@@ -1,0 +1,70 @@
+<div>
+    <h1 mat-dialog-title>{{title}}</h1>
+    <div mat-dialog-content>
+        <form class="example-form" [formGroup]="predmetForm">
+            <mat-form-field class="example-full-width">
+                <mat-label>Oznaka</mat-label>
+                <input formControlName="oznaka" matInput placeholder="Unesite šifru predmeta...">
+            </mat-form-field>
+
+            <mat-form-field class="example-full-width">
+                <mat-label>Plan</mat-label>
+                <input formControlName="plan" matInput placeholder="Unesite plan..." type="number">
+            </mat-form-field>
+
+            <mat-form-field class="example-full-width">
+                <mat-label>Naziv</mat-label>
+                <input formControlName="naziv" matInput placeholder="Unesite naziv predmeta...">
+            </mat-form-field>
+
+            <mat-form-field class="example-full-width">
+                <mat-label>Godina</mat-label>
+                <input formControlName="godina" matInput placeholder="Unesite godinu na kojoj se sluša..." type="number">
+            </mat-form-field>
+
+            <mat-form-field class="example-full-width">
+                <mat-label>Šifra struke</mat-label>
+                <input formControlName="sifraStruke" matInput placeholder="Unesite šifru struke...">
+            </mat-form-field>
+
+            <mat-form-field class="example-full-width" appearance="fill">
+                <mat-label>Studijski program</mat-label>
+                <input type="text"
+                       placeholder="Izaberite studijski program..."
+                       matInput
+                       formControlName="studijskiProgram"
+                       [matAutocomplete]="auto">
+                <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+                  <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+                    {{option}}
+                  </mat-option>
+                </mat-autocomplete>
+              </mat-form-field>
+
+            <mat-form-field class="example-full-width">
+                <mat-label>Broj časova predavanja</mat-label>
+                <input formControlName="brojCasovaPred" matInput placeholder="Unesite broj časova predavanja..." type="number">
+            </mat-form-field>
+
+            <mat-form-field class="example-full-width">
+                <mat-label>Broj časova auditornih vežbi</mat-label>
+                <input formControlName="brojCasovaAud" matInput placeholder="Unesite broj časova auditornih vežbi..." type="number">
+            </mat-form-field>
+
+            <mat-form-field class="example-full-width">
+                <mat-label>Broj časova laboratorijskih vežbi</mat-label>
+                <input formControlName="brojCasovaLab" matInput placeholder="Unesite broj časova laboratorijskih vežbi..." type="number">
+            </mat-form-field>
+
+            <mat-form-field class="example-full-width">
+                <mat-label>Broj časova računarskih vežbi</mat-label>
+                <input formControlName="brojCasovaRac" matInput placeholder="Unesite broj časova računarskih vežbi..." type="number">
+            </mat-form-field>
+        </form>
+    </div>
+
+    <div mat-dialog-actions [align]="'end'">
+        <button mat-raised-button color="warn" mat-dialog-close>Zatvori</button>
+        <button mat-raised-button color="primary" (click)="add()">{{actionBtn}}</button>
+    </div>
+</div>

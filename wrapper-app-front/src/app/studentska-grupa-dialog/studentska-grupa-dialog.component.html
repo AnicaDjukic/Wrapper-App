@@ -1,0 +1,45 @@
+<div>
+    <h1 mat-dialog-title>{{title}}</h1>
+    <div mat-dialog-content>
+        <form class="example-form" [formGroup]="studentskaGrupaForm">
+            <mat-form-field class="example-full-width">
+                <mat-label>Oznaka</mat-label>
+                <input formControlName="oznaka" matInput placeholder="Unesite oznaku grupe..." type="number">
+            </mat-form-field>
+
+            <mat-form-field class="example-full-width">
+                <mat-label>Godina</mat-label>
+                <input formControlName="godina" matInput placeholder="Unesite godinu..." type="number">
+            </mat-form-field>
+
+            <mat-form-field class="example-full-width">
+                <mat-label>Semestar</mat-label>
+                <input formControlName="semestar" matInput placeholder="Unesite semestar...">
+            </mat-form-field>
+
+            <mat-form-field class="example-full-width">
+                <mat-label>Broj studenata</mat-label>
+                <input formControlName="brojStudenata" matInput placeholder="Unesite broj studenata..." type="number">
+            </mat-form-field>
+
+            <mat-form-field class="example-full-width" appearance="fill">
+                <mat-label>Studijski program</mat-label>
+                <input type="text"
+                       placeholder="Izaberite studijski program..."
+                       matInput
+                       formControlName="studijskiProgram"
+                       [matAutocomplete]="auto">
+                <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+                  <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+                    {{option}}
+                  </mat-option>
+                </mat-autocomplete>
+              </mat-form-field>
+        </form>
+    </div>
+
+    <div mat-dialog-actions [align]="'end'">
+        <button mat-raised-button color="warn" mat-dialog-close>Zatvori</button>
+        <button mat-raised-button color="primary" (click)="add()">{{actionBtn}}</button>
+    </div>
+</div>

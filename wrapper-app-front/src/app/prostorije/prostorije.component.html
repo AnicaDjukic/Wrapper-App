@@ -1,0 +1,72 @@
+<div>
+    <mat-form-field>
+        <mat-label>Pretraži</mat-label>
+        <input matInput (keyup)="applyFilter($event)" placeholder="Pretraži po bilo kom atributu...">
+    </mat-form-field>
+
+    <div class="mat-elevation-z8" style="margin-top: -25px; margin-bottom: 56px;">
+        <!-- <div class="table-container"> -->
+            <table mat-table [dataSource]="dataSource">
+
+                <ng-container matColumnDef="oznaka">
+                    <th mat-header-cell *matHeaderCellDef> Oznaka </th>
+                    <td mat-cell *matCellDef="let element"> {{element.oznaka}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="tip">
+                    <th mat-header-cell *matHeaderCellDef> Tip </th>
+                    <td mat-cell *matCellDef="let element"> {{element.tip}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="kapacitet">
+                    <th mat-header-cell *matHeaderCellDef> Kapacitet </th>
+                    <td mat-cell *matCellDef="let element"> {{element.kapacitet}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="orgJedinica">
+                    <th mat-header-cell *matHeaderCellDef> Organizacione jedinice </th>
+                    <td mat-cell *matCellDef="let element">
+                        <ng-container *ngFor="let item of element.orgJedinica">
+                            <div>
+                                <span>{{item}}</span>
+                            </div>
+                        </ng-container>
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="edit">
+                    <th mat-header-cell *matHeaderCellDef> </th>
+                    <td mat-cell *matCellDef="let element">
+                        <button mat-icon-button (click)="edit(element)" color="primary">
+                            <mat-icon>edit</mat-icon>
+                        </button>
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef>
+                        <button (click)="openDialog();" mat-raised-button color="primary"
+                            style="float: right; width: 100px;">
+                            <mat-icon>add</mat-icon>
+                            Nova
+                        </button>
+                    </th>
+                    <td mat-cell *matCellDef="let element">
+                        <button mat-icon-button (click)="edit(element)" color="primary">
+                            <mat-icon>edit</mat-icon>
+                        </button>
+                        <button mat-icon-button (click)="delete(element.id)" color="warn">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+        <!-- </div> -->
+        <div class="footer">
+            <mat-paginator [pageSizeOptions]="[10, 20]" showFirstLastButtons></mat-paginator>
+        </div>
+    </div>
+</div>

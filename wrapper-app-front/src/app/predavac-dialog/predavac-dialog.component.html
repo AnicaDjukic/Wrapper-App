@@ -1,0 +1,49 @@
+<div>
+    <h1 mat-dialog-title>{{title}}</h1>
+    <div mat-dialog-content>
+        <form class="example-form" [formGroup]="predavacForm">
+            <mat-form-field class="example-full-width">
+                <mat-label>Oznaka</mat-label>
+                <input formControlName="oznaka" matInput placeholder="Unesite oznaku predavača..." type="number">
+            </mat-form-field>
+
+            <mat-form-field class="example-full-width">
+                <mat-label>Ime</mat-label>
+                <input formControlName="ime" matInput placeholder="Unesite ime predavača...">
+            </mat-form-field>
+
+            <mat-form-field class="example-full-width">
+                <mat-label>Prezime</mat-label>
+                <input formControlName="prezime" matInput placeholder="Unesite prezime predavača...">
+            </mat-form-field>
+
+            <mat-form-field class="example-full-width">
+                <mat-label>Titula</mat-label>
+                <input formControlName="titula" matInput placeholder="Unesite titulu predavača...">
+            </mat-form-field>
+
+            <mat-checkbox formControlName="organizacijaFakulteta">Da li je u organizaciji fakulteta?</mat-checkbox>
+
+            <mat-checkbox formControlName="dekanat" style="margin-bottom: 5%;">Da li je u dekanatu?</mat-checkbox>
+
+            <mat-form-field class="example-full-width" appearance="fill">
+                <mat-label>Organizaciona jedinica</mat-label>
+                <input type="text"
+                       placeholder="Izaberite organizacionu jedinicu..."
+                       matInput
+                       formControlName="orgJedinica"
+                       [matAutocomplete]="auto">
+                <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+                  <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+                    {{option}}
+                  </mat-option>
+                </mat-autocomplete>
+              </mat-form-field>
+        </form>
+    </div>
+
+    <div mat-dialog-actions [align]="'end'">
+        <button mat-raised-button color="warn" mat-dialog-close>Zatvori</button>
+        <button mat-raised-button color="primary" (click)="add()">{{actionBtn}}</button>
+    </div>
+</div>

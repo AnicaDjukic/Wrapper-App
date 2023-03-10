@@ -1,0 +1,56 @@
+<div>
+    <h1 mat-dialog-title>{{title}}</h1>
+    <div mat-dialog-content>
+        <form class="example-form" [formGroup]="prostorijaForm">
+            <mat-form-field class="example-full-width">
+                <mat-label>Oznaka</mat-label>
+                <input formControlName="oznaka" matInput placeholder="Unesite oznaku prostorije...">
+            </mat-form-field>
+
+            <mat-form-field class="example-full-width">
+                <mat-label>Tip</mat-label>
+                <input formControlName="tip" matInput placeholder="Izaberite tip prostorije...">
+            </mat-form-field>
+
+            <mat-form-field class="example-full-width">
+                <mat-label>Kapacitet</mat-label>
+                <input formControlName="kapacitet" matInput placeholder="Unesite kapacitet prostorije..." type="number">
+            </mat-form-field>
+
+            <!-- <mat-form-field class="example-full-width" appearance="fill">
+                <mat-label>Organizaciona jedinica</mat-label>
+                <input type="text"
+                       placeholder="Izaberite organizacionu jedinicu..."
+                       matInput
+                       formControlName="orgJedinica"
+                       [matAutocomplete]="auto">
+                <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+                  <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+                    {{option}}
+                  </mat-option>
+                </mat-autocomplete>
+            </mat-form-field> -->
+            <div *ngFor="let control of orgJedinicaFieldAsFormArray.controls; let i = index;" formArrayName="orgJedinica">
+                <mat-form-field class="example-full-width" appearance="fill">
+                    <mat-label>Organizaciona jedinica</mat-label>
+                    <input type="text" 
+                    placeholder="Izaberite organizacionu jedinicu..."
+                    matInput [formControlName]="i"
+                    [matAutocomplete]="auto">
+                    <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+                        <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+                          {{option}}
+                        </mat-option>
+                    </mat-autocomplete>
+                </mat-form-field>
+                <button mat-raised-button type="button" (click)="remove(i)" style="margin-top: -25px; margin-bottom: 5px;">Ukloni</button>
+            </div>
+        </form>
+    </div>
+
+    <div mat-dialog-actions [align]="'end'">
+        <button mat-raised-button color="warn" mat-dialog-close>Zatvori</button>
+        <button mat-raised-button class="button" (click)="addControl()">Dodaj org jed</button>
+        <button mat-raised-button color="primary" (click)="add()">{{actionBtn}}</button>
+    </div>
+</div>

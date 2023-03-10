@@ -1,0 +1,31 @@
+<div>
+    <h1 mat-dialog-title>{{title}}</h1>
+    <div mat-dialog-content>
+        <form class="example-form" [formGroup]="studijskiProgramForm">
+            <mat-form-field class="example-full-width">
+                <mat-label>Oznaka</mat-label>
+                <input formControlName="oznaka" matInput placeholder="Unesite oznaku studijskog programa...">
+            </mat-form-field>
+
+            <mat-form-field class="example-full-width">
+                <mat-label>Stepen</mat-label>
+                <input formControlName="stepen" matInput placeholder="Unesite stepen..." type="number">
+            </mat-form-field>
+
+            <mat-form-field class="example-full-width">
+                <mat-label>Nivo</mat-label>
+                <input formControlName="nivo" matInput placeholder="Unesite nivo..." type="number">
+            </mat-form-field>
+
+            <mat-form-field class="example-full-width">
+                <mat-label>Naziv</mat-label>
+                <input formControlName="naziv" matInput placeholder="Unesite naziv studijskog programa...">
+            </mat-form-field>
+        </form>
+    </div>
+
+    <div mat-dialog-actions [align]="'end'">
+        <button mat-raised-button color="warn" mat-dialog-close>Zatvori</button>
+        <button mat-raised-button color="primary" (click)="add()">{{actionBtn}}</button>
+    </div>
+</div>
