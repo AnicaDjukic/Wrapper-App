@@ -20,13 +20,20 @@ $my-palette: mat.define-palette(mat.$indigo-palette);
   z-index: 1;
 }
 
+// a:hover {   
+//   background-color: mat.get-color-from-palette($my-palette, 300);
+// }
+
+// .active .contact-names:hover {
+//   color: white !important;
+// }
+
 .active {
-  background-color: mat.get-color-from-palette($my-palette)!important;
-  color: white !important;
+  background-color: mat.get-color-from-palette($my-palette);
 }
 
 .active .contact-names {
-  color: white !important;
+  color: white;
   font-weight: 500;
 }
 

@@ -1,1 +1,92 @@
-<p>realizacija works!</p>
+<div>
+    <mat-form-field class="example-full-width" appearance="outline" style="margin-top: 10px;">
+        <mat-label>Studijski program</mat-label>
+        <input type="text" placeholder="Izaberite studijski program..." matInput [formControl]="myControl"
+            [matAutocomplete]="auto">
+        <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete" (optionSelected)='get($event.option.value)'>
+            <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+                {{option}}
+            </mat-option>
+        </mat-autocomplete>
+    </mat-form-field>
+
+    <div *ngIf="!dataSource" style="margin-top: 30vh; margin-left: 60vh; color: gray; font-size: large;">Izaberite
+        studijski program...</div>
+
+    <table *ngIf="dataSource" mat-table style="margin-top: -15px;" [dataSource]="dataSource" multiTemplateDataRows>
+        
+        <ng-container matColumnDef="predmetOznaka">
+            <th mat-header-cell *matHeaderCellDef> Oznaka predmeta </th>
+            <td mat-cell *matCellDef="let element"> {{element.predmetOznaka}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="predmetNaziv">
+            <th mat-header-cell *matHeaderCellDef> Naziv predmeta </th>
+            <td mat-cell *matCellDef="let element"> {{element.predmetNaziv}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="predmetGodina">
+            <th mat-header-cell *matHeaderCellDef> Godina </th>
+            <td mat-cell *matCellDef="let element"> {{element.predmetGodina}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="profesor">
+            <th mat-header-cell *matHeaderCellDef> Profesor </th>
+            <td mat-cell *matCellDef="let element"> {{element.profesor}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="ostaliProfesori">
+            <th mat-header-cell *matHeaderCellDef> Ostali profesori </th>
+            <td mat-cell *matCellDef="let element"> {{element.ostaliProfesori}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="expand">
+            <th mat-header-cell *matHeaderCellDef aria-label="row actions">Asistenti</th>
+            <td mat-cell *matCellDef="let element">
+                <button mat-icon-button aria-label="expand row"
+                    (click)="(expandedElement = expandedElement === element ? null : element); $event.stopPropagation()">
+                    <mat-icon *ngIf="expandedElement !== element">keyboard_arrow_down</mat-icon>
+                    <mat-icon *ngIf="expandedElement === element">keyboard_arrow_up</mat-icon>
+                </button>
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>
+              <button mat-raised-button color="primary" style="float: right; width: 100px;">
+                <mat-icon>add</mat-icon>
+                Novi
+              </button>
+            </th>
+            <td mat-cell *matCellDef="let element">
+              <button mat-icon-button color="primary">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button color="warn">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+        <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
+        <ng-container matColumnDef="expandedDetail">
+            <td mat-cell *matCellDef="let element" [attr.colspan]="columnsToDisplayWithExpand.length">
+                <div [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+                    <div *ngIf="element.asistentiZauzeca != 0"><b>Asistenti:</b></div>
+                    <div *ngIf="element.asistentiZauzeca == 0"><em>Nema asistenata</em></div>
+                    <div *ngFor="let zauzece of element.asistentiZauzeca">
+                        <div style="margin-left: 65px;"> {{zauzece.asistent}} : <em>broj termina:</em>
+                            {{zauzece.brojTermina}} </div>
+                    </div>
+                </div>
+            </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="columnsToDisplayWithExpand; sticky: true"></tr>
+        <tr mat-row *matRowDef="let element; columns: columnsToDisplayWithExpand;" class="example-element-row"
+            [class.example-expanded-row]="expandedElement === element"
+            (click)="expandedElement = expandedElement === element ? null : element">
+        </tr>
+        <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+    </table>
+</div>

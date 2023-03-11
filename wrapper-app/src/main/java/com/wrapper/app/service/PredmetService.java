@@ -16,12 +16,9 @@ public class PredmetService {
 
     private final StudijskiProgramService studijskiProgramService;
 
-    private final RealizacijaService realizacijaService;
-
-    public PredmetService(PredmetRepository repository, StudijskiProgramService studijskiProgramService, RealizacijaService realizacijaService) {
+    public PredmetService(PredmetRepository repository, StudijskiProgramService studijskiProgramService) {
         this.repository = repository;
         this.studijskiProgramService = studijskiProgramService;
-        this.realizacijaService = realizacijaService;
     }
 
     public List<Predmet> getAll() {

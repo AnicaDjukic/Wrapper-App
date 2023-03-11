@@ -2,6 +2,7 @@ package com.wrapper.app.controller;
 
 import com.wrapper.app.dto.RealizacijaRequestDto;
 import com.wrapper.app.dto.RealizacijaResponseDto;
+import com.wrapper.app.dto.StudijskiProgramPredmetiDto;
 import com.wrapper.app.service.RealizacijaService;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -39,5 +40,12 @@ public class RealizacijaController {
     @PutMapping("{id}")
     public RealizacijaResponseDto update(@PathVariable String id, @RequestBody RealizacijaRequestDto dto) {
         return modelMapper.map(service.update(id, dto), RealizacijaResponseDto.class);
+    }
+
+    @CrossOrigin(origins = "*")
+    @GetMapping("studijski-programi/{studProgId}")
+    @ResponseStatus(HttpStatus.OK)
+    public StudijskiProgramPredmetiDto getByStudijskiProgramId(@PathVariable String studProgId) {
+        return service.getStudijskiProgramById(studProgId);
     }
 }

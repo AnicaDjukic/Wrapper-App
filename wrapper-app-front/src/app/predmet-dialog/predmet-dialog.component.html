@@ -19,7 +19,8 @@
 
             <mat-form-field class="example-full-width">
                 <mat-label>Godina</mat-label>
-                <input formControlName="godina" matInput placeholder="Unesite godinu na kojoj se sluša..." type="number">
+                <input formControlName="godina" matInput placeholder="Unesite godinu na kojoj se sluša..."
+                    type="number">
             </mat-form-field>
 
             <mat-form-field class="example-full-width">
@@ -29,36 +30,37 @@
 
             <mat-form-field class="example-full-width" appearance="fill">
                 <mat-label>Studijski program</mat-label>
-                <input type="text"
-                       placeholder="Izaberite studijski program..."
-                       matInput
-                       formControlName="studijskiProgram"
-                       [matAutocomplete]="auto">
+                <input type="text" placeholder="Izaberite studijski program..." matInput
+                    formControlName="studijskiProgram" [matAutocomplete]="auto">
                 <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
-                  <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
-                    {{option}}
-                  </mat-option>
+                    <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+                        {{option}}
+                    </mat-option>
                 </mat-autocomplete>
-              </mat-form-field>
+            </mat-form-field>
 
             <mat-form-field class="example-full-width">
                 <mat-label>Broj časova predavanja</mat-label>
-                <input formControlName="brojCasovaPred" matInput placeholder="Unesite broj časova predavanja..." type="number">
+                <input formControlName="brojCasovaPred" matInput placeholder="Unesite broj časova predavanja..."
+                    type="number">
             </mat-form-field>
 
             <mat-form-field class="example-full-width">
                 <mat-label>Broj časova auditornih vežbi</mat-label>
-                <input formControlName="brojCasovaAud" matInput placeholder="Unesite broj časova auditornih vežbi..." type="number">
+                <input formControlName="brojCasovaAud" matInput placeholder="Unesite broj časova auditornih vežbi..."
+                    type="number">
             </mat-form-field>
 
             <mat-form-field class="example-full-width">
                 <mat-label>Broj časova laboratorijskih vežbi</mat-label>
-                <input formControlName="brojCasovaLab" matInput placeholder="Unesite broj časova laboratorijskih vežbi..." type="number">
+                <input formControlName="brojCasovaLab" matInput
+                    placeholder="Unesite broj časova laboratorijskih vežbi..." type="number">
             </mat-form-field>
 
             <mat-form-field class="example-full-width">
                 <mat-label>Broj časova računarskih vežbi</mat-label>
-                <input formControlName="brojCasovaRac" matInput placeholder="Unesite broj časova računarskih vežbi..." type="number">
+                <input formControlName="brojCasovaRac" matInput placeholder="Unesite broj časova računarskih vežbi..."
+                    type="number">
             </mat-form-field>
         </form>
     </div>

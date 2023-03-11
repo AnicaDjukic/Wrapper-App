@@ -1,3 +1,7 @@
+@use '@angular/material' as mat;
+
+$my-palette: mat.define-palette(mat.$indigo-palette);
+
 .table {
     width: 100%;
 }
@@ -23,12 +27,26 @@
 }
 
 .mat-mdc-row:hover .mat-mdc-cell {
-    border-color: currentColor;
+    //border-color: currentColor;
+    // background-color: mat.get-color-from-palette($my-palette, 200);
+    background-color: lightgray;
+    // color: white;
+    font-weight: 400;
 }
+
+// .demo-row-is-clicked {
+//     font-weight: bold;
+// }
 
 .footer {
     position: fixed;
     left: 0;
     bottom: 0;
     width: 100%;
+}
+
+.table-container {
+    position: relative;
+    max-height: calc(100vh - 110px);
+    overflow: auto;
 }

@@ -8,6 +8,7 @@ import { StudentskeGrupeComponent } from './studentske-grupe/studentske-grupe.co
 import { StudijskiProgramiComponent } from './studijski-programi/studijski-programi.component';
 
 const routes: Routes = [
+  { path: "", component: PredmetiComponent },
   { path: "predmeti", component: PredmetiComponent },
   { path: "predavaci", component: PredavaciComponent },
   { path: "prostorije", component: ProstorijeComponent },
