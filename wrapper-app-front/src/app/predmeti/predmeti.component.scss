@@ -8,7 +8,7 @@ $my-palette: mat.define-palette(mat.$indigo-palette);
 
 .mat-form-field {
     font-size: 14px;
-    width: 100%;
+    width: 50%;
 }
 
 .td .th {
@@ -38,10 +38,7 @@ $my-palette: mat.define-palette(mat.$indigo-palette);
 //     font-weight: bold;
 // }
 
-.footer {
-    position: fixed;
-    left: 0;
-    bottom: 0;
+.header {
     width: 100%;
 }
 
@@ -49,4 +46,16 @@ $my-palette: mat.define-palette(mat.$indigo-palette);
     position: relative;
     max-height: calc(100vh - 110px);
     overflow: auto;
+}
+
+.footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+}
+
+td {
+    border-bottom: 0.5px solid lightgrey !important;
+    // border-right: 0.5px solid lightgrey !important;
 }

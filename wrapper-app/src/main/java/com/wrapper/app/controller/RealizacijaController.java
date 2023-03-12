@@ -43,9 +43,9 @@ public class RealizacijaController {
     }
 
     @CrossOrigin(origins = "*")
-    @GetMapping("studijski-programi/{studProgId}")
+    @GetMapping("studijski-programi/{studProgramId}")
     @ResponseStatus(HttpStatus.OK)
-    public StudijskiProgramPredmetiDto getByStudijskiProgramId(@PathVariable String studProgId) {
-        return service.getStudijskiProgramById(studProgId);
+    public StudijskiProgramPredmetiDto getByStudijskiProgramId(@PathVariable String studProgramId) {
+        return service.getStudijskiProgramById(studProgramId);
     }
 }

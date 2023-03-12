@@ -1,10 +1,12 @@
 <div>
-  <mat-form-field>
-    <mat-label>Pretraži</mat-label>
-    <input matInput (keyup)="applyFilter($event)" placeholder="Pretraži po bilo kom atributu...">
-  </mat-form-field>
+  <div class="header">
+    <mat-form-field>
+      <mat-label>Pretraži</mat-label>
+      <input matInput (keyup)="applyFilter($event)" placeholder="Pretraži po bilo kom atributu...">
+    </mat-form-field>
+  </div>
 
-  <div class="mat-elevation-z8" style="margin-top: -25px; margin-bottom: 56px;">
+  <div style="margin-top: -25px; margin-bottom: 56px;">
     <div class="table-container">
       <table mat-table [dataSource]="dataSource">
 

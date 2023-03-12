@@ -32,3 +32,13 @@ tr.example-element-row:not(.example-expanded-row):hover {
     overflow: hidden;
     display: flex;
 }
+
+.header {
+    width: 100%;
+}
+
+.table-container {
+    position: relative;
+    max-height: calc(100vh - 75px);
+    overflow: auto;
+}

@@ -25,6 +25,7 @@ import { StudijskiProgramDialogComponent } from './studijski-program-dialog/stud
 import { StudentskaGrupaDialogComponent } from './studentska-grupa-dialog/studentska-grupa-dialog.component';
 import { ProstorijaDialogComponent } from './prostorija-dialog/prostorija-dialog.component';
 import { RouterModule } from '@angular/router';
+import { ToastrModule, ToastrService } from 'ngx-toastr';
 
 @NgModule({
   declarations: [
@@ -55,9 +56,10 @@ import { RouterModule } from '@angular/router';
     MatListModule,
     HttpClientModule,
     ReactiveFormsModule,
-    RouterModule
+    RouterModule,
+    ToastrModule.forRoot()
   ],
-  providers: [],
+  providers: [ToastrService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

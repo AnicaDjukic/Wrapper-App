@@ -29,9 +29,9 @@ export class PredavacDialogComponent {
       oznaka : ['', Validators.required],
       ime : ['', Validators.required],
       prezime: ['', Validators.required],
-      titula: ['', Validators.required],
-      organizacijaFakulteta : [false, Validators.required],
-      dekanat : [false, Validators.required],
+      titula: [''],
+      organizacijaFakulteta : [false],
+      dekanat : [false],
       orgJedinica: ['', Validators.required],
     })
 

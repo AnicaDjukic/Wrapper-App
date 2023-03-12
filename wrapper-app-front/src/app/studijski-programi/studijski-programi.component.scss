@@ -23,11 +23,18 @@
 }
 
 .mat-mdc-row:hover .mat-mdc-cell {
-    border-color: currentColor;
+    background-color: lightgray;
+    font-weight: 400;
 }
 
-.demo-row-is-clicked {
-    font-weight: bold;
+.header {
+    width: 100%;
+}
+
+.table-container {
+    position: relative;
+    max-height: calc(100vh - 110px);
+    overflow: auto;
 }
 
 .footer {
@@ -35,4 +42,9 @@
     left: 0;
     bottom: 0;
     width: 100%;
+}
+
+td {
+    border-bottom: 0.5px solid lightgrey !important;
+    // border-right: 0.5px solid lightgrey !important;
 }

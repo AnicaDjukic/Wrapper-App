@@ -1,78 +1,82 @@
 <div>
-  <mat-form-field>
-    <mat-label>Pretraži</mat-label>
-    <input matInput (keyup)="applyFilter($event)" placeholder="Pretraži po bilo kom atributu...">
-  </mat-form-field>
+  <div class="header">
+    <mat-form-field>
+      <mat-label>Pretraži</mat-label>
+      <input matInput (keyup)="applyFilter($event)" placeholder="Pretraži po bilo kom atributu...">
+    </mat-form-field>
+  </div>
 
-  <div class="mat-elevation-z8" style="margin-top: -25px; margin-bottom: 56px;">
-    <!-- <div class="table-container"> -->
-    <table mat-table [dataSource]="dataSource">
+  <div style="margin-top: -25px; margin-bottom: 56px;">
+    <div class="table-container">
+      <table mat-table [dataSource]="dataSource">
 
-      <ng-container matColumnDef="oznaka">
-        <th mat-header-cell *matHeaderCellDef> Oznaka </th>
-        <td mat-cell *matCellDef="let element"> {{element.oznaka}} </td>
-      </ng-container>
+        <ng-container matColumnDef="oznaka">
+          <th mat-header-cell *matHeaderCellDef> Oznaka </th>
+          <td mat-cell *matCellDef="let element"> {{element.oznaka}} </td>
+        </ng-container>
 
-      <ng-container matColumnDef="ime">
-        <th mat-header-cell *matHeaderCellDef> Ime </th>
-        <td mat-cell *matCellDef="let element"> {{element.ime}} </td>
-      </ng-container>
+        <ng-container matColumnDef="ime">
+          <th mat-header-cell *matHeaderCellDef> Ime </th>
+          <td mat-cell *matCellDef="let element"> {{element.ime}} </td>
+        </ng-container>
 
-      <ng-container matColumnDef="prezime">
-        <th mat-header-cell *matHeaderCellDef> Prezime </th>
-        <td mat-cell *matCellDef="let element"> {{element.prezime}} </td>
-      </ng-container>
+        <ng-container matColumnDef="prezime">
+          <th mat-header-cell *matHeaderCellDef> Prezime </th>
+          <td mat-cell *matCellDef="let element"> {{element.prezime}} </td>
+        </ng-container>
 
-      <ng-container matColumnDef="titula">
-        <th mat-header-cell *matHeaderCellDef> Titula </th>
-        <td mat-cell *matCellDef="let element"> {{element.titula}} </td>
-      </ng-container>
+        <ng-container matColumnDef="titula">
+          <th mat-header-cell *matHeaderCellDef> Titula </th>
+          <td mat-cell *matCellDef="let element"> {{element.titula}} </td>
+        </ng-container>
 
-      <ng-container matColumnDef="organizacijaFakulteta">
-        <th mat-header-cell *matHeaderCellDef> Organizacija fakulteta </th>
-        <td mat-cell *matCellDef="let element"><mat-checkbox [checked]="element.organizacijaFakulteta" disabled="true"></mat-checkbox></td>
-      </ng-container>
+        <ng-container matColumnDef="organizacijaFakulteta">
+          <th mat-header-cell *matHeaderCellDef> Organizacija fakulteta </th>
+          <td mat-cell *matCellDef="let element"><mat-checkbox [checked]="element.organizacijaFakulteta"
+              disabled="true"></mat-checkbox></td>
+        </ng-container>
 
-      <ng-container matColumnDef="dekanat">
-        <th mat-header-cell *matHeaderCellDef> Dekanat </th>
-        <td mat-cell *matCellDef="let element"><mat-checkbox [checked]="element.dekanat" disabled="true"></mat-checkbox></td>
-      </ng-container>
+        <ng-container matColumnDef="dekanat">
+          <th mat-header-cell *matHeaderCellDef> Dekanat </th>
+          <td mat-cell *matCellDef="let element"><mat-checkbox [checked]="element.dekanat"
+              disabled="true"></mat-checkbox></td>
+        </ng-container>
 
-      <ng-container matColumnDef="orgJedinica">
-        <th mat-header-cell *matHeaderCellDef> Organizaciona jedinica </th>
-        <td mat-cell *matCellDef="let element"> {{element.orgJedinica}} </td>
-      </ng-container>
+        <ng-container matColumnDef="orgJedinica">
+          <th mat-header-cell *matHeaderCellDef> Organizaciona jedinica </th>
+          <td mat-cell *matCellDef="let element"> {{element.orgJedinica}} </td>
+        </ng-container>
 
-      <ng-container matColumnDef="edit">
-        <th mat-header-cell *matHeaderCellDef> </th>
-        <td mat-cell *matCellDef="let element">
-          <button mat-icon-button (click)="edit(element)" color="primary">
-            <mat-icon>edit</mat-icon>
-          </button>
-        </td>
-      </ng-container>
+        <ng-container matColumnDef="edit">
+          <th mat-header-cell *matHeaderCellDef> </th>
+          <td mat-cell *matCellDef="let element">
+            <button mat-icon-button (click)="edit(element)" color="primary">
+              <mat-icon>edit</mat-icon>
+            </button>
+          </td>
+        </ng-container>
 
-      <ng-container matColumnDef="actions">
-        <th mat-header-cell *matHeaderCellDef>
-          <button (click)="openDialog();" mat-raised-button color="primary" style="float: right; width: 100px;">
-            <mat-icon>add</mat-icon>
-            Novi
-          </button>
-        </th>
-        <td mat-cell *matCellDef="let element">
-          <button mat-icon-button (click)="edit(element)" color="primary">
-            <mat-icon>edit</mat-icon>
-          </button>
-          <button mat-icon-button (click)="delete(element.id)" color="warn">
-            <mat-icon>delete</mat-icon>
-          </button>
-        </td>
-      </ng-container>
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>
+            <button (click)="openDialog();" mat-raised-button color="primary" style="float: right; width: 100px;">
+              <mat-icon>add</mat-icon>
+              Novi
+            </button>
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <button mat-icon-button (click)="edit(element)" color="primary">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button (click)="delete(element.id)" color="warn">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-    </table>
-    <!-- </div> -->
+        <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </div>
     <div class="footer">
       <mat-paginator [pageSizeOptions]="[10, 20]" showFirstLastButtons>
       </mat-paginator>

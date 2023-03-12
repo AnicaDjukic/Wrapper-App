@@ -4,6 +4,7 @@ import { map, Observable, startWith } from 'rxjs';
 import { StudijskiProgramDto } from '../dtos/StudijskiProgramDto';
 import { ApiService } from '../services/api.service';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { ToastrService } from 'ngx-toastr'
 
 @Component({
   selector: 'app-predmet-dialog',
@@ -22,7 +23,8 @@ export class PredmetDialogComponent implements OnInit {
   constructor(private formBuilder: FormBuilder, 
     private api: ApiService,
     @Inject(MAT_DIALOG_DATA) public editData : any, 
-    private dialogRef: MatDialogRef<PredmetDialogComponent>) {}
+    private dialogRef: MatDialogRef<PredmetDialogComponent>,
+    private toastr: ToastrService) {}
 
   ngOnInit(): void {
     this.predmetForm = this.formBuilder.group({
@@ -83,12 +85,12 @@ export class PredmetDialogComponent implements OnInit {
         this.api.post(this.predmetForm.value)
         .subscribe({
           next: () => {
-            alert("Novi predmet je uspešno dodat!");
+            this.toastr.success('Novi predmet je uspešno dodat!', 'Uspešno!');
             this.predmetForm.reset();
             this.dialogRef.close('save');
           },
           error:() => {
-            alert("Greška")
+            this.toastr.error('Došlo je do greške prilikom brisanja predmeta!', 'Greška!');
           }
         })
       }
@@ -96,6 +98,7 @@ export class PredmetDialogComponent implements OnInit {
       this.update();
     }   
   }
+
   update() {
     if(!this.predmetForm.valid) {
       return
@@ -105,12 +108,12 @@ export class PredmetDialogComponent implements OnInit {
     this.api.put(this.predmetForm.value, this.editData.id)
     .subscribe({
       next: () => {
-        alert("Predmet je uspešno izmenjen!");
+        this.toastr.success('Predmet je uspešno izmenjen!', 'Uspešno!');
         this.predmetForm.reset();
         this.dialogRef.close('update');
       },
       error: () => {
-        alert("Greška!");
+        this.toastr.error('Došlo je do greške prilikom izmene predmeta!', 'Greška!');
       }
     })
   }
