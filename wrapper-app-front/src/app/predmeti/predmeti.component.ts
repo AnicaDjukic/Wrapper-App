@@ -30,7 +30,7 @@ export class PredmetiComponent implements OnInit {
 
   }
 
-  constructor(private api: ApiService, public dialog: MatDialog ) {}
+  constructor(private api: ApiService, public dialog: MatDialog) {}
 
   getAll() {
     this.api.getAll()

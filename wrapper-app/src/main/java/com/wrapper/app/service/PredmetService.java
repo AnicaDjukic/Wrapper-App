@@ -57,4 +57,8 @@ public class PredmetService {
         predmet.setId(id);
         return repository.save(predmet);
     }
+
+    public List<Predmet> getByStudijskiProgram(String studijskiProgram) {
+        return repository.findByStudijskiProgram(studijskiProgram);
+    }
 }

@@ -26,6 +26,7 @@ import { StudentskaGrupaDialogComponent } from './studentska-grupa-dialog/studen
 import { ProstorijaDialogComponent } from './prostorija-dialog/prostorija-dialog.component';
 import { RouterModule } from '@angular/router';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
+import { RealizacijaDialogComponent } from './realizacija-dialog/realizacija-dialog.component';
 
 @NgModule({
   declarations: [
@@ -41,7 +42,8 @@ import { ToastrModule, ToastrService } from 'ngx-toastr';
     PredavacDialogComponent,
     StudijskiProgramDialogComponent,
     StudentskaGrupaDialogComponent,
-    ProstorijaDialogComponent
+    ProstorijaDialogComponent,
+    RealizacijaDialogComponent
   ],
   imports: [
     BrowserModule,

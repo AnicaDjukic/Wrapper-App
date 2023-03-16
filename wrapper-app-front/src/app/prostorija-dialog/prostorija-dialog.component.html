@@ -49,8 +49,10 @@
     </div>
 
     <div mat-dialog-actions [align]="'end'">
+        <button mat-raised-button class="button" (click)="addControl()">
+            <mat-icon>add</mat-icon> org jedinicu
+        </button>
         <button mat-raised-button color="warn" mat-dialog-close>Zatvori</button>
-        <button mat-raised-button class="button" (click)="addControl()">Dodaj org jed</button>
         <button mat-raised-button color="primary" (click)="add()">{{actionBtn}}</button>
     </div>
 </div>

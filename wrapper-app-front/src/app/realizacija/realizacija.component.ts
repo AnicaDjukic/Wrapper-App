@@ -1,12 +1,13 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { Observable } from 'rxjs';
-import { map, startWith } from 'rxjs/operators'
-import { AsistentZauzeceDto } from '../dtos/AsistentZauzeceDto';
+import { map, startWith } from 'rxjs/operators';
 import { PredmetPredavacDto } from '../dtos/PredmetPredavacDto';
 import { StudijskiProgramDto } from '../dtos/StudijskiProgramDto';
+import { RealizacijaDialogComponent } from '../realizacija-dialog/realizacija-dialog.component';
 import { ApiService } from '../services/api.service';
 import { RealizacijaService } from '../services/realizacija.service';
 
@@ -25,13 +26,14 @@ import { RealizacijaService } from '../services/realizacija.service';
 export class RealizacijaComponent {
 
 
-  constructor(private api: ApiService, private realizacijaService: RealizacijaService){}
+  constructor(private api: ApiService, private realizacijaService: RealizacijaService, public dialog: MatDialog ){}
 
   studijskiProgrami: StudijskiProgramDto[] = [];
   options: string[] = [];
   filteredOptions!: Observable<string[]>;
   myControl = new FormControl('');
   show!:boolean
+  selected!:string
 
   dataSource!: MatTableDataSource<PredmetPredavacDto>;
   columnsToDisplay = ['predmetOznaka', 'predmetNaziv', 'predmetGodina', 'profesor', 'ostaliProfesori', 'expand', 'actions'];
@@ -55,6 +57,19 @@ export class RealizacijaComponent {
     );
   }
 
+  openDialog(): void {
+    let studijskiProgramId = this.studijskiProgrami.filter(sp => sp.oznaka == this.selected.split(' ')[0]).map(value => value.id)[0];
+    this.dialog.open(RealizacijaDialogComponent, {
+      width: '40%',
+      data: studijskiProgramId
+    }).afterClosed().subscribe((val) => {
+      if(val == 'save') {
+        console.log('The dialog was closed');
+        //this.getAll();
+      }
+    });
+  }
+
   private _filter(value: string): string[] {
     if (value == '')
       return this.options;
@@ -65,7 +80,7 @@ export class RealizacijaComponent {
 
   get(studijskiProgram : string) {
     console.log(this.myControl);
-    this.show = true;
+    this.selected = studijskiProgram;
     let studijskiProgramId = this.studijskiProgrami.filter(sp => sp.oznaka == studijskiProgram.split(' ')[0]).map(value => value.id)[0];
     this.realizacijaService.get(studijskiProgramId)
     .subscribe({

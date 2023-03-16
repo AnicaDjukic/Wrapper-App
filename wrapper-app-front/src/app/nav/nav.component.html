@@ -7,8 +7,8 @@
         <mat-option value="Letnji 2022/23">Letnji 2022/23</mat-option>
       </mat-select>
     </mat-toolbar>
-    <mat-nav-list>
-      <a mat-list-item routerLink="predmeti" routerLinkActive="active" selected="false"
+    <mat-nav-list #navList>
+      <a mat-list-item routerLink="predmeti" routerLinkActive="active"
         [routerLinkActiveOptions]="{exact: true}" [class.active]="router.url == '/predmeti' || router.url == '/'">
         <span class="contact-names">Predmeti</span>
       </a>

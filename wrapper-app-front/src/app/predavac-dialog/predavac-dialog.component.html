@@ -28,17 +28,14 @@
 
             <mat-form-field class="example-full-width" appearance="fill">
                 <mat-label>Organizaciona jedinica</mat-label>
-                <input type="text"
-                       placeholder="Izaberite organizacionu jedinicu..."
-                       matInput
-                       formControlName="orgJedinica"
-                       [matAutocomplete]="auto">
+                <input type="text" placeholder="Izaberite organizacionu jedinicu..." matInput
+                    formControlName="orgJedinica" [matAutocomplete]="auto">
                 <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
-                  <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
-                    {{option}}
-                  </mat-option>
+                    <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+                        {{option}}
+                    </mat-option>
                 </mat-autocomplete>
-              </mat-form-field>
+            </mat-form-field>
         </form>
     </div>
 

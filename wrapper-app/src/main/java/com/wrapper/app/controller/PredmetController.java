@@ -32,10 +32,18 @@ public class PredmetController {
         return modelMapper.map(service.getAll(), new TypeToken<ArrayList<PredmetResponseDto>>() {}.getType());
     }
 
+    @CrossOrigin(origins = "*")
     @GetMapping("{id}")
     @ResponseStatus(HttpStatus.OK)
     public PredmetResponseDto getById(@PathVariable String id) {
         return modelMapper.map(service.getById(id), PredmetResponseDto.class);
+    }
+
+    @CrossOrigin(origins = "*")
+    @GetMapping("/studijski-program/{studijskiProgram}")
+    @ResponseStatus(HttpStatus.OK)
+    public List<PredmetResponseDto> getByStudijskiProgram(@PathVariable String studijskiProgram) {
+        return modelMapper.map(service.getByStudijskiProgram(studijskiProgram), new TypeToken<ArrayList<PredmetResponseDto>>() {}.getType());
     }
 
     @CrossOrigin(origins = "*")

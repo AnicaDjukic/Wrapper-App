@@ -1,4 +1,5 @@
 export interface PredmetDto {
+  id: string;
   oznaka: string;
   plan: number;
   naziv: string;

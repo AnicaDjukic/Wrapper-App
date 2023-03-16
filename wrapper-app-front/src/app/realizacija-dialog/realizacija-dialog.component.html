@@ -1,0 +1,95 @@
+<div>
+    <h1 mat-dialog-title>{{title}}</h1>
+    <div mat-dialog-content>
+        <form class="example-form" [formGroup]="predmetForm">
+
+            <mat-form-field class="example-full-width" appearance="outline" style="margin-top: 5px;">
+                <mat-label>Studijski program</mat-label>
+                <input formControlName="studijskiProgram" matInput readonly>
+            </mat-form-field>
+
+            <mat-form-field class="example-full-width" style="margin-top: 10px;">
+                <mat-label>Predmet</mat-label>
+                <input type="text" placeholder="Izaberite predmet..." matInput formControlName="predmet"
+                    [matAutocomplete]="auto1">
+                <mat-autocomplete autoActiveFirstOption #auto1="matAutocomplete" matAutocompleteSingleOption
+                    (optionSelected)='get($event.option.value)'>
+                    <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+                        {{option}}
+                    </mat-option>
+                </mat-autocomplete>
+            </mat-form-field>
+
+            <mat-form-field *ngIf="show" class="example-full-width" appearance="outline">
+                <mat-label>Godina</mat-label>
+                <input formControlName="godina" matInput type="number" readonly>
+            </mat-form-field>
+
+            <mat-form-field class="example-full-width" style="margin-top: 10px;">
+                <mat-label>Glavni profesor</mat-label>
+                <input type="text" placeholder="Izaberite profesora..." matInput formControlName="profesor"
+                    [matAutocomplete]="auto2">
+                <mat-autocomplete autoActiveFirstOption #auto2="matAutocomplete" matAutocompleteSingleOption>
+                    <mat-option *ngFor="let option2 of filteredOptions2 | async" [value]="option2">
+                        {{option2}}
+                    </mat-option>
+                </mat-autocomplete>
+            </mat-form-field>
+
+            <div *ngIf="ostaliProfesoriFieldsAsFormArray.length" class="heading2"> Ostali
+                profesori: </div>
+
+            <div *ngFor="let control of ostaliProfesoriFieldsAsFormArray.controls; let i = index;"
+                formArrayName="ostaliProfesori" class="field-container">
+                <mat-form-field class="example-full-width" appearance="fill">
+                    <mat-label>Profesor</mat-label>
+                    <input type="text" placeholder="Izaberite profesora..." matInput [formControlName]="i"
+                        [matAutocomplete]="auto3">
+                    <mat-autocomplete autoActiveFirstOption #auto3="matAutocomplete">
+                        <mat-option *ngFor="let option3 of filteredOptions3 | async" [value]="option3">
+                            {{option3}}
+                        </mat-option>
+                    </mat-autocomplete>
+                </mat-form-field>
+                <button mat-raised-button type="button" (click)="remove(i)"
+                    style="margin-top: -20px; margin-bottom: 10px;">Ukloni</button>
+            </div>
+
+            <div *ngIf="asistentZauzecaFieldsAsFormArray.length" class="heading2"> Asistenti:
+            </div>
+
+            <div *ngFor="let control of asistentZauzecaFieldsAsFormArray.controls; let i = index;"
+                formArrayName="asistentZauzeca">
+                <div [formGroupName]='i' class="field-container">
+                    <mat-form-field class="example-full-width" appearance="fill">
+                        <mat-label>Asistent</mat-label>
+                        <input type="text" placeholder="Izaberite asistenta..." matInput formControlName="asistentId"
+                            [matAutocomplete]="auto3">
+                        <mat-autocomplete autoActiveFirstOption #auto3="matAutocomplete">
+                            <mat-option *ngFor="let option of filteredOptions4 | async" [value]="option">
+                                {{option}}
+                            </mat-option>
+                        </mat-autocomplete>
+                    </mat-form-field>
+                    <mat-form-field *ngIf="show" class="example-full-width">
+                        <mat-label>Broj termina</mat-label>
+                        <input formControlName="brojTermina" matInput type="number">
+                    </mat-form-field>
+                    <button mat-raised-button type="button" (click)="removeAsistent(i)"
+                        style="margin-top: -20px; margin-bottom: 10px;">Ukloni</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div mat-dialog-actions [align]="'end'">
+        <button mat-raised-button (click)="addControl()">
+            <mat-icon>add</mat-icon> profesora
+        </button>
+        <button mat-raised-button (click)="addAsistent()">
+            <mat-icon>add</mat-icon> asistenta
+        </button>
+        <button mat-raised-button color="warn" mat-dialog-close>Zatvori</button>
+        <button mat-raised-button color="primary" (click)="add()">{{actionBtn}}</button>
+    </div>
+</div>

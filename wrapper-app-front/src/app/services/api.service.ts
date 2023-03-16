@@ -14,6 +14,14 @@ export class ApiService {
     return this.http.get<any>(`${this.predmetiUrl}`);
   }
 
+  get(id: string) {
+    return this.http.get<any>(`${this.predmetiUrl}/` + id);
+  }
+
+  getByStudijskiProgram(studijskiProgram: string) {
+    return this.http.get<any>(`${this.predmetiUrl}/studijski-program/` + studijskiProgram);
+  }
+
   post(data: any) {
     return this.http.post<any>(`${this.predmetiUrl}`, data);
   }
