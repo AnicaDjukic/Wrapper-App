@@ -11,7 +11,7 @@
             </mat-autocomplete>
         </mat-form-field>
     </div>
-    <mat-spinner *ngIf="!dataSource && myControl.value" style="margin-top: 25vh; margin-left: 70vh;"></mat-spinner>
+    <mat-spinner *ngIf="!dataSource && myControl.value" style="margin-top: 25vh; margin-left: 80vh;"></mat-spinner>
     <div *ngIf="!dataSource" style="margin-top: 30vh; margin-left: 70vh; color: gray; font-size: large;">Izaberite
         studijski program...</div>
 
@@ -40,7 +40,13 @@
 
             <ng-container matColumnDef="ostaliProfesori">
                 <th mat-header-cell *matHeaderCellDef> Ostali profesori </th>
-                <td mat-cell *matCellDef="let element"> {{element.ostaliProfesori}} </td>
+                <td mat-cell *matCellDef="let element">
+                    <ng-container *ngFor="let item of element.ostaliProfesori">
+                        <div>
+                            <span>{{item}}</span>
+                        </div>
+                    </ng-container>
+                </td>
             </ng-container>
 
             <ng-container matColumnDef="expand">
@@ -62,10 +68,10 @@
                     </button>
                 </th>
                 <td mat-cell *matCellDef="let element">
-                    <button mat-icon-button color="primary">
+                    <button mat-icon-button color="primary" (click)="edit(element)">
                         <mat-icon>edit</mat-icon>
                     </button>
-                    <button mat-icon-button color="warn">
+                    <button mat-icon-button color="warn" (click)="delete(element.predmetId)">
                         <mat-icon>delete</mat-icon>
                     </button>
                 </td>

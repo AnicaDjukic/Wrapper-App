@@ -41,8 +41,10 @@ export class ProstorijaDialogComponent {
       this.prostorijaForm.controls['oznaka'].setValue(this.editData.oznaka);
       this.prostorijaForm.controls['tip'].setValue(this.editData.tip);
       this.prostorijaForm.controls['kapacitet'].setValue(this.editData.kapacitet);
-      for (let orgJed of this.editData.orgJedinica) {
-        this.orgJedinicaFieldAsFormArray.push(this.formBuilder.control(orgJed));
+      if(this.editData.orgJedinica) {
+        for (let orgJed of this.editData.orgJedinica) {
+          this.orgJedinicaFieldAsFormArray.push(this.formBuilder.control(orgJed));
+        }
       }
     }
 

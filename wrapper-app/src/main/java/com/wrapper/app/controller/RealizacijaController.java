@@ -37,9 +37,10 @@ public class RealizacijaController {
         return modelMapper.map(service.getById(id), RealizacijaResponseDto.class);
     }
 
-    @PutMapping("{id}")
-    public RealizacijaResponseDto update(@PathVariable String id, @RequestBody RealizacijaRequestDto dto) {
-        return modelMapper.map(service.update(id, dto), RealizacijaResponseDto.class);
+    @CrossOrigin(origins = "*")
+    @PostMapping("studijski-programi/{studProgramId}/predmeti")
+    public RealizacijaResponseDto addPredmet(@PathVariable String studProgramId, @RequestBody RealizacijaRequestDto dto) {
+        return modelMapper.map(service.addPredmet(studProgramId, dto), RealizacijaResponseDto.class);
     }
 
     @CrossOrigin(origins = "*")
@@ -47,5 +48,12 @@ public class RealizacijaController {
     @ResponseStatus(HttpStatus.OK)
     public StudijskiProgramPredmetiDto getByStudijskiProgramId(@PathVariable String studProgramId) {
         return service.getStudijskiProgramById(studProgramId);
+    }
+
+    @CrossOrigin(origins = "*")
+    @DeleteMapping("studijski-programi/{studProgramId}/predmeti/{predmetId}")
+    @ResponseStatus(HttpStatus.OK)
+    public void deletePredmetFromStudijskiProgram(@PathVariable String studProgramId, @PathVariable String predmetId) {
+        service.deletePredmetInStudijskiProgram(studProgramId, predmetId);
     }
 }

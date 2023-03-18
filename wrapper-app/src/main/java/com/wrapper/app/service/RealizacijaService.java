@@ -39,16 +39,17 @@ public class RealizacijaService {
     }
 
     // rukovanje predavacima na predmetima
-    public Realizacija update(String id, RealizacijaRequestDto dto) {
-        Realizacija realizacija = getById(id);
-        check(dto);
+    public Realizacija addPredmet(String studijskiProgramId, RealizacijaRequestDto dto) {
+        predmetService.getById(dto.getPredmetId()); // check if predmet exists
+        Realizacija realizacija = getAll().get(0);
+        checkPredavaci(dto);    // provera da li predavaci postoje
         // TODO: provera da li ukupan broj termina vezbi odgovara broju termina vezbi na predmetu
-        Realizacija updated = realizacija.update(dto);
+        Realizacija updated = realizacija.addPredmet(studijskiProgramId, dto);
         return repository.save(updated);
     }
 
     // provera da li predavaci postoje
-    private void check(RealizacijaRequestDto dto) {
+    private void checkPredavaci(RealizacijaRequestDto dto) {
         predavacService.getById(dto.getProfesorId());
         dto.getOstaliProfesori().forEach(predavacService::getById);
         dto.getAsistentZauzeca().forEach(az -> predavacService.getById(az.getAsistentId()));
@@ -64,6 +65,7 @@ public class RealizacijaService {
         for(PredmetPredavac predmetPredavac : studijskiProgramPredmeti.getPredmetPredavaci()) {
             PredmetPredavacDto predmetPredavacDto = new PredmetPredavacDto();
             Predmet predmet = predmetService.getById(predmetPredavac.getPredmetId());
+            predmetPredavacDto.setPredmetId(predmet.getId());
             predmetPredavacDto.setPredmetOznaka(predmet.getOznaka());
             predmetPredavacDto.setPredmetNaziv(predmet.getNaziv());
             predmetPredavacDto.setPredmetGodina(predmet.getGodina());
@@ -86,5 +88,17 @@ public class RealizacijaService {
             studijskiProgramPredmetiDto.getPredmetPredavaci().add(predmetPredavacDto);
         }
         return studijskiProgramPredmetiDto;
+    }
+
+    public void deletePredmetInStudijskiProgram(String studijskiProgramId, String predmetId) {
+        Realizacija realizacija = repository.findAll().get(0);
+        StudijskiProgramPredmeti studijskiProgramPredmeti = realizacija.getStudijskiProgramPredmeti().stream()
+                .filter(p -> p.getStudijskiProgramId().equals(studijskiProgramId))
+                .findFirst().orElseThrow(() -> new NotFoundException(StudijskiProgram.class.getSimpleName()));
+        PredmetPredavac predmetPredavac = studijskiProgramPredmeti.getPredmetPredavaci().stream()
+                        .filter(p -> p.getPredmetId().equals(predmetId))
+                        .findFirst().orElseThrow(() -> new NotFoundException(Predmet.class.getSimpleName()));
+        studijskiProgramPredmeti.getPredmetPredavaci().remove(predmetPredavac);
+        repository.save(realizacija);
     }
 }

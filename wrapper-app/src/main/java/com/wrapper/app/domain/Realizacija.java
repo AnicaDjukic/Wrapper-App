@@ -18,18 +18,32 @@ public class Realizacija {
     private String semestar;
     private List<StudijskiProgramPredmeti> studijskiProgramPredmeti;
 
-    public Realizacija update(RealizacijaRequestDto dto) {
+//    public Realizacija update(RealizacijaRequestDto dto) {
+//        StudijskiProgramPredmeti studijskiProgram =
+//                studijskiProgramPredmeti.stream()
+//                        .filter(sp -> sp.getStudijskiProgramId().equals(dto.getStudijskiProgramId()))
+//                        .findFirst().orElseThrow(() -> new NotFoundException(StudijskiProgram.class.getSimpleName()));
+//        PredmetPredavac predmetPredavac =
+//                studijskiProgram.getPredmetPredavaci().stream()
+//                        .filter(pp -> pp.getPredmetId().equals(dto.getPredmetId()))
+//                        .findFirst().orElseThrow(() -> new NotFoundException(Predmet.class.getSimpleName()));
+//        predmetPredavac.setPredmetId(dto.getPredmetId());
+//        predmetPredavac.setOstaliProfesori(dto.getOstaliProfesori());
+//        predmetPredavac.setAsistentZauzeca(dto.getAsistentZauzeca());
+//        return this;
+//    }
+
+    public Realizacija addPredmet(String studijskiProgramId, RealizacijaRequestDto dto) {
         StudijskiProgramPredmeti studijskiProgram =
                 studijskiProgramPredmeti.stream()
-                        .filter(sp -> sp.getStudijskiProgramId().equals(dto.getStudijskiProgramId()))
+                        .filter(sp -> sp.getStudijskiProgramId().equals(studijskiProgramId))
                         .findFirst().orElseThrow(() -> new NotFoundException(StudijskiProgram.class.getSimpleName()));
-        PredmetPredavac predmetPredavac =
-                studijskiProgram.getPredmetPredavaci().stream()
-                        .filter(pp -> pp.getPredmetId().equals(dto.getPredmetId()))
-                        .findFirst().orElseThrow(() -> new NotFoundException(Predmet.class.getSimpleName()));
+        PredmetPredavac predmetPredavac = new PredmetPredavac();
         predmetPredavac.setPredmetId(dto.getPredmetId());
+        predmetPredavac.setProfesorId(dto.getProfesorId());
         predmetPredavac.setOstaliProfesori(dto.getOstaliProfesori());
         predmetPredavac.setAsistentZauzeca(dto.getAsistentZauzeca());
+        studijskiProgram.getPredmetPredavaci().add(predmetPredavac);
         return this;
     }
 }

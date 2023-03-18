@@ -7,6 +7,7 @@ import { RealizacijaService } from '../services/realizacija.service';
 import { ApiService } from '../services/api.service';
 import { PredmetDto } from '../dtos/PredmetDto';
 import { PredavacService } from '../services/predavac.service';
+import { PredavacDto } from '../dtos/PredavacDto';
 
 @Component({
   selector: 'app-realizacija-dialog',
@@ -15,97 +16,132 @@ import { PredavacService } from '../services/predavac.service';
 })
 export class RealizacijaDialogComponent {
   title!: string;
-  actionBtn: string = "Sačuvaj"
+  actionBtn: string = "Sačuvaj";
+  studijskiProgramId!: string;
   predmeti: PredmetDto[] = [];
-  options: string[] = [];
-  options2: string[] = [];
-  filteredOptions!: Observable<string[]>;
-  filteredOptions2!: Observable<string[]>;
-  filteredOptions3!: Observable<string[]>;
-  filteredOptions4!: Observable<string[]>;
-  predmetForm!: FormGroup
-  show = false
+  predavaci: PredavacDto[] = [];
+  predmetiOptions: string[] = [];
+  predavaciOptions: string[] = [];
+  filteredPredmetOptions!: Observable<string[]>;
+  filteredProfesorOptions!: Observable<string[]>;
+  filteredOstaliProfesoriOptions!: Observable<string[]>;
+  filteredAsistentiOptions!: Observable<string[]>;
+  predmetForm!: FormGroup;
+  show = false;
 
-  constructor(private formBuilder: FormBuilder, 
+  constructor(private formBuilder: FormBuilder,
     private api: RealizacijaService,
     private predmetApi: ApiService,
     private predavacApi: PredavacService,
-    @Inject(MAT_DIALOG_DATA) public editData : any, 
+    @Inject(MAT_DIALOG_DATA) public editData: any,
     private dialogRef: MatDialogRef<RealizacijaDialogComponent>,
-    private toastr: ToastrService) {}
+    private toastr: ToastrService) { }
 
   ngOnInit(): void {
     this.predmetForm = this.formBuilder.group({
-      studijskiProgram: new FormControl({value: '', disabled: true}),
-      predmet : ['', Validators.required],
-      godina: new FormControl({value: '', disabled: true}),
-      profesor: ['', Validators.required],
+      studijskiProgramId: new FormControl({ value: '', disabled: true }),
+      predmetId: ['', Validators.required],
+      godina: new FormControl({ value: '', disabled: true }),
+      profesorId: ['', Validators.required],
       ostaliProfesori: this.formBuilder.array([]),
       asistentZauzeca: this.formBuilder.array([])
     })
 
-    if(this.editData) {
-      this.title = "Dodavanje predmeta u realizaciju"
-      console.log(this.editData);
-      this.api.get(this.editData)
-      .subscribe({
-        next: (res) => {
-          console.log(res);
-          this.predmetForm.controls['studijskiProgram'].setValue(res.studijskiProgram);
-        }
-      })
+    this.getPredavaciOptions();
 
-      this.predmetApi.getByStudijskiProgram(this.editData)
+    if (this.editData && typeof this.editData === 'string') {
+      this.prepareForAdd();
+    } else {
+      this.prepareForEdit();
+    }
+
+    this.filteredPredmetOptions = this.predmetForm.get('predmetId')!.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filterPredmetiOptions(value || '')),
+    );
+
+    this.filteredProfesorOptions = this.predmetForm.get('profesorId')!.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filterGlavniProfesorOptions(value || '')),
+    );
+
+    this.filteredOstaliProfesoriOptions = this.predmetForm.get('ostaliProfesori')!.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filterOstaliProfesoriOptions(value || '', this.ostaliProfesoriFieldsAsFormArray.length - 1)),
+    );
+
+    this.filteredAsistentiOptions = this.predmetForm.get('asistentZauzeca')!.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filterAsistentiOptions(value || '', this.asistentZauzecaFieldsAsFormArray.length - 1)),
+    );
+  }
+
+  getPredavaciOptions() {
+    this.predavacApi.getAll()
       .subscribe({
         next: (res) => {
           console.log(res);
-          for(let predmet of res) {
-            this.options.push(predmet.oznaka + " " + predmet.naziv);
+          for (let predavac of res) {
+            let opt = predavac.titula + " " + predavac.ime + " " + predavac.prezime + " (" + predavac.orgJedinica + ")";
+            this.predavaciOptions.push(opt.trim());
+          }
+          this.predavaci = res;
+        }
+      });
+  }
+
+  prepareForAdd() {
+    this.title = "Dodavanje predmeta u realizaciju"
+    console.log(this.editData);
+    this.setStudijskiProgram(this.editData);
+    this.getPredmetOptions(this.editData)
+  }
+
+  setStudijskiProgram(studijskiProgramId: any) {
+    this.studijskiProgramId = studijskiProgramId;
+    this.api.get(studijskiProgramId)
+      .subscribe({
+        next: (res) => {
+          console.log(res);
+          this.predmetForm.controls['studijskiProgramId'].setValue(res.studijskiProgram);
+        }
+      });
+  }
+
+  getPredmetOptions(studijskiProgramId: any) {
+    this.predmetApi.getByStudijskiProgram(studijskiProgramId)
+      .subscribe({
+        next: (res) => {
+          console.log(res);
+          for (let predmet of res) {
+            this.predmetiOptions.push(predmet.oznaka + " " + predmet.naziv);
           }
           this.predmeti = res;
         }
-      })
+      });
+  }
 
-      this.predavacApi.getAll()
-      .subscribe({
-        next: (res) => {
-          console.log(res);
-          for(let predavac of res) {
-            let opt = predavac.titula + " " + predavac.ime + " " + predavac.prezime + " (" + predavac.orgJedinica + ")";
-            this.options2.push(opt.trim());
-          }
-        }
-      })
+  prepareForEdit() {
+    this.title = "Izmena predmeta u realizaciju"
+    console.log(this.editData);
+    this.setStudijskiProgram(this.editData.studijskiProgramId);
+    this.predmetForm.controls['predmetId'].setValue(this.editData.predmetOznaka + " " + this.editData.predmetNaziv);
+    this.predmetForm.controls['predmetId'].disable();
+    this.predmetForm.controls['godina'].setValue(this.editData.predmetGodina);
+    this.show = true;
+    this.predmetForm.controls['godina'].disable();
+    this.predmetForm.controls['profesorId'].setValue(this.editData.profesor);
+    if (this.editData.ostaliProfesori) {
+      for (let prof of this.editData.ostaliProfesori) {
+        this.ostaliProfesoriFieldsAsFormArray.push(this.formBuilder.control(prof));
+      }
     }
-
-    // if(this.editData) {
-    //   this.title = "Izmeni predmet";
-    //   this.actionBtn = "Sačuvaj izmene";
-    //   this.predmetForm.controls['oznaka'].setValue(this.editData.oznaka);
-    //   this.predmetForm.controls['plan'].setValue(this.editData.plan);
-    //   this.predmetForm.controls['naziv'].setValue(this.editData.naziv);
-    //   this.predmetForm.controls['godina'].setValue(this.editData.godina);
-    // }
-
-    this.filteredOptions = this.predmetForm.get('predmet')!.valueChanges.pipe(
-      startWith(''),
-      map(value => this._filter(value || '')),
-    );
-
-    this.filteredOptions2 = this.predmetForm.get('profesor')!.valueChanges.pipe(
-      startWith(''),
-      map(value => this._filter2(value || '')),
-    );
-
-    this.filteredOptions3 = this.predmetForm.get('ostaliProfesori')!.valueChanges.pipe(
-      startWith(''),
-      map(value => this._filter3(value || '', this.ostaliProfesoriFieldsAsFormArray.length - 1)),
-    );
-
-    this.filteredOptions4 = this.predmetForm.get('ostaliProfesori')!.valueChanges.pipe(
-      startWith(''),
-      map(value => this._filter3(value || '', this.ostaliProfesoriFieldsAsFormArray.length - 1)),
-    );
+    if (this.editData.asistentiZauzeca) {
+      for (let asist of this.editData.asistentiZauzeca) {
+        this.asistentZauzecaFieldsAsFormArray.push(this.asistentZauzece(asist.asistent, asist.brojTermina));
+      }
+    }
+    console.log(this.predmetForm.value);
   }
 
   get ostaliProfesoriFieldsAsFormArray(): any {
@@ -120,7 +156,14 @@ export class RealizacijaDialogComponent {
     this.ostaliProfesoriFieldsAsFormArray.removeAt(i);
   }
 
-  asistentZauzece(): any {
+  asistentZauzece(asistentId: string, brojTermina: number): any {
+    return this.formBuilder.group({
+      asistentId: this.formBuilder.control(asistentId),
+      brojTermina: this.formBuilder.control(brojTermina)
+    });
+  }
+
+  newAsistentZauzece(): any {
     return this.formBuilder.group({
       asistentId: this.formBuilder.control(''),
       brojTermina: this.formBuilder.control('')
@@ -132,93 +175,102 @@ export class RealizacijaDialogComponent {
   }
 
   addAsistent() {
-    this.asistentZauzecaFieldsAsFormArray.push(this.asistentZauzece())
+    this.asistentZauzecaFieldsAsFormArray.push(this.newAsistentZauzece())
   }
 
   removeAsistent(i: number): void {
     this.asistentZauzecaFieldsAsFormArray.removeAt(i);
   }
 
-  private _filter(value: string): string[] {
-    if(value == '')
-      return this.options;
-
-    const filterValue = value.toLowerCase();
-
-    return this.options.filter(option => option.toLowerCase().includes(filterValue));
-  }
-
-  private _filter2(value: string): string[] {
-    if(value == '')
-      return this.options2;
-
-    const filterValue = value.toLowerCase();
-    let all = this.options2;
-    return all.filter(option => option.toLowerCase().includes(filterValue));
-  }
-
-  private _filter3(value: string, index: number): string[] {
+  private _filterPredmetiOptions(value: string): string[] {
     if (value == '')
-      return this.options2;
-    const filterValue = value[index].toLowerCase();
-    let all = this.options2;
+      return this.predmetiOptions;
+
+    const filterValue = value.toLowerCase();
+
+    return this.predmetiOptions.filter(option => option.toLowerCase().includes(filterValue));
+  }
+
+  private _filterGlavniProfesorOptions(value: string): string[] {
+    if (value == '')
+      return this.predavaciOptions;
+    const filterValue = value.toLowerCase();
+    let all = this.predavaciOptions;
     return all.filter(option => option.toLowerCase().includes(filterValue));
   }
 
-  get(predmet : string) {
-    // this.selected = studijskiProgram;
+  private _filterOstaliProfesoriOptions(value: string, index: number): string[] {
+    if (value == '')
+      return this.predavaciOptions;
+    const filterValue = value[index].toLowerCase();
+    let all = this.predavaciOptions;
+    return all.filter(option => option.toLowerCase().includes(filterValue));
+  }
+
+  private _filterAsistentiOptions(value: any, index: number): string[] {
+    if (value == '' || value[index].asistentId == '')
+      return this.predavaciOptions;
+    const filterValue = value[index].asistentId.toLowerCase();
+    let all = this.predavaciOptions;
+    return all.filter(option => option.toLowerCase().includes(filterValue));
+  }
+
+  getGodina(predmet: string) {
     let predmetId = this.predmeti.filter(sp => sp.oznaka == predmet.split(' ')[0]).map(value => value.id)[0];
     this.predmetApi.get(predmetId)
-    .subscribe({
-      next:(res) => {
-        console.log(res);
-        this.show = true;
-        this.predmetForm.controls['godina'].setValue(res.godina);
-        // console.log(res.predmetPredavaci);
-        // this.dataSource = res.predmetPredavaci;
-      }
-    });
+      .subscribe({
+        next: (res) => {
+          console.log(res);
+          this.show = true;
+          this.predmetForm.controls['godina'].setValue(res.godina);
+        }
+      });
   }
 
   add() {
     console.log(this.predmetForm.value);
-    // if(!this.editData) {
-    //   if(this.predmetForm.valid) {
-    //     let studProg : string = this.predmetForm.value.studijskiProgram
-    //     this.predmetForm.value.studijskiProgram = this.predmeti.filter(sp => sp.oznaka == studProg.split(' ')[0]).map(value => value.id)[0];
-    //     this.api.post(this.predmetForm.value)
-    //     .subscribe({
-    //       next: () => {
-    //         this.toastr.success('Novi predmet je uspešno dodat!', 'Uspešno!');
-    //         this.predmetForm.reset();
-    //         this.dialogRef.close('save');
-    //       },
-    //       error:() => {
-    //         this.toastr.error('Došlo je do greške prilikom brisanja predmeta!', 'Greška!');
-    //       }
-    //     })
-    //   }
-    // } else {
-    //   this.update();
-    // }   
+
+    this.predmetForm.value.predmetId = this.predmeti.filter(sp => sp.oznaka == this.predmetForm.value.predmetId.split(' ')[0]).map(value => value.id)[0];
+
+    let profesori = this.predavaci;
+    this.predmetForm.value.profesorId = profesori.filter(p =>
+      (p.titula + " " + p.ime + " " + p.prezime + " (" + p.orgJedinica + ")").trim() == this.predmetForm.value.profesorId).map(value => value.id)[0];
+
+    let izabraniProfesori = [];
+    for (let prof of this.predmetForm.value.ostaliProfesori) {
+      let ostaliProfesori = this.predavaci;
+      izabraniProfesori.push(ostaliProfesori.filter(p =>
+        (p.titula + " " + p.ime + " " + p.prezime + " (" + p.orgJedinica + ")").trim() == prof).map(value => value.id)[0]);
+    }
+    this.predmetForm.value.ostaliProfesori = izabraniProfesori;
+
+    let asistentZauzeca = [];
+    for (let zauzece of this.predmetForm.value.asistentZauzeca) {
+      let asistenti = this.predavaci;
+      let asistentId = asistenti.filter(p =>
+        (p.titula + " " + p.ime + " " + p.prezime + " (" + p.orgJedinica + ")").trim() == zauzece.asistentId).map(value => value.id)[0];
+      asistentZauzeca.push({ asistentId: asistentId, brojTermina: zauzece.brojTermina });
+    }
+    this.predmetForm.value.asistentZauzeca = asistentZauzeca;
+    console.log(this.predmetForm.value);
+
+    this.api.post(this.studijskiProgramId, this.predmetForm.value)
+      .subscribe({
+        next: () => {
+          this.toastr.success('Novi predmet je uspešno dodat u realizaciju!', 'Uspešno!');
+          this.dialogRef.close('save');
+        },
+        error: () => {
+          this.toastr.error('Došlo je do greške prilikom dodavanja predmeta u realizaciju!', 'Greška!');
+        }
+      })
   }
 
   update() {
-    if(!this.predmetForm.valid) {
+    if (!this.predmetForm.valid) {
       return
     }
-    let studProg : string = this.predmetForm.value.studijskiProgram
+    let studProg: string = this.predmetForm.value.studijskiProgram
     this.predmetForm.value.studijskiProgram = this.predmeti.filter(sp => sp.oznaka == studProg.split(' ')[0]).map(value => value.id)[0];
-    // this.api.put(this.predmetForm.value, this.editData.id)
-    // .subscribe({
-    //   next: () => {
-    //     this.toastr.success('Predmet je uspešno izmenjen!', 'Uspešno!');
-    //     this.predmetForm.reset();
-    //     this.dialogRef.close('update');
-    //   },
-    //   error: () => {
-    //     this.toastr.error('Došlo je do greške prilikom izmene predmeta!', 'Greška!');
-    //   }
-    // })
   }
 }

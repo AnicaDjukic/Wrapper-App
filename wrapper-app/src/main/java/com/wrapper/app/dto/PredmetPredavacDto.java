@@ -1,8 +1,6 @@
 package com.wrapper.app.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.ArrayList;
@@ -12,6 +10,7 @@ import java.util.List;
 @Setter
 public class PredmetPredavacDto {
 
+    private String predmetId;
     private String predmetOznaka;
     private String predmetNaziv;
     private int predmetGodina;

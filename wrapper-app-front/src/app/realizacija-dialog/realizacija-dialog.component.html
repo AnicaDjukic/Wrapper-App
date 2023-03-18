@@ -5,16 +5,16 @@
 
             <mat-form-field class="example-full-width" appearance="outline" style="margin-top: 5px;">
                 <mat-label>Studijski program</mat-label>
-                <input formControlName="studijskiProgram" matInput readonly>
+                <input formControlName="studijskiProgramId" matInput readonly>
             </mat-form-field>
 
             <mat-form-field class="example-full-width" style="margin-top: 10px;">
                 <mat-label>Predmet</mat-label>
-                <input type="text" placeholder="Izaberite predmet..." matInput formControlName="predmet"
+                <input type="text" placeholder="Izaberite predmet..." matInput formControlName="predmetId"
                     [matAutocomplete]="auto1">
                 <mat-autocomplete autoActiveFirstOption #auto1="matAutocomplete" matAutocompleteSingleOption
-                    (optionSelected)='get($event.option.value)'>
-                    <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+                    (optionSelected)='getGodina($event.option.value)'>
+                    <mat-option *ngFor="let option of filteredPredmetOptions | async" [value]="option">
                         {{option}}
                     </mat-option>
                 </mat-autocomplete>
@@ -27,11 +27,11 @@
 
             <mat-form-field class="example-full-width" style="margin-top: 10px;">
                 <mat-label>Glavni profesor</mat-label>
-                <input type="text" placeholder="Izaberite profesora..." matInput formControlName="profesor"
+                <input type="text" placeholder="Izaberite profesora..." matInput formControlName="profesorId"
                     [matAutocomplete]="auto2">
                 <mat-autocomplete autoActiveFirstOption #auto2="matAutocomplete" matAutocompleteSingleOption>
-                    <mat-option *ngFor="let option2 of filteredOptions2 | async" [value]="option2">
-                        {{option2}}
+                    <mat-option *ngFor="let option of filteredProfesorOptions | async" [value]="option">
+                        {{option}}
                     </mat-option>
                 </mat-autocomplete>
             </mat-form-field>
@@ -46,8 +46,8 @@
                     <input type="text" placeholder="Izaberite profesora..." matInput [formControlName]="i"
                         [matAutocomplete]="auto3">
                     <mat-autocomplete autoActiveFirstOption #auto3="matAutocomplete">
-                        <mat-option *ngFor="let option3 of filteredOptions3 | async" [value]="option3">
-                            {{option3}}
+                        <mat-option *ngFor="let option of filteredOstaliProfesoriOptions | async" [value]="option">
+                            {{option}}
                         </mat-option>
                     </mat-autocomplete>
                 </mat-form-field>
@@ -64,9 +64,9 @@
                     <mat-form-field class="example-full-width" appearance="fill">
                         <mat-label>Asistent</mat-label>
                         <input type="text" placeholder="Izaberite asistenta..." matInput formControlName="asistentId"
-                            [matAutocomplete]="auto3">
-                        <mat-autocomplete autoActiveFirstOption #auto3="matAutocomplete">
-                            <mat-option *ngFor="let option of filteredOptions4 | async" [value]="option">
+                            [matAutocomplete]="auto4">
+                        <mat-autocomplete autoActiveFirstOption #auto4="matAutocomplete">
+                            <mat-option *ngFor="let option of filteredAsistentiOptions | async" [value]="option">
                                 {{option}}
                             </mat-option>
                         </mat-autocomplete>
@@ -90,6 +90,6 @@
             <mat-icon>add</mat-icon> asistenta
         </button>
         <button mat-raised-button color="warn" mat-dialog-close>Zatvori</button>
-        <button mat-raised-button color="primary" (click)="add()">{{actionBtn}}</button>
+        <button mat-raised-button color="primary" (click)="add()" [disabled]="!predmetForm.valid">{{actionBtn}}</button>
     </div>
 </div>

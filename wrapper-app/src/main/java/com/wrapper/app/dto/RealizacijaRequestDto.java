@@ -13,8 +13,6 @@ import java.util.List;
 @Getter
 @Setter
 public class RealizacijaRequestDto {
-
-    private String studijskiProgramId;
     private String predmetId;
     private String profesorId;
     private List<String> ostaliProfesori;
