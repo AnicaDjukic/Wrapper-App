@@ -42,7 +42,7 @@ export class RealizacijaDialogComponent {
       studijskiProgramId: new FormControl({ value: '', disabled: true }),
       predmetId: ['', Validators.required],
       godina: new FormControl({ value: '', disabled: true }),
-      profesorId: ['', Validators.required],
+      profesorId: [''],
       ostaliProfesori: this.formBuilder.array([]),
       asistentZauzeca: this.formBuilder.array([])
     })
@@ -114,7 +114,7 @@ export class RealizacijaDialogComponent {
         next: (res) => {
           console.log(res);
           for (let predmet of res) {
-            this.predmetiOptions.push(predmet.oznaka + " " + predmet.naziv);
+            this.predmetiOptions.push("(20) " + predmet.oznaka + " " + predmet.naziv);
           }
           this.predmeti = res;
         }
@@ -125,15 +125,19 @@ export class RealizacijaDialogComponent {
     this.title = "Izmena predmeta u realizaciju"
     console.log(this.editData);
     this.setStudijskiProgram(this.editData.studijskiProgramId);
-    this.predmetForm.controls['predmetId'].setValue(this.editData.predmetOznaka + " " + this.editData.predmetNaziv);
+    this.predmetForm.controls['predmetId'].setValue("(20) " + this.editData.predmetOznaka + " " + this.editData.predmetNaziv);
     this.predmetForm.controls['predmetId'].disable();
     this.predmetForm.controls['godina'].setValue(this.editData.predmetGodina);
     this.show = true;
     this.predmetForm.controls['godina'].disable();
-    this.predmetForm.controls['profesorId'].setValue(this.editData.profesor);
+    let profesori = this.predavaciOptions; // ovdee
+    let profesor = profesori.filter(p => p.split("(")[0].trim() == this.editData.profesor).map(value => value)[0];
+    this.predmetForm.controls['profesorId'].setValue(profesor);
     if (this.editData.ostaliProfesori) {
       for (let prof of this.editData.ostaliProfesori) {
-        this.ostaliProfesoriFieldsAsFormArray.push(this.formBuilder.control(prof));
+        let profesori = this.predavaciOptions;
+        let profesor = profesori.filter(p => p.split("(")[0].trim() == prof)
+        this.ostaliProfesoriFieldsAsFormArray.push(this.formBuilder.control(profesor));
       }
     }
     if (this.editData.asistentiZauzeca) {
@@ -230,7 +234,7 @@ export class RealizacijaDialogComponent {
   add() {
     console.log(this.predmetForm.value);
 
-    this.predmetForm.value.predmetId = this.predmeti.filter(sp => sp.oznaka == this.predmetForm.value.predmetId.split(' ')[0]).map(value => value.id)[0];
+    this.predmetForm.value.predmetId = this.predmeti.filter(sp => sp.oznaka == this.predmetForm.value.predmetId.split(' ')[1]).map(value => value.id)[0];
 
     let profesori = this.predavaci;
     this.predmetForm.value.profesorId = profesori.filter(p =>

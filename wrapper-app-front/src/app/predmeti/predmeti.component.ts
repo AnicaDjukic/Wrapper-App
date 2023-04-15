@@ -44,7 +44,7 @@ export class PredmetiComponent implements OnInit {
 
   openDialog(): void {
     this.dialog.open(PredmetDialogComponent, {
-      width: '30%'
+      width: '40%'
     }).afterClosed().subscribe((val) => {
       if(val == 'save') {
         console.log('The dialog was closed');
@@ -55,7 +55,7 @@ export class PredmetiComponent implements OnInit {
 
   edit(element : any) {
     this.dialog.open(PredmetDialogComponent, {
-      width: '30%',
+      width: '40%',
       data: element
     }).afterClosed().subscribe((val) => {
       if(val == 'update') {

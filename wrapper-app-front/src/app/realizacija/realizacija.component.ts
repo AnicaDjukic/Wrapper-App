@@ -38,7 +38,7 @@ export class RealizacijaComponent {
   studijskiProgramId!: string
 
   dataSource!: MatTableDataSource<PredmetPredavacDto>;
-  columnsToDisplay = ['predmetOznaka', 'predmetNaziv', 'predmetGodina', 'profesor', 'ostaliProfesori', 'expand', 'actions'];
+  columnsToDisplay = ['planPredmeta', 'predmetOznaka', 'predmetNaziv', 'predmetGodina', 'profesor', 'ostaliProfesori', 'expand', 'actions'];
   columnsToDisplayWithExpand = [...this.columnsToDisplay];
   expandedElement!: PredmetPredavacDto;
 
@@ -62,7 +62,7 @@ export class RealizacijaComponent {
   openDialog(): void {
     let studijskiProgramId = this.studijskiProgrami.filter(sp => sp.oznaka == this.selected.split(' ')[0]).map(value => value.id)[0];
     this.dialog.open(RealizacijaDialogComponent, {
-      width: '40%',
+      width: '60%',
       data: studijskiProgramId
     }).afterClosed().subscribe((val) => {
       if (val == 'save') {
@@ -75,7 +75,7 @@ export class RealizacijaComponent {
   edit(element: any) {
     element.studijskiProgramId = this.studijskiProgramId;
     this.dialog.open(RealizacijaDialogComponent, {
-      width: '40%',
+      width: '60%',
       data: element
     }).afterClosed().subscribe((val) => {
       if (val == 'update') {

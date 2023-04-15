@@ -8,16 +8,14 @@
       </mat-select>
     </mat-toolbar>
     <mat-nav-list #navList>
-      <a mat-list-item routerLink="predmeti" routerLinkActive="active"
-        [routerLinkActiveOptions]="{exact: true}" [class.active]="router.url == '/predmeti' || router.url == '/'">
+      <a mat-list-item routerLink="predmeti" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"
+        [class.active]="router.url == '/predmeti' || router.url == '/'">
         <span class="contact-names">Predmeti</span>
       </a>
-      <a mat-list-item routerLink="predavaci" routerLinkActive="active"
-        [routerLinkActiveOptions]="{exact: true}">
+      <a mat-list-item routerLink="predavaci" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
         <span class="contact-names">Predavači</span>
       </a>
-      <a mat-list-item routerLink="prostorije" routerLinkActive="active"
-        [routerLinkActiveOptions]="{exact: true}">
+      <a mat-list-item routerLink="prostorije" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
         <span class="contact-names">Prostorije</span>
       </a>
       <a mat-list-item routerLink="studijski-programi" routerLinkActive="active"
@@ -28,11 +26,14 @@
         [routerLinkActiveOptions]="{exact: true}">
         <span class="contact-names">Studentske grupe</span>
       </a>
-      <a mat-list-item routerLink="realizacija" routerLinkActive="active"
-        [routerLinkActiveOptions]="{exact: true}">
+      <a mat-list-item routerLink="realizacija" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
         <span class="contact-names">Realizacija</span>
       </a>
     </mat-nav-list>
+    <!-- <button mat-raised-button color="primary" style="margin-top: 110%; margin-left: 10%; height: 50px;">
+      <mat-icon>add</mat-icon>
+      Novi semestar
+    </button> -->
   </mat-sidenav>
   <mat-sidenav-content>
     <!--<mat-toolbar color="primary">

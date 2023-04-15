@@ -5,6 +5,7 @@ import com.wrapper.app.exception.NotFoundException;
 import com.wrapper.app.repository.StudijskiProgramRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,7 +19,19 @@ public class StudijskiProgramService {
     }
 
     public List<StudijskiProgram> getAll() {
-        return repository.findAll();
+        List<StudijskiProgram> studijskiProgrami = new ArrayList<>();
+        for(StudijskiProgram studijskiProgram : repository.findAll()){
+            if(studijskiProgram.getStepen() == 1 && studijskiProgram.getNivo() == 1)
+                studijskiProgram.setNaziv(studijskiProgram.getNaziv() + " (OSNOVNE AKADEMSKE STUDIJE)");
+            else if(studijskiProgram.getStepen() == 1 && studijskiProgram.getNivo() == 2)
+                studijskiProgram.setNaziv(studijskiProgram.getNaziv() + " (OSNOVNE STRUKOVNE STUDIJE)");
+            else if(studijskiProgram.getStepen() == 2 && studijskiProgram.getNivo() == 2)
+                studijskiProgram.setNaziv(studijskiProgram.getNaziv() + " (MASTER AKADEMSKE STUDIJE)");
+            else
+                studijskiProgram.setNaziv(studijskiProgram.getNaziv() + " (MASTER STRUKOVNE STUDIJE)");
+            studijskiProgrami.add(studijskiProgram);
+        }
+        return studijskiProgrami;
     }
 
     public StudijskiProgram getById(String id) {

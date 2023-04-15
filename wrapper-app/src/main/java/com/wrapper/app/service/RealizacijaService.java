@@ -43,7 +43,7 @@ public class RealizacijaService {
         predmetService.getById(dto.getPredmetId()); // check if predmet exists
         Realizacija realizacija = getAll().get(0);
         checkPredavaci(dto);    // provera da li predavaci postoje
-        // TODO: provera da li ukupan broj termina vezbi odgovara broju termina vezbi na predmetu
+        // TODO: provera da li ukupan broj termina vezbi odgovara broju termina vezbi na predmetu???
         Realizacija updated = realizacija.addPredmet(studijskiProgramId, dto);
         return repository.save(updated);
     }
@@ -55,39 +55,70 @@ public class RealizacijaService {
         dto.getAsistentZauzeca().forEach(az -> predavacService.getById(az.getAsistentId()));
     }
 
-    // TODO: refaktorisati
     public StudijskiProgramPredmetiDto getStudijskiProgramById(String studijskiProgramId) {
         Realizacija realizacija = repository.findStudijskiProgramPredmetiByStudijskiProgramId(studijskiProgramId);
         StudijskiProgramPredmeti studijskiProgramPredmeti = realizacija.getStudijskiProgramPredmeti().get(0);
         StudijskiProgramPredmetiDto studijskiProgramPredmetiDto = new StudijskiProgramPredmetiDto();
-        StudijskiProgram studijskiProgram = studijskiProgramService.getById(studijskiProgramPredmeti.getStudijskiProgramId());
-        studijskiProgramPredmetiDto.setStudijskiProgram(studijskiProgram.getOznaka() + " " + studijskiProgram.getNaziv());
+        fillStudijskiProgramInfo(studijskiProgramPredmeti.getStudijskiProgramId(), studijskiProgramPredmetiDto);
         for(PredmetPredavac predmetPredavac : studijskiProgramPredmeti.getPredmetPredavaci()) {
             PredmetPredavacDto predmetPredavacDto = new PredmetPredavacDto();
-            Predmet predmet = predmetService.getById(predmetPredavac.getPredmetId());
-            predmetPredavacDto.setPredmetId(predmet.getId());
-            predmetPredavacDto.setPredmetOznaka(predmet.getOznaka());
-            predmetPredavacDto.setPredmetNaziv(predmet.getNaziv());
-            predmetPredavacDto.setPredmetGodina(predmet.getGodina());
-            Predavac profesor = predavacService.getById(predmetPredavac.getProfesorId());
-            String profesorNaziv = profesor.getTitula() + " " + profesor.getIme() + " " + profesor.getPrezime();
-            predmetPredavacDto.setProfesor(profesorNaziv.trim()); // TODO: dodati org jed
-            for(String ostaliProfId : predmetPredavac.getOstaliProfesori()) {
-                Predavac ostaliProfesor = predavacService.getById(ostaliProfId);
-                String ostaliProfNaziv = ostaliProfesor.getTitula() + " " + ostaliProfesor.getIme() + " " + ostaliProfesor.getPrezime();
-                predmetPredavacDto.getOstaliProfesori().add(ostaliProfNaziv.trim()); // TODO: dodati org jed
-            }
-            for(AsistentZauzece zauzece : predmetPredavac.getAsistentZauzeca()) {
-                AsistentiZauzecaDto zauzeceDto = new AsistentiZauzecaDto();
-                Predavac asistent = predavacService.getById(zauzece.getAsistentId());
-                String asistentNaziv = asistent.getTitula() + " " + asistent.getIme() + " " + asistent.getPrezime();
-                zauzeceDto.setAsistent(asistentNaziv.trim());
-                zauzeceDto.setBrojTermina(zauzece.getBrojTermina());
-                predmetPredavacDto.getAsistentiZauzeca().add(zauzeceDto);
-            }
+            fillPredmetInfo(predmetPredavac.getPredmetId(), predmetPredavacDto);
+            fillProfesorInfo(predmetPredavac.getProfesorId(), predmetPredavacDto);
+            fillOstaliProfesoriInfo(predmetPredavac.getOstaliProfesori(), predmetPredavacDto);
+            fillAsistentiInfo(predmetPredavac.getAsistentZauzeca(), predmetPredavacDto);
             studijskiProgramPredmetiDto.getPredmetPredavaci().add(predmetPredavacDto);
         }
         return studijskiProgramPredmetiDto;
+    }
+
+    private void fillStudijskiProgramInfo(String studijskiProgramId, StudijskiProgramPredmetiDto studijskiProgramPredmetiDto) {
+        StudijskiProgram studijskiProgram = studijskiProgramService.getById(studijskiProgramId);
+        studijskiProgramPredmetiDto.setStudijskiProgram(studijskiProgram.getOznaka() + " " + studijskiProgram.getNaziv());
+    }
+
+    private void fillPredmetInfo(String predmetId, PredmetPredavacDto predmetPredavacDto) {
+        Predmet predmet = predmetService.getById(predmetId);
+        predmetPredavacDto.setPredmetId(predmet.getId());
+        predmetPredavacDto.setPredmetOznaka(predmet.getOznaka());
+        predmetPredavacDto.setPredmetNaziv(predmet.getNaziv());
+        predmetPredavacDto.setPredmetGodina(predmet.getGodina());
+    }
+
+    private void fillProfesorInfo(String profesorId, PredmetPredavacDto predmetPredavacDto) {
+        if(predavacService.existsById(profesorId)) {
+            Predavac profesor = predavacService.getById(profesorId);
+            String profesorNaziv = profesor.getTitula() + " " + profesor.getIme() + " " + profesor.getPrezime();
+            predmetPredavacDto.setProfesor(profesorNaziv.trim());
+        } else {
+            System.out.println("Profesor: " + profesorId);
+        }
+    }
+
+    private void fillOstaliProfesoriInfo(List<String> ostaliProfesori, PredmetPredavacDto predmetPredavacDto) {
+        for(String profId : ostaliProfesori) {
+            if(!predavacService.existsById(profId)) {
+                System.out.println("Ostali profesor: " + profId);
+                continue;
+            }
+            Predavac ostaliProfesor = predavacService.getById(profId);
+            String profNaziv = ostaliProfesor.getTitula() + " " + ostaliProfesor.getIme() + " " + ostaliProfesor.getPrezime();
+            predmetPredavacDto.getOstaliProfesori().add(profNaziv.trim());
+        }
+    }
+
+    private void fillAsistentiInfo(List<AsistentZauzece> asistentiZauzeca, PredmetPredavacDto predmetPredavacDto) {
+        for(AsistentZauzece zauzece : asistentiZauzeca) {
+            if(!predavacService.existsById(zauzece.getAsistentId())) {
+                System.out.println("Asistent: " + zauzece.getAsistentId());
+                continue;
+            }
+            AsistentiZauzecaDto zauzeceDto = new AsistentiZauzecaDto();
+            Predavac asistent = predavacService.getById(zauzece.getAsistentId());
+            String asistentNaziv = asistent.getTitula() + " " + asistent.getIme() + " " + asistent.getPrezime();
+            zauzeceDto.setAsistent(asistentNaziv.trim());
+            zauzeceDto.setBrojTermina(zauzece.getBrojTermina());
+            predmetPredavacDto.getAsistentiZauzeca().add(zauzeceDto);
+        }
     }
 
     public void deletePredmetInStudijskiProgram(String studijskiProgramId, String predmetId) {

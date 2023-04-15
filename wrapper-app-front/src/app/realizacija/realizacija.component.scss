@@ -4,7 +4,7 @@ $my-palette: mat.define-palette(mat.$indigo-palette);
 
 .mat-mdc-form-field {
     font-size: 17px;
-    width: 70%;
+    width: 80%;
 }
 
 table {
@@ -23,6 +23,10 @@ tr.example-element-row:not(.example-expanded-row):hover {
 // tr.example-element-row:not(.example-expanded-row):active {
 //     background-color: mat.get-color-from-palette($my-palette, 200);
 // }
+
+.block {
+    background-color: lightcoral !important;
+}
 
 .example-element-row td {
     border-bottom-width: 0;
