@@ -4,6 +4,9 @@ import com.wrapper.app.domain.Predmet;
 import com.wrapper.app.domain.StudijskiProgram;
 import com.wrapper.app.exception.NotFoundException;
 import com.wrapper.app.repository.PredmetRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,8 +24,8 @@ public class PredmetService {
         this.studijskiProgramService = studijskiProgramService;
     }
 
-    public List<Predmet> getAll() {
-        List<Predmet> results = repository.findAll();
+    public Page<Predmet> getAll(Pageable pageable) {
+        Page<Predmet> results = repository.findAll(pageable);
         results.forEach(result -> {
             StudijskiProgram studijskiProgram = studijskiProgramService.getById(result.getStudijskiProgram());
             result.setStudijskiProgram(studijskiProgram.getOznaka() + " " + studijskiProgram.getNaziv());

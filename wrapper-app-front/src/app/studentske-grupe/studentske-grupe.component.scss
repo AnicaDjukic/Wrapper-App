@@ -35,12 +35,38 @@
 }
 
 .header {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 5px;
     width: 100%;
 }
 
+.oznaka {
+    width: 20%;
+}
+
+.godina {
+    width: 10%;
+}
+
+.br-stud {
+    width: 25%;
+}
+
+.stud-prog {
+    width: 30%;
+}
+
+.search-button {
+    width: 100px;
+    top: 20px;
+}
+
 .table-container {
+    margin-top: -15px; 
+    margin-bottom: 56px;
     position: relative;
-    max-height: calc(100vh - 110px);
+    max-height: calc(100vh - 125px);
     overflow: auto;
 }
 

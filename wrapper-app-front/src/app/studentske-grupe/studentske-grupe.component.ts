@@ -12,24 +12,30 @@ import { StudentskaGrupaDialogComponent } from '../studentska-grupa-dialog/stude
   styleUrls: ['./studentske-grupe.component.scss']
 })
 export class StudentskeGrupeComponent {
-  displayedColumns: string[] = ['oznaka', 'godina', 'semestar', 'brojStudenata', 'studijskiProgram', 'actions'];
-  dataSource! : MatTableDataSource<StudentskaGrupaDto>;
-
+  displayedColumns: string[] = ['oznaka', 'godina', 'brojStudenata', 'studijskiProgram', 'actions'];
+  
+  dataSource = new MatTableDataSource<StudentskaGrupaDto>();
   @ViewChild(MatPaginator)
   paginator!: MatPaginator;
 
+  pageSize = 10;
+  totalElements = 0;
+  pageIndex = 0;
+
   ngOnInit() {
-    this.getAll()
+    this.dataSource.paginator = this.paginator;
+    this.getAll(0, this.pageSize);
   }
 
   constructor(private api: StudentskaGrupaService, public dialog: MatDialog) {}
 
-  getAll() {
-    this.api.getAll()
+  getAll(page: number, size: number) {
+    this.api.getAll(page, size)
     .subscribe({
       next:(res) => {
-        this.dataSource = new MatTableDataSource(res);
-        this.dataSource.paginator = this.paginator
+        this.dataSource = new MatTableDataSource(res.content);
+      this.totalElements = res.totalElements;
+      this.pageIndex = res.pageable.pageNumber;
       }
     })
   }
@@ -40,7 +46,7 @@ export class StudentskeGrupeComponent {
     }).afterClosed().subscribe((val) => {
       if(val == 'save') {
         console.log('The dialog was closed');
-        this.getAll();
+        this.getAll(0, this.pageSize);
       }
     });
   }
@@ -52,7 +58,7 @@ export class StudentskeGrupeComponent {
     }).afterClosed().subscribe((val) => {
       if(val == 'update') {
         console.log('The dialog was closed');
-        this.getAll();
+        this.getAll(0, this.pageSize);
       }
     });
   }
@@ -62,7 +68,7 @@ export class StudentskeGrupeComponent {
     .subscribe({
       next: () => {
         alert("Studentska grupa je uspešno obrisana!");
-        this.getAll()
+        this.getAll(0, this.pageSize)
       },
       error: () => {
         alert("Greška!");

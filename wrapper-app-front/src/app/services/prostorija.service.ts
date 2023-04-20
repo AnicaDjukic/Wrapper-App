@@ -10,8 +10,8 @@ export class ProstorijaService {
 
   constructor(private http: HttpClient) { }
 
-  getAll() {
-    return this.http.get<any>(`${this.prostorijeUrl}`);
+  getAll(page: number, size: number) {
+    return this.http.get<any>(`${this.prostorijeUrl}?page=` + page + `&size=` + size);
   }
 
   post(data: any) {

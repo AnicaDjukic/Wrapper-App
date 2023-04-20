@@ -12,7 +12,7 @@ import { StudijskiProgramDialogComponent } from '../studijski-program-dialog/stu
   styleUrls: ['./studijski-programi.component.scss']
 })
 export class StudijskiProgramiComponent {
-  displayedColumns: string[] = ['oznaka', 'stepen', 'nivo', 'naziv', 'actions'];
+  displayedColumns: string[] = ['oznaka', 'naziv', /*'tip',*/ 'actions'];
   dataSource! : MatTableDataSource<StudijskiProgramDto>;
 
   @ViewChild(MatPaginator)

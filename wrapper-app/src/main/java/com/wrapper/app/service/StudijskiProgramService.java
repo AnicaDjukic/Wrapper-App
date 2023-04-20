@@ -25,7 +25,7 @@ public class StudijskiProgramService {
                 studijskiProgram.setNaziv(studijskiProgram.getNaziv() + " (OSNOVNE AKADEMSKE STUDIJE)");
             else if(studijskiProgram.getStepen() == 1 && studijskiProgram.getNivo() == 2)
                 studijskiProgram.setNaziv(studijskiProgram.getNaziv() + " (OSNOVNE STRUKOVNE STUDIJE)");
-            else if(studijskiProgram.getStepen() == 2 && studijskiProgram.getNivo() == 2)
+            else if(studijskiProgram.getStepen() == 2 && studijskiProgram.getNivo() == 1)
                 studijskiProgram.setNaziv(studijskiProgram.getNaziv() + " (MASTER AKADEMSKE STUDIJE)");
             else
                 studijskiProgram.setNaziv(studijskiProgram.getNaziv() + " (MASTER STRUKOVNE STUDIJE)");

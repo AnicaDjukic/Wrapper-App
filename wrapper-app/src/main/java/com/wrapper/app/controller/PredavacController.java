@@ -5,12 +5,10 @@ import com.wrapper.app.dto.PredavacRequestDto;
 import com.wrapper.app.dto.PredavacResponseDto;
 import com.wrapper.app.service.PredavacService;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @RestController
 @RequestMapping("api/v1/predavaci")
@@ -28,8 +26,9 @@ public class PredavacController {
     @CrossOrigin(origins = "*")
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<PredavacResponseDto> getAll() {
-        return modelMapper.map(service.getAll(), new TypeToken<ArrayList<PredavacResponseDto>>(){}.getType());
+    public Page<PredavacResponseDto> getAll(@RequestParam(required = false, defaultValue = "0") int page,
+                                            @RequestParam(required = false, defaultValue = "10") int size) {
+        return service.getAll(PageRequest.of(page, size)).map(p -> modelMapper.map(p, PredavacResponseDto.class));
     }
 
     @CrossOrigin(origins = "*")

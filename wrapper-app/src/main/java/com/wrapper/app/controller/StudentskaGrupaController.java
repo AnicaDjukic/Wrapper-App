@@ -1,11 +1,14 @@
 package com.wrapper.app.controller;
 
 import com.wrapper.app.domain.StudentskaGrupa;
+import com.wrapper.app.dto.ProstorijaResponseDto;
 import com.wrapper.app.dto.StudentskaGrupaRequestDto;
 import com.wrapper.app.dto.StudentskaGrupaResponseDto;
 import com.wrapper.app.service.StudentskaGrupaService;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,8 +31,9 @@ public class StudentskaGrupaController {
     @CrossOrigin(origins = "*")
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<StudentskaGrupaResponseDto> getAll() {
-        return modelMapper.map(service.getAll(), new TypeToken<ArrayList<StudentskaGrupaResponseDto>>(){}.getType());
+    public Page<StudentskaGrupaResponseDto> getAll(@RequestParam(required = false, defaultValue = "0") int page,
+                                                   @RequestParam(required = false, defaultValue = "10") int size) {
+        return service.getAll(PageRequest.of(page, size)).map(s -> modelMapper.map(s, StudentskaGrupaResponseDto.class));
     }
 
     @GetMapping("{id}")

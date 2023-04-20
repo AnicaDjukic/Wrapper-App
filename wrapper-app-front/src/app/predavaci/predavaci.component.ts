@@ -13,61 +13,63 @@ import { PredavacService } from '../services/predavac.service';
 })
 export class PredavaciComponent implements OnInit {
   displayedColumns: string[] = ['oznaka', 'ime', 'prezime', 'titula', 'organizacijaFakulteta', 'dekanat', 'orgJedinica', 'actions'];
-  dataSource! : MatTableDataSource<PredavacDto>;
+  
+  dataSource = new MatTableDataSource<PredavacDto>();
+  @ViewChild(MatPaginator, { static: true }) paginator!: MatPaginator;
 
-  @ViewChild(MatPaginator)
-  paginator!: MatPaginator;
+  constructor(private api: PredavacService, public dialog: MatDialog) { }
+
+  pageSize = 10;
+  totalElements = 0;
+  pageIndex = 0;
 
   ngOnInit() {
-    this.getAll()
+    this.dataSource.paginator = this.paginator;
+    this.getAll(0, this.pageSize);
   }
 
-  constructor(private api: PredavacService, public dialog: MatDialog) {}
-
-  getAll() {
-    this.api.getAll()
-    .subscribe({
-      next:(res) => {
-        this.dataSource = new MatTableDataSource(res);
-        this.dataSource.paginator = this.paginator
-      }
-    })
+  getAll(page: number, size: number) {
+    this.api.getAll(page, size).subscribe(res => {
+      this.dataSource = new MatTableDataSource(res.content);
+      this.totalElements = res.totalElements;
+      this.pageIndex = res.pageable.pageNumber;
+    });
   }
 
   openDialog(): void {
     this.dialog.open(PredavacDialogComponent, {
       width: '40%'
     }).afterClosed().subscribe((val) => {
-      if(val == 'save') {
+      if (val == 'save') {
         console.log('The dialog was closed');
-        this.getAll();
+        this.getAll(0, this.pageSize);
       }
     });
   }
 
-  edit(element : any) {
+  edit(element: any) {
     this.dialog.open(PredavacDialogComponent, {
       width: '40%',
       data: element
     }).afterClosed().subscribe((val) => {
-      if(val == 'update') {
+      if (val == 'update') {
         console.log('The dialog was closed');
-        this.getAll();
+        this.getAll(0, this.pageSize);
       }
     });
   }
-  
-  delete(id : string) {
+
+  delete(id: string) {
     this.api.delete(id)
-    .subscribe({
-      next: () => {
-        alert("Predavac je uspešno obrisan!");
-        this.getAll()
-      },
-      error: () => {
-        alert("Greška!");
-      }
-    })
+      .subscribe({
+        next: () => {
+          alert("Predavac je uspešno obrisan!");
+          this.getAll(0, this.pageSize)
+        },
+        error: () => {
+          alert("Greška!");
+        }
+      })
   }
 
   applyFilter(event: Event) {

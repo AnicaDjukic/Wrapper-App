@@ -13,23 +13,29 @@ import { ProstorijaService } from '../services/prostorija.service';
 })
 export class ProstorijeComponent {
   displayedColumns: string[] = ['oznaka', 'tip', 'kapacitet', 'orgJedinica', 'actions'];
-  dataSource! : MatTableDataSource<ProstorijaDto>;
-
+  
+  dataSource = new MatTableDataSource<ProstorijaDto>();
   @ViewChild(MatPaginator)
   paginator!: MatPaginator;
 
+  pageSize = 10;
+  totalElements = 0;
+  pageIndex = 0;
+
   ngOnInit() {
-    this.getAll()
+    this.dataSource.paginator = this.paginator;
+    this.getAll(0, this.pageSize);
   }
 
   constructor(private api: ProstorijaService, public dialog: MatDialog) {}
 
-  getAll() {
-    this.api.getAll()
+  getAll(page: number, size: number) {
+    this.api.getAll(page, size)
     .subscribe({
       next:(res) => {
-        this.dataSource = new MatTableDataSource(res);
-        this.dataSource.paginator = this.paginator
+        this.dataSource = new MatTableDataSource(res.content);
+      this.totalElements = res.totalElements;
+      this.pageIndex = res.pageable.pageNumber;
       }
     })
   }
@@ -40,7 +46,7 @@ export class ProstorijeComponent {
     }).afterClosed().subscribe((val) => {
       if(val == 'save') {
         console.log('The dialog was closed');
-        this.getAll();
+        this.getAll(0, this.pageSize);
       }
     });
   }
@@ -52,7 +58,7 @@ export class ProstorijeComponent {
     }).afterClosed().subscribe((val) => {
       if(val == 'update') {
         console.log('The dialog was closed');
-        this.getAll();
+        this.getAll(0, this.pageSize);
       }
     });
   }
@@ -62,7 +68,7 @@ export class ProstorijeComponent {
     .subscribe({
       next: () => {
         alert("Prostorija je uspešno obrisana!");
-        this.getAll()
+        this.getAll(0, this.pageSize)
       },
       error: () => {
         alert("Greška!");

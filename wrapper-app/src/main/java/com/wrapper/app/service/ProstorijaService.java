@@ -4,6 +4,8 @@ import com.wrapper.app.domain.Departman;
 import com.wrapper.app.domain.Prostorija;
 import com.wrapper.app.exception.NotFoundException;
 import com.wrapper.app.repository.ProstorijaRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -25,8 +27,8 @@ public class ProstorijaService {
         this.departmanService = departmanService;
     }
 
-    public List<Prostorija> getAll() {
-        List<Prostorija> results = repository.findAll();
+    public Page<Prostorija> getAll(Pageable pageable) {
+        Page<Prostorija> results = repository.findAll(pageable);
         results.forEach(result -> {
             List<String> orgJedinice = new ArrayList<>();
             if(result.getOrgJedinica() != null) {

@@ -6,6 +6,8 @@ import com.wrapper.app.dto.PredmetResponseDto;
 import com.wrapper.app.service.PredmetService;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,8 +30,9 @@ public class PredmetController {
     @CrossOrigin(origins = "*")
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<PredmetResponseDto> getAll() {
-        return modelMapper.map(service.getAll(), new TypeToken<ArrayList<PredmetResponseDto>>() {}.getType());
+    public Page<PredmetResponseDto> getAll(@RequestParam(required = false, defaultValue = "0") int page,
+                                           @RequestParam(required = false, defaultValue = "10") int size) {
+        return service.getAll(PageRequest.of(page, size)).map(p -> modelMapper.map(p, PredmetResponseDto.class));
     }
 
     @CrossOrigin(origins = "*")

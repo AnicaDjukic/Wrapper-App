@@ -12,70 +12,66 @@ import { PredmetDialogComponent } from '../predmet-dialog/predmet-dialog.compone
   styleUrls: ['./predmeti.component.scss']
 })
 export class PredmetiComponent implements OnInit {
-  
-  displayedColumns: string[] = ['oznaka', 'plan', 'naziv', 'sifraStruke', 'godina', 'studijskiProgram', 
-  'brojCasovaPred', 'brojCasovaAud', 'brojCasovaLab', 'brojCasovaRac', 'actions'];
-  dataSource! : MatTableDataSource<PredmetDto>;
 
-  @ViewChild(MatPaginator)
-  paginator!: MatPaginator;
+  displayedColumns: string[] = ['oznaka', 'plan', 'naziv', 'godina', 'studijskiProgram',
+    'brojCasovaPred', 'brojCasovaAud', 'brojCasovaLab', 'brojCasovaRac', 'actions'];
 
-  windowScrolled = false;
+  constructor(private api: ApiService, public dialog: MatDialog) { }
+
+  dataSource = new MatTableDataSource<PredmetDto>();
+  @ViewChild(MatPaginator, { static: true }) paginator!: MatPaginator;
+
+  pageSize = 10;
+  totalElements = 0;
+  pageIndex = 0;
 
   ngOnInit() {
-    this.getAll();
-    window.addEventListener('scroll', () => {
-      this.windowScrolled = window.pageYOffset !== 0;
-    });
-
+    this.dataSource.paginator = this.paginator;
+    this.getAll(0, this.pageSize);
   }
 
-  constructor(private api: ApiService, public dialog: MatDialog) {}
-
-  getAll() {
-    this.api.getAll()
-    .subscribe({
-      next:(res) => {
-        this.dataSource = new MatTableDataSource(res);
-        this.dataSource.paginator = this.paginator
-      }
-    })
+  getAll(page: number, size: number) {
+    this.api.getAll(page, size).subscribe(res => {
+      this.dataSource = new MatTableDataSource(res.content);
+      this.totalElements = res.totalElements;
+      this.pageIndex = res.pageable.pageNumber;
+    });
   }
 
   openDialog(): void {
     this.dialog.open(PredmetDialogComponent, {
       width: '40%'
     }).afterClosed().subscribe((val) => {
-      if(val == 'save') {
+      if (val == 'save') {
         console.log('The dialog was closed');
-        this.getAll();
+        this.getAll(0, this.pageSize);
       }
     });
   }
 
-  edit(element : any) {
+  edit(element: any) {
     this.dialog.open(PredmetDialogComponent, {
       width: '40%',
       data: element
     }).afterClosed().subscribe((val) => {
-      if(val == 'update') {
+      if (val == 'update') {
         console.log('The dialog was closed');
-        this.getAll();
+        this.getAll(0, this.pageSize);
       }
     });
   }
-  
-  delete(id : string) {
+
+  delete(id: string) {
     this.api.delete(id)
-    .subscribe({
-      next: () => {
-        alert("Predmet je uspešno obrisan!");
-        this.getAll()
-      },
-      error: () => {
-        alert("Greška!");
-      }
-    })
+      .subscribe({
+        next: () => {
+          alert("Predmet je uspešno obrisan!");
+          this.getAll(0, this.pageSize)
+        },
+        error: () => {
+          alert("Greška!");
+        }
+      })
   }
 
   applyFilter(event: Event) {

@@ -1,6 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormControl, FormArray } from '@angular/forms';
-import { map, Observable, startWith } from 'rxjs';
+import { concatMap, map, Observable, of, startWith, switchMap, tap } from 'rxjs';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr'
 import { RealizacijaService } from '../services/realizacija.service';
@@ -77,17 +77,27 @@ export class RealizacijaDialogComponent {
   }
 
   getPredavaciOptions() {
-    this.predavacApi.getAll()
-      .subscribe({
-        next: (res) => {
-          console.log(res);
-          for (let predavac of res) {
-            let opt = predavac.titula + " " + predavac.ime + " " + predavac.prezime + " (" + predavac.orgJedinica + ")";
-            this.predavaciOptions.push(opt.trim());
-          }
-          this.predavaci = res;
+    this.getPredavaci(0, 100)
+      .subscribe(res => {
+        for (let predavac of res) {
+          let opt = predavac.titula + " " + predavac.ime + " " + predavac.prezime + " (" + predavac.orgJedinica + ")";
+          this.predavaciOptions.push(opt.trim());
         }
+        this.predavaci = res;
       });
+  }
+
+  getPredavaci(page: number, size: number, data: any[] = []): Observable<any[]> {
+    return this.predavacApi.getAll(page, size).pipe(
+      switchMap((res: any) => {
+        data.push(...res.content);
+        if (res.pageable.pageNumber + 1 < res.totalPages) {
+          return this.getPredavaci(res.pageable.pageNumber + 1, size, data);
+        } else {
+          return of(data);
+        }
+      })
+    );
   }
 
   prepareForAdd() {

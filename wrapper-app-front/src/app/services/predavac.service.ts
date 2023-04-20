@@ -10,8 +10,8 @@ export class PredavacService {
 
   constructor(private http: HttpClient) { }
 
-  getAll() {
-    return this.http.get<any>(`${this.predavaciUrl}`);
+  getAll(page: number, size: number) {
+    return this.http.get<any>(`${this.predavaciUrl}?page=` + page + `&size=` + size);
   }
 
   post(data: any) {

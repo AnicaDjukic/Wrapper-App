@@ -10,8 +10,8 @@ export class ApiService {
 
   constructor(private http: HttpClient) { }
 
-  getAll() {
-    return this.http.get<any>(`${this.predmetiUrl}`);
+  getAll(page: number, size: number) {
+    return this.http.get<any>(`${this.predmetiUrl}?page=` + page + `&size=` + size);
   }
 
   get(id: string) {

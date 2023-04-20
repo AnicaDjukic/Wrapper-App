@@ -26,4 +26,11 @@ public class MongoDbService {
         }
         return false;
     }
+
+    public void switchDatabase(String databaseName) {
+        if(databaseFound(databaseName)) {
+            mongoClient.getDatabase(databaseName);
+            System.out.println(mongoClient.startSession());
+        }
+    }
 }

@@ -1,12 +1,24 @@
 <div>
   <div class="header">
-    <mat-form-field>
-      <mat-label>Pretraži</mat-label>
-      <input matInput (keyup)="applyFilter($event)" placeholder="Pretraži po bilo kom atributu...">
+    <mat-form-field class="oznaka">
+      <mat-label>Pretražite po oznaci</mat-label>
+      <input matInput (keyup)="applyFilter($event)" placeholder="Unesite oznaku...">
     </mat-form-field>
+    <mat-form-field class="naziv">
+      <mat-label>Pretražite po nazivu</mat-label>
+      <input matInput (keyup)="applyFilter($event)" placeholder="Unesite naziv...">
+    </mat-form-field>
+    <mat-form-field class="stud-prog">
+      <mat-label>Pretražite po studijskom programu</mat-label>
+      <input matInput (keyup)="applyFilter($event)" placeholder="Unesite naziv studijskog programa...">
+    </mat-form-field>
+    <button class="search-button" mat-raised-button color="primary">
+      <mat-icon>search</mat-icon>
+      Traži
+    </button>
   </div>
 
-  <div style="margin-top: -25px; margin-bottom: 56px;">
+  <div>
     <div class="table-container">
       <table mat-table [dataSource]="dataSource">
 
@@ -23,11 +35,6 @@
         <ng-container matColumnDef="naziv">
           <th mat-header-cell *matHeaderCellDef> Naziv </th>
           <td mat-cell *matCellDef="let element"> {{element.naziv}} </td>
-        </ng-container>
-
-        <ng-container matColumnDef="sifraStruke">
-          <th mat-header-cell *matHeaderCellDef> Šifra struke </th>
-          <td mat-cell *matCellDef="let element"> {{element.sifraStruke}} </td>
         </ng-container>
 
         <ng-container matColumnDef="godina">
@@ -82,7 +89,9 @@
       </table>
     </div>
     <div class="footer">
-      <mat-paginator [pageSizeOptions]="[10, 20]" showFirstLastButtons></mat-paginator>
+      <mat-paginator #paginator [length]="totalElements" [pageSize]="pageSize" [pageIndex]="pageIndex"
+        [pageSizeOptions]="[10, 15, 20, 25]" (page)="getAll($event.pageIndex, $event.pageSize)" showFirstLastButtons>
+      </mat-paginator>
     </div>
   </div>
 </div>

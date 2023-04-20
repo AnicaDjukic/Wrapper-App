@@ -10,8 +10,8 @@ export class StudentskaGrupaService {
 
   constructor(private http: HttpClient) { }
 
-  getAll() {
-    return this.http.get<any>(`${this.studentskeGrupeUrl}`);
+  getAll(page: number, size: number) {
+    return this.http.get<any>(`${this.studentskeGrupeUrl}?page=` + page + `&size=` + size);
   }
 
   post(data: any) {

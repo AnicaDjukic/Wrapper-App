@@ -6,6 +6,8 @@ import com.wrapper.app.dto.ProstorijaResponseDto;
 import com.wrapper.app.service.ProstorijaService;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,8 +30,9 @@ public class ProstorijaController {
     @CrossOrigin(origins = "*")
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<ProstorijaResponseDto> getAll() {
-        return modelMapper.map(service.getAll(), new TypeToken<ArrayList<ProstorijaResponseDto>>(){}.getType());
+    public Page<ProstorijaResponseDto> getAll(@RequestParam(required = false, defaultValue = "0") int page,
+                                              @RequestParam(required = false, defaultValue = "10") int size) {
+        return service.getAll(PageRequest.of(page, size)).map(p -> modelMapper.map(p, ProstorijaResponseDto.class));
     }
 
     @GetMapping("{id}")

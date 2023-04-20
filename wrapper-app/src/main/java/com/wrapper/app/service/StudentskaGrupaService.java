@@ -4,6 +4,8 @@ import com.wrapper.app.domain.StudentskaGrupa;
 import com.wrapper.app.domain.StudijskiProgram;
 import com.wrapper.app.exception.NotFoundException;
 import com.wrapper.app.repository.StudentskaGrupaRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,8 +23,8 @@ public class StudentskaGrupaService {
         this.studijskiProgramService = studijskiProgramService;
     }
 
-    public List<StudentskaGrupa> getAll() {
-        List<StudentskaGrupa> results = repository.findAll();
+    public Page<StudentskaGrupa> getAll(Pageable pageable) {
+        Page<StudentskaGrupa> results = repository.findAll(pageable);
         results.forEach(result -> {
             StudijskiProgram studijskiProgram = studijskiProgramService.getById(result.getStudijskiProgram());
             result.setStudijskiProgram(studijskiProgram.getOznaka() + " " + studijskiProgram.getNaziv());

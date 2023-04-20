@@ -4,6 +4,8 @@ import com.wrapper.app.domain.Departman;
 import com.wrapper.app.domain.Predavac;
 import com.wrapper.app.exception.NotFoundException;
 import com.wrapper.app.repository.PredavacRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,8 +26,8 @@ public class PredavacService {
         this.departmanService = departmanService;
     }
 
-    public List<Predavac> getAll() {
-        List<Predavac> results = repository.findAll();
+    public Page<Predavac> getAll(Pageable pageable) {
+        Page<Predavac> results = repository.findAll(pageable);
         results.forEach(result -> {
             if(katedraService.existsById(result.getOrgJedinica())) {
                 result.setOrgJedinica(katedraService.getById(result.getOrgJedinica()).getNaziv());
