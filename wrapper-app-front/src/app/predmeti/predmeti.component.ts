@@ -21,6 +21,10 @@ export class PredmetiComponent implements OnInit {
   dataSource = new MatTableDataSource<PredmetDto>();
   @ViewChild(MatPaginator, { static: true }) paginator!: MatPaginator;
 
+  oznaka = '';
+  naziv = '';
+  studijskiProgram = '';
+
   pageSize = 10;
   totalElements = 0;
   pageIndex = 0;
@@ -44,7 +48,7 @@ export class PredmetiComponent implements OnInit {
     }).afterClosed().subscribe((val) => {
       if (val == 'save') {
         console.log('The dialog was closed');
-        this.getAll(0, this.pageSize);
+        this.getAll(this.pageIndex, this.pageSize);
       }
     });
   }
@@ -56,7 +60,7 @@ export class PredmetiComponent implements OnInit {
     }).afterClosed().subscribe((val) => {
       if (val == 'update') {
         console.log('The dialog was closed');
-        this.getAll(0, this.pageSize);
+        this.getAll(this.pageIndex, this.pageSize);
       }
     });
   }
@@ -66,7 +70,7 @@ export class PredmetiComponent implements OnInit {
       .subscribe({
         next: () => {
           alert("Predmet je uspešno obrisan!");
-          this.getAll(0, this.pageSize)
+          this.getAll(this.pageIndex, this.pageSize)
         },
         error: () => {
           alert("Greška!");
@@ -74,13 +78,19 @@ export class PredmetiComponent implements OnInit {
       })
   }
 
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
-
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
+  applyFilter(page: number, size: number) {
+    let predmetSearchDto = {
+      oznaka: this.oznaka,
+      naziv: this.naziv,
+      studijskiProgram: this.studijskiProgram
     }
+    this.api.search(page, size, predmetSearchDto).subscribe({
+      next: (res) => {
+        this.dataSource = new MatTableDataSource(res.content);
+        this.totalElements = res.totalElements;
+        this.pageIndex = res.pageable.pageNumber;
+      }
+    });
   }
 
   scrollToTop(): void {

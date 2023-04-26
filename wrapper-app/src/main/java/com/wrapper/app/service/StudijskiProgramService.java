@@ -60,4 +60,8 @@ public class StudijskiProgramService {
     public boolean existsById(String id) {
         return repository.existsById(id);
     }
+
+    public List<StudijskiProgram> searchByNaziv(String searchParam) {
+        return repository.searchByNaziv(searchParam.trim());
+    }
 }

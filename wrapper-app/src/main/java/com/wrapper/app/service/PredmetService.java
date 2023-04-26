@@ -2,13 +2,15 @@ package com.wrapper.app.service;
 
 import com.wrapper.app.domain.Predmet;
 import com.wrapper.app.domain.StudijskiProgram;
+import com.wrapper.app.dto.PredmetSearchDto;
 import com.wrapper.app.exception.NotFoundException;
 import com.wrapper.app.repository.PredmetRepository;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -31,6 +33,28 @@ public class PredmetService {
             result.setStudijskiProgram(studijskiProgram.getOznaka() + " " + studijskiProgram.getNaziv());
         });
         return results;
+    }
+
+    public Page<Predmet> search(PredmetSearchDto searchDto, Pageable pageable) {
+        List<StudijskiProgram> studProgrami = studijskiProgramService.searchByNaziv(searchDto.getStudijskiProgram());
+        List<String> studProgramIds = studProgrami.stream().map(StudijskiProgram::getId).toList();
+        List<Predmet> results = new ArrayList<>();
+        for(String studProgramId : studProgramIds) {
+                results.addAll(repository.searchByOznakaAndNazivAndStudProg(searchDto.getOznaka(), searchDto.getNaziv(), studProgramId));
+        }
+        long offset = pageable.getOffset();
+        int limit = pageable.getPageSize();
+        long endIndex = Math.min(offset + limit, results.size());
+        List<Predmet> pageContent = results.subList((int) offset, (int) endIndex);
+        return new PageImpl<>(mapStudijskiProgram(pageContent), pageable, results.size());
+    }
+
+    private List<Predmet> mapStudijskiProgram(List<Predmet> list) {
+        list.forEach(result -> {
+            StudijskiProgram studijskiProgram = studijskiProgramService.getById(result.getStudijskiProgram());
+            result.setStudijskiProgram(studijskiProgram.getOznaka() + " " + studijskiProgram.getNaziv());
+        });
+        return list;
     }
 
     public Predmet create(Predmet predmet) {

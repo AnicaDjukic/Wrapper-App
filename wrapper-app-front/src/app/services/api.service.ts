@@ -14,6 +14,13 @@ export class ApiService {
     return this.http.get<any>(`${this.predmetiUrl}?page=` + page + `&size=` + size);
   }
 
+  search(page: number, size: number, searchParams: { oznaka: string; naziv: string; studijskiProgram: string; }) {
+    return this.http.get<any>(`${this.predmetiUrl}/search?page=` + page + `&size=` + size 
+    + `&oznaka=` + searchParams.oznaka
+    + `&naziv=`+ searchParams.naziv
+    + '&stud_prog=' + searchParams.studijskiProgram);
+  }
+
   get(id: string) {
     return this.http.get<any>(`${this.predmetiUrl}/` + id);
   }

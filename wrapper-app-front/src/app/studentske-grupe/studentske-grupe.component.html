@@ -2,7 +2,7 @@
   <div class="header">
     <mat-form-field class="oznaka">
       <mat-label>Pretražite po oznaci</mat-label>
-      <input matInput (keyup)="applyFilter($event)" placeholder="Unesite oznaku...">
+      <input matInput (keyup)="applyFilter($event)">
     </mat-form-field>
     <mat-form-field class="godina">
       <mat-select value="SVE" class="font-bold">
@@ -17,11 +17,11 @@
     </mat-form-field>
     <mat-form-field class="br-stud">
       <mat-label>Pretražite po broju studenata</mat-label>
-      <input matInput type="number" (keyup)="applyFilter($event)" placeholder="Unesite broj studenata...">
+      <input matInput type="number" (keyup)="applyFilter($event)">
     </mat-form-field>
     <mat-form-field class="stud-prog">
       <mat-label>Pretražite po studijskom programu</mat-label>
-      <input matInput type="number" (keyup)="applyFilter($event)" placeholder="Unesite studijski program...">
+      <input matInput type="number" (keyup)="applyFilter($event)">
     </mat-form-field>
     <button class="search-button" mat-raised-button color="primary">
       <mat-icon>search</mat-icon>

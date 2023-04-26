@@ -4,6 +4,13 @@ $my-palette: mat.define-palette(mat.$indigo-palette);
 
 .sidenav-container {
   height: 100%;
+  position: relative;
+}
+
+.logout-btn {
+  position: absolute;
+  bottom: 5%;
+  left: 25%;
 }
 
 .sidenav {

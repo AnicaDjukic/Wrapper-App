@@ -27,6 +27,7 @@ import { ProstorijaDialogComponent } from './prostorija-dialog/prostorija-dialog
 import { RouterModule } from '@angular/router';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { RealizacijaDialogComponent } from './realizacija-dialog/realizacija-dialog.component';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -59,7 +60,8 @@ import { RealizacijaDialogComponent } from './realizacija-dialog/realizacija-dia
     HttpClientModule,
     ReactiveFormsModule,
     RouterModule,
-    ToastrModule.forRoot()
+    ToastrModule.forRoot(),
+    FormsModule
   ],
   providers: [ToastrService],
   bootstrap: [AppComponent]

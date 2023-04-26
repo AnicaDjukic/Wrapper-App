@@ -3,6 +3,7 @@ package com.wrapper.app.controller;
 import com.wrapper.app.domain.Predmet;
 import com.wrapper.app.dto.PredmetRequestDto;
 import com.wrapper.app.dto.PredmetResponseDto;
+import com.wrapper.app.dto.PredmetSearchDto;
 import com.wrapper.app.service.PredmetService;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -33,6 +34,18 @@ public class PredmetController {
     public Page<PredmetResponseDto> getAll(@RequestParam(required = false, defaultValue = "0") int page,
                                            @RequestParam(required = false, defaultValue = "10") int size) {
         return service.getAll(PageRequest.of(page, size)).map(p -> modelMapper.map(p, PredmetResponseDto.class));
+    }
+
+    @CrossOrigin(origins = "*")
+    @GetMapping("search")
+    @ResponseStatus(HttpStatus.OK)
+    public Page<PredmetResponseDto> search(@RequestParam(required = false, defaultValue = "0") int page,
+                                           @RequestParam(required = false, defaultValue = "10") int size,
+                                           @RequestParam String oznaka,
+                                           @RequestParam String naziv,
+                                           @RequestParam String stud_prog) {
+        PredmetSearchDto searchDto = new PredmetSearchDto(oznaka, naziv, stud_prog);
+        return service.search(searchDto, PageRequest.of(page, size)).map(p -> modelMapper.map(p, PredmetResponseDto.class));
     }
 
     @CrossOrigin(origins = "*")
