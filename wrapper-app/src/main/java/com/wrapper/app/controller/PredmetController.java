@@ -44,7 +44,7 @@ public class PredmetController {
                                            @RequestParam String oznaka,
                                            @RequestParam String naziv,
                                            @RequestParam String stud_prog) {
-        PredmetSearchDto searchDto = new PredmetSearchDto(oznaka, naziv, stud_prog);
+        PredmetSearchDto searchDto = new PredmetSearchDto(oznaka.trim(), naziv.trim(), stud_prog.trim());
         return service.search(searchDto, PageRequest.of(page, size)).map(p -> modelMapper.map(p, PredmetResponseDto.class));
     }
 

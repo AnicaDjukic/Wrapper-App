@@ -5,6 +5,8 @@ import com.wrapper.app.exception.NotFoundException;
 import com.wrapper.app.repository.KatedraRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class KatedraService {
 
@@ -20,5 +22,9 @@ public class KatedraService {
 
     public boolean existsById(String id) {
         return repository.existsById(id);
+    }
+
+    public List<Katedra> searchByNaziv(String naziv) {
+        return repository.searchByNaziv(naziv);
     }
 }

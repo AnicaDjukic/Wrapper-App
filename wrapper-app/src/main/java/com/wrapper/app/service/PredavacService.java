@@ -1,13 +1,17 @@
 package com.wrapper.app.service;
 
 import com.wrapper.app.domain.Departman;
+import com.wrapper.app.domain.Katedra;
 import com.wrapper.app.domain.Predavac;
+import com.wrapper.app.dto.PredavacSearchDto;
 import com.wrapper.app.exception.NotFoundException;
 import com.wrapper.app.repository.PredavacRepository;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -28,7 +32,28 @@ public class PredavacService {
 
     public Page<Predavac> getAll(Pageable pageable) {
         Page<Predavac> results = repository.findAll(pageable);
-        results.forEach(result -> {
+        return mapOrgJedinica(results);
+    }
+
+    public Page<Predavac> search(PredavacSearchDto searchDto, Pageable pageable) {
+        List<String> departmanIds = departmanService.searchByNaziv(searchDto.getOrgJedinica()).stream().map(Departman::getId).toList();
+        List<String> katedraIds = katedraService.searchByNaziv(searchDto.getOrgJedinica()).stream().map(Katedra::getId).toList();
+        List<Predavac> results = new ArrayList<>();
+        departmanIds.forEach(orgJedId -> results.addAll(repository.search(searchDto.getOznaka(), searchDto.getIme(), searchDto.getPrezime(), orgJedId)));
+        katedraIds.forEach(orgJedId -> results.addAll(repository.search(searchDto.getOznaka(), searchDto.getIme(), searchDto.getPrezime(), orgJedId)));
+        return mapOrgJedinica(createPage(pageable, results));
+    }
+
+    private PageImpl<Predavac> createPage(Pageable pageable, List<Predavac> results) {
+        long offset = pageable.getOffset();
+        int limit = pageable.getPageSize();
+        long endIndex = Math.min(offset + limit, results.size());
+        List<Predavac> pageContent = results.subList((int) offset, (int) endIndex);
+        return new PageImpl<>(pageContent, pageable, results.size());
+    }
+
+    private Page<Predavac> mapOrgJedinica(Page<Predavac> list) {
+        list.forEach(result -> {
             if(katedraService.existsById(result.getOrgJedinica())) {
                 result.setOrgJedinica(katedraService.getById(result.getOrgJedinica()).getNaziv());
             } else {
@@ -36,7 +61,7 @@ public class PredavacService {
                 result.setOrgJedinica(departman.getNaziv());
             }
         });
-        return results;
+        return list;
     }
 
     public Predavac getById(String id) {

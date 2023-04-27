@@ -14,6 +14,14 @@ export class PredavacService {
     return this.http.get<any>(`${this.predavaciUrl}?page=` + page + `&size=` + size);
   }
 
+  search(page: any, size: any, searchParams: { oznaka: string; ime: string; prezime: string; orgJedinica: string; }) {
+    return this.http.get<any>(`${this.predavaciUrl}/search?page=` + page + `&size=` + size 
+    + `&oznaka=` + searchParams.oznaka
+    + `&ime=`+ searchParams.ime
+    + `&prezime=` + searchParams.prezime
+    + '&org_jed=' + searchParams.orgJedinica);
+  }
+
   post(data: any) {
     return this.http.post<any>(`${this.predavaciUrl}`, data);
   }

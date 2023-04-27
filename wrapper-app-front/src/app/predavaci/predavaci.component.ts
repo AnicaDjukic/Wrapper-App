@@ -13,11 +13,16 @@ import { PredavacService } from '../services/predavac.service';
 })
 export class PredavaciComponent implements OnInit {
   displayedColumns: string[] = ['oznaka', 'ime', 'prezime', 'titula', 'organizacijaFakulteta', 'dekanat', 'orgJedinica', 'actions'];
-  
+
   dataSource = new MatTableDataSource<PredavacDto>();
   @ViewChild(MatPaginator, { static: true }) paginator!: MatPaginator;
 
   constructor(private api: PredavacService, public dialog: MatDialog) { }
+
+  oznaka = '';
+  ime = '';
+  prezime = '';
+  orgJedinica = '';
 
   pageSize = 10;
   totalElements = 0;
@@ -72,12 +77,19 @@ export class PredavaciComponent implements OnInit {
       })
   }
 
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
-
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
+  applyFilter(page: number, size: number) {
+    let predavacSearchDto = {
+      oznaka: this.oznaka,
+      ime: this.ime,
+      prezime: this.prezime,
+      orgJedinica: this.orgJedinica
     }
+    this.api.search(page, size, predavacSearchDto).subscribe({
+      next: (res) => {
+        this.dataSource = new MatTableDataSource(res.content);
+        this.totalElements = res.totalElements;
+        this.pageIndex = res.pageable.pageNumber;
+      }
+    });
   }
 }

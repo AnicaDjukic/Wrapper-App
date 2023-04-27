@@ -11,5 +11,5 @@ public interface PredmetRepository extends MongoRepository<Predmet, String> {
     List<Predmet> findByStudijskiProgram(String studijskiProgram);
 
     @Query("{$and:[{'oznaka': {$regex : ?0, $options: 'i'}}, {'naziv': {$regex : ?1, $options: 'i'}}, {'studijskiProgram': ?2}]}")
-    List<Predmet> searchByOznakaAndNazivAndStudProg(String oznaka, String naziv, String studijskiProgram);
+    List<Predmet> search(String oznaka, String naziv, String studijskiProgram);
 }

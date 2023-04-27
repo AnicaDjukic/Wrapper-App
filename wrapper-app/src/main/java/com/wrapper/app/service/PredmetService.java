@@ -28,28 +28,26 @@ public class PredmetService {
 
     public Page<Predmet> getAll(Pageable pageable) {
         Page<Predmet> results = repository.findAll(pageable);
-        results.forEach(result -> {
-            StudijskiProgram studijskiProgram = studijskiProgramService.getById(result.getStudijskiProgram());
-            result.setStudijskiProgram(studijskiProgram.getOznaka() + " " + studijskiProgram.getNaziv());
-        });
-        return results;
+        return mapStudijskiProgram(results);
     }
 
     public Page<Predmet> search(PredmetSearchDto searchDto, Pageable pageable) {
         List<StudijskiProgram> studProgrami = studijskiProgramService.searchByNaziv(searchDto.getStudijskiProgram());
         List<String> studProgramIds = studProgrami.stream().map(StudijskiProgram::getId).toList();
         List<Predmet> results = new ArrayList<>();
-        for(String studProgramId : studProgramIds) {
-                results.addAll(repository.searchByOznakaAndNazivAndStudProg(searchDto.getOznaka(), searchDto.getNaziv(), studProgramId));
-        }
+        studProgramIds.forEach(id -> results.addAll(repository.search(searchDto.getOznaka(), searchDto.getNaziv(), id)));
+        return mapStudijskiProgram(createPage(pageable, results));
+    }
+
+    private PageImpl<Predmet> createPage(Pageable pageable, List<Predmet> results) {
         long offset = pageable.getOffset();
         int limit = pageable.getPageSize();
         long endIndex = Math.min(offset + limit, results.size());
         List<Predmet> pageContent = results.subList((int) offset, (int) endIndex);
-        return new PageImpl<>(mapStudijskiProgram(pageContent), pageable, results.size());
+        return new PageImpl<>(pageContent, pageable, results.size());
     }
 
-    private List<Predmet> mapStudijskiProgram(List<Predmet> list) {
+    private Page<Predmet> mapStudijskiProgram(Page<Predmet> list) {
         list.forEach(result -> {
             StudijskiProgram studijskiProgram = studijskiProgramService.getById(result.getStudijskiProgram());
             result.setStudijskiProgram(studijskiProgram.getOznaka() + " " + studijskiProgram.getNaziv());

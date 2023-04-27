@@ -5,6 +5,8 @@ import com.wrapper.app.exception.NotFoundException;
 import com.wrapper.app.repository.DepartmanRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class DepartmanService {
 
@@ -20,5 +22,9 @@ public class DepartmanService {
 
     public Departman getById(String id) {
         return repository.findById(id).orElseThrow(() -> new NotFoundException(Departman.class.getSimpleName()));
+    }
+
+    public List<Departman> searchByNaziv(String naziv) {
+        return repository.searchByNaziv(naziv);
     }
 }

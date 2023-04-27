@@ -2,24 +2,20 @@
   <div class="header">
     <mat-form-field class="oznaka">
       <mat-label>Pretražite po oznaci</mat-label>
-      <input matInput (keyup)="applyFilter($event)">
+      <input [(ngModel)]="oznaka" matInput (keyup)="oznaka || ime || prezime || orgJedinica ? applyFilter(0, pageSize) : getAll(0, pageSize)">
     </mat-form-field>
     <mat-form-field class="ime">
       <mat-label>Pretražite po imenu</mat-label>
-      <input matInput (keyup)="applyFilter($event)">
+      <input [(ngModel)]="ime" matInput (keyup)="oznaka || ime || prezime || orgJedinica ? applyFilter(0, pageSize) : getAll(0, pageSize)">
     </mat-form-field>
     <mat-form-field class="prezime">
       <mat-label>Pretražite po prezimenu</mat-label>
-      <input matInput (keyup)="applyFilter($event)">
+      <input [(ngModel)]="prezime" matInput (keyup)="oznaka || ime || prezime || orgJedinica ? applyFilter(0, pageSize) : getAll(0, pageSize)">
     </mat-form-field>
     <mat-form-field class="org-jed">
       <mat-label>Pretražite po organizacionoj jedinici</mat-label>
-      <input matInput (keyup)="applyFilter($event)">
+      <input [(ngModel)]="orgJedinica" matInput (keyup)="oznaka || ime || prezime || orgJedinica ? applyFilter(0, pageSize) : getAll(0, pageSize)">
     </mat-form-field>
-    <button class="search-button" mat-raised-button color="primary">
-      <mat-icon>search</mat-icon>
-      Traži
-    </button>
   </div>
 
   <div>
@@ -95,7 +91,7 @@
     </div>
     <div class="footer">
       <mat-paginator #paginator [length]="totalElements" [pageSize]="pageSize" [pageIndex]="pageIndex"
-        [pageSizeOptions]="[10, 15, 20, 25]" (page)="getAll($event.pageIndex, $event.pageSize)" showFirstLastButtons>
+        [pageSizeOptions]="[10, 15, 20, 25]" (page)="oznaka || ime || prezime || orgJedinica ? applyFilter($event.pageIndex, $event.pageSize) : getAll($event.pageIndex, $event.pageSize)" showFirstLastButtons>
       </mat-paginator>
     </div>
   </div>

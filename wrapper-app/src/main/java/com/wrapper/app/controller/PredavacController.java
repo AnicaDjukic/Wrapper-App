@@ -1,8 +1,7 @@
 package com.wrapper.app.controller;
 
 import com.wrapper.app.domain.Predavac;
-import com.wrapper.app.dto.PredavacRequestDto;
-import com.wrapper.app.dto.PredavacResponseDto;
+import com.wrapper.app.dto.*;
 import com.wrapper.app.service.PredavacService;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -29,6 +28,19 @@ public class PredavacController {
     public Page<PredavacResponseDto> getAll(@RequestParam(required = false, defaultValue = "0") int page,
                                             @RequestParam(required = false, defaultValue = "10") int size) {
         return service.getAll(PageRequest.of(page, size)).map(p -> modelMapper.map(p, PredavacResponseDto.class));
+    }
+
+    @CrossOrigin(origins = "*")
+    @GetMapping("search")
+    @ResponseStatus(HttpStatus.OK)
+    public Page<PredavacResponseDto> search(@RequestParam(required = false, defaultValue = "0") int page,
+                                           @RequestParam(required = false, defaultValue = "10") int size,
+                                           @RequestParam String oznaka,
+                                           @RequestParam String ime,
+                                           @RequestParam String prezime,
+                                           @RequestParam String org_jed) {
+        PredavacSearchDto searchDto = new PredavacSearchDto(oznaka.trim(), ime.trim(), prezime.trim(), org_jed.trim());
+        return service.search(searchDto, PageRequest.of(page, size)).map(p -> modelMapper.map(p, PredavacResponseDto.class));
     }
 
     @CrossOrigin(origins = "*")
