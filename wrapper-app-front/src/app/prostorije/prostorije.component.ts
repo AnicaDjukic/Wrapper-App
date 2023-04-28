@@ -18,16 +18,22 @@ export class ProstorijeComponent {
   @ViewChild(MatPaginator)
   paginator!: MatPaginator;
 
-  pageSize = 10;
-  totalElements = 0;
-  pageIndex = 0;
-
   ngOnInit() {
     this.dataSource.paginator = this.paginator;
     this.getAll(0, this.pageSize);
   }
 
   constructor(private api: ProstorijaService, public dialog: MatDialog) {}
+
+  oznaka = '';
+  tip = 'SVE';
+  kapacitet = 0;
+  kapacitetStr = '';
+  orgJedinica = '';
+
+  pageSize = 10;
+  totalElements = 0;
+  pageIndex = 0;
 
   getAll(page: number, size: number) {
     this.api.getAll(page, size)
@@ -76,12 +82,27 @@ export class ProstorijeComponent {
     })
   }
 
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
-
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
+  onInputChange(event: Event) {
+    const inputValue = (event.target as HTMLInputElement)?.value || '';
+    if(inputValue != '') {
+      this.kapacitet = Number(inputValue);
     }
+    this.kapacitetStr = inputValue;
+  }
+
+  applyFilter(page: number, size: number) {
+    let prostorijaSearchDto = {
+      oznaka: this.oznaka,
+      tip: this.tip != 'SVE' ? this.tip : '',
+      kapacitet: this.kapacitetStr,
+      orgJedinica: this.orgJedinica
+    }
+    this.api.search(page, size, prostorijaSearchDto).subscribe({
+      next: (res) => {
+        this.dataSource = new MatTableDataSource(res.content);
+        this.totalElements = res.totalElements;
+        this.pageIndex = res.pageable.pageNumber;
+      }
+    });
   }
 }

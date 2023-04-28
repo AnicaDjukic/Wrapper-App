@@ -22,7 +22,8 @@ public class RealizacijaService {
 
     private final PredmetService predmetService;
 
-    public RealizacijaService(RealizacijaRepository repository, PredavacService predavacService, StudijskiProgramService studijskiProgramService, PredmetService predmetService) {
+    public RealizacijaService(RealizacijaRepository repository, PredavacService predavacService,
+                              StudijskiProgramService studijskiProgramService, PredmetService predmetService) {
         this.repository = repository;
         this.predavacService = predavacService;
         this.studijskiProgramService = studijskiProgramService;

@@ -41,10 +41,10 @@ public class PredavacService {
         List<Predavac> results = new ArrayList<>();
         departmanIds.forEach(orgJedId -> results.addAll(repository.search(searchDto.getOznaka(), searchDto.getIme(), searchDto.getPrezime(), orgJedId)));
         katedraIds.forEach(orgJedId -> results.addAll(repository.search(searchDto.getOznaka(), searchDto.getIme(), searchDto.getPrezime(), orgJedId)));
-        return mapOrgJedinica(createPage(pageable, results));
+        return mapOrgJedinica(createPage(results, pageable));
     }
 
-    private PageImpl<Predavac> createPage(Pageable pageable, List<Predavac> results) {
+    private PageImpl<Predavac> createPage(List<Predavac> results, Pageable pageable) {
         long offset = pageable.getOffset();
         int limit = pageable.getPageSize();
         long endIndex = Math.min(offset + limit, results.size());

@@ -14,6 +14,14 @@ export class ProstorijaService {
     return this.http.get<any>(`${this.prostorijeUrl}?page=` + page + `&size=` + size);
   }
 
+  search(page: number, size: number, searchParams: { oznaka: string; tip: string; kapacitet: string; orgJedinica: string; }) {
+    return this.http.get<any>(`${this.prostorijeUrl}/search?page=` + page + `&size=` + size 
+    + `&oznaka=` + searchParams.oznaka
+    + `&tip=`+ searchParams.tip
+    + `&kapacitet=` + searchParams.kapacitet
+    + '&org_jed=' + searchParams.orgJedinica);
+  }
+
   post(data: any) {
     return this.http.post<any>(`${this.prostorijeUrl}`, data);
   }

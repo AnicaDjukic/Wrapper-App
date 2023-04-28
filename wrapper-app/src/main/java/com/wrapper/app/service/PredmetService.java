@@ -36,10 +36,10 @@ public class PredmetService {
         List<String> studProgramIds = studProgrami.stream().map(StudijskiProgram::getId).toList();
         List<Predmet> results = new ArrayList<>();
         studProgramIds.forEach(id -> results.addAll(repository.search(searchDto.getOznaka(), searchDto.getNaziv(), id)));
-        return mapStudijskiProgram(createPage(pageable, results));
+        return mapStudijskiProgram(createPage(results, pageable));
     }
 
-    private PageImpl<Predmet> createPage(Pageable pageable, List<Predmet> results) {
+    private PageImpl<Predmet> createPage(List<Predmet> results, Pageable pageable) {
         long offset = pageable.getOffset();
         int limit = pageable.getPageSize();
         long endIndex = Math.min(offset + limit, results.size());

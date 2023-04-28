@@ -1,8 +1,7 @@
 package com.wrapper.app.controller;
 
 import com.wrapper.app.domain.Prostorija;
-import com.wrapper.app.dto.ProstorijaRequestDto;
-import com.wrapper.app.dto.ProstorijaResponseDto;
+import com.wrapper.app.dto.*;
 import com.wrapper.app.service.ProstorijaService;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -33,6 +32,19 @@ public class ProstorijaController {
     public Page<ProstorijaResponseDto> getAll(@RequestParam(required = false, defaultValue = "0") int page,
                                               @RequestParam(required = false, defaultValue = "10") int size) {
         return service.getAll(PageRequest.of(page, size)).map(p -> modelMapper.map(p, ProstorijaResponseDto.class));
+    }
+
+    @CrossOrigin(origins = "*")
+    @GetMapping("search")
+    @ResponseStatus(HttpStatus.OK)
+    public Page<ProstorijaResponseDto> search(@RequestParam(required = false, defaultValue = "0") int page,
+                                           @RequestParam(required = false, defaultValue = "10") int size,
+                                           @RequestParam String oznaka,
+                                           @RequestParam String tip,
+                                           @RequestParam String kapacitet,
+                                           @RequestParam String org_jed) {
+        ProstorijaSearchDto searchDto = new ProstorijaSearchDto(oznaka.trim(), tip.trim(), kapacitet, org_jed);
+        return service.search(searchDto, PageRequest.of(page, size)).map(p -> modelMapper.map(p, ProstorijaResponseDto.class));
     }
 
     @GetMapping("{id}")
