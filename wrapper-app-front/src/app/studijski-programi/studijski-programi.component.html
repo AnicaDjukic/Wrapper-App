@@ -2,25 +2,24 @@
   <div class="header">
     <mat-form-field class="oznaka">
       <mat-label>Pretražite po oznaci</mat-label>
-      <input matInput (keyup)="applyFilter($event)">
+      <input matInput [(ngModel)]="oznaka"
+        (keyup)="oznaka || naziv || stepenStudija != 'SVE' ? applyFilter() : getAll()">
     </mat-form-field>
     <mat-form-field class="naziv">
       <mat-label>Pretražite po nazivu</mat-label>
-      <input matInput (keyup)="applyFilter($event)">
+      <input matInput [(ngModel)]="naziv"
+        (keyup)="oznaka || naziv || stepenStudija != 'SVE' ? applyFilter() : getAll()">
     </mat-form-field>
     <mat-form-field class="stepen">
-      <mat-select value="SVE" class="font-bold">
+      <mat-select [(value)]="stepenStudija" value="SVE" class="font-bold"
+        (selectionChange)="oznaka || naziv || stepenStudija != 'SVE' ? applyFilter() : getAll()">
         <mat-option value="SVE">SVE</mat-option>
-        <mat-option value="OSNOVNE AKADEMSKE">OSNOVNE AKADEMSKE STUDIJE</mat-option>
-        <mat-option value="OSNOVNE STRUKOVNE">OSNOVNE STRUKOVNE STUDIJE</mat-option>
-        <mat-option value="MASTER AKADEMSKE">MASTER AKADEMSKE STUDIJE</mat-option>
-        <mat-option value="MASTER STRUKOVNE">MASTER STRUKOVNE STUDIJE</mat-option>
-    </mat-select>
+        <mat-option value="OSNOVNE AKADEMSKE STUDIJE">OSNOVNE AKADEMSKE STUDIJE</mat-option>
+        <mat-option value="OSNOVNE STRUKOVNE STUDIJE">OSNOVNE STRUKOVNE STUDIJE</mat-option>
+        <mat-option value="MASTER AKADEMSKE STUDIJE">MASTER AKADEMSKE STUDIJE</mat-option>
+        <mat-option value="MASTER STRUKOVNE STUDIJE">MASTER STRUKOVNE STUDIJE</mat-option>
+      </mat-select>
     </mat-form-field>
-    <button class="search-button" mat-raised-button color="primary">
-      <mat-icon>search</mat-icon>
-      Traži
-    </button>
   </div>
 
   <div>
@@ -37,10 +36,10 @@
           <td mat-cell *matCellDef="let element"> {{element.naziv}} </td>
         </ng-container>
 
-        <!-- <ng-container matColumnDef="tip">
-          <th mat-header-cell *matHeaderCellDef> Tip </th>
-          <td mat-cell *matCellDef="let element"> {{element.naziv.split(" (")[1].split("STUDIJE")[0]}} </td>
-        </ng-container> -->
+        <ng-container matColumnDef="stepenStudija">
+          <th mat-header-cell *matHeaderCellDef> Stepen studija </th>
+          <td mat-cell *matCellDef="let element"> {{element.stepenStudija}} </td>
+        </ng-container>
 
         <ng-container matColumnDef="edit">
           <th mat-header-cell *matHeaderCellDef> </th>
@@ -73,7 +72,7 @@
       </table>
     </div>
     <div class="footer">
-      <mat-paginator [pageSizeOptions]="[10, 20]" showFirstLastButtons></mat-paginator>
+      <mat-paginator [pageSizeOptions]="[10, 15, 20, 25]" showFirstLastButtons></mat-paginator>
     </div>
   </div>
 </div>

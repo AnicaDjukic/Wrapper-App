@@ -3,13 +3,12 @@ package com.wrapper.app.controller;
 import com.wrapper.app.domain.StudijskiProgram;
 import com.wrapper.app.dto.StudijskiProgramRequestDto;
 import com.wrapper.app.dto.StudijskiProgramResponseDto;
+import com.wrapper.app.dto.StudijskiProgramSearchDto;
 import com.wrapper.app.service.StudijskiProgramService;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -29,7 +28,21 @@ public class StudijskiProgramController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<StudijskiProgramResponseDto> getAll() {
-        return modelMapper.map(service.getAll(), new TypeToken<ArrayList<StudijskiProgramResponseDto>>() {}.getType());
+        List<StudijskiProgramResponseDto> results = service.getAll().stream()
+                .map(sp -> modelMapper.map(sp, StudijskiProgramResponseDto.class)).toList();
+        results.forEach(sp -> sp.setStepenStudija(service.getStepenStudija(sp.getStepen(), sp.getNivo())));
+        return results;
+    }
+
+    @CrossOrigin(origins = "*")
+    @GetMapping("search")
+    @ResponseStatus(HttpStatus.OK)
+    public List<StudijskiProgramResponseDto> search(@RequestParam String oznaka, @RequestParam String naziv, @RequestParam String stepenStudija) {
+        StudijskiProgramSearchDto searchDto = new StudijskiProgramSearchDto(oznaka.trim(), naziv.trim(), stepenStudija);
+        List<StudijskiProgramResponseDto> results = service.search(searchDto).stream()
+                .map(p -> modelMapper.map(p, StudijskiProgramResponseDto.class)).toList();
+        results.forEach(sp -> sp.setStepenStudija(service.getStepenStudija(sp.getStepen(), sp.getNivo())));
+        return results;
     }
 
     @GetMapping("{id}")

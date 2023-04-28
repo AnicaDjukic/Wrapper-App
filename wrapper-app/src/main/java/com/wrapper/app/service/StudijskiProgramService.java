@@ -1,16 +1,21 @@
 package com.wrapper.app.service;
 
 import com.wrapper.app.domain.StudijskiProgram;
+import com.wrapper.app.dto.StudijskiProgramSearchDto;
 import com.wrapper.app.exception.NotFoundException;
 import com.wrapper.app.repository.StudijskiProgramRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @Service
 public class StudijskiProgramService {
+
+    private final String OAS = "OSNOVNE AKADEMSKE STUDIJE";
+    private final String OSS = "OSNOVNE STRUKOVNE STUDIJE";
+    private final String MAS = "MASTER AKADEMSKE STUDIJE";
+    private final String MSS = "MASTER STRUKOVNE STUDIJE";
 
     private final StudijskiProgramRepository repository;
 
@@ -19,19 +24,29 @@ public class StudijskiProgramService {
     }
 
     public List<StudijskiProgram> getAll() {
-        List<StudijskiProgram> studijskiProgrami = new ArrayList<>();
-        for(StudijskiProgram studijskiProgram : repository.findAll()){
-            if(studijskiProgram.getStepen() == 1 && studijskiProgram.getNivo() == 1)
-                studijskiProgram.setNaziv(studijskiProgram.getNaziv() + " (OSNOVNE AKADEMSKE STUDIJE)");
-            else if(studijskiProgram.getStepen() == 1 && studijskiProgram.getNivo() == 2)
-                studijskiProgram.setNaziv(studijskiProgram.getNaziv() + " (OSNOVNE STRUKOVNE STUDIJE)");
-            else if(studijskiProgram.getStepen() == 2 && studijskiProgram.getNivo() == 1)
-                studijskiProgram.setNaziv(studijskiProgram.getNaziv() + " (MASTER AKADEMSKE STUDIJE)");
-            else
-                studijskiProgram.setNaziv(studijskiProgram.getNaziv() + " (MASTER STRUKOVNE STUDIJE)");
-            studijskiProgrami.add(studijskiProgram);
-        }
-        return studijskiProgrami;
+        return repository.findAll();
+    }
+
+    public List<StudijskiProgram> search(StudijskiProgramSearchDto searchDto) {
+        return repository.search(searchDto.getOznaka(), searchDto.getNaziv(),
+                getStepen(searchDto.getStepenStudija()), getNivo(searchDto.getStepenStudija()));
+    }
+
+    private String getStepen(String stepenStudija) {
+        return switch (stepenStudija) {
+            case OAS, OSS -> "1";
+            case MAS, MSS -> "2";
+            default -> "";
+        };
+    }
+
+    private String getNivo(String stepenStudija) {
+        return switch (stepenStudija) {
+            case OAS, MAS -> "1";
+            case OSS -> "2";
+            case MSS -> "5";
+            default -> "";
+        };
     }
 
     public StudijskiProgram getById(String id) {
@@ -63,5 +78,13 @@ public class StudijskiProgramService {
 
     public List<StudijskiProgram> searchByNaziv(String searchParam) {
         return repository.searchByNaziv(searchParam.trim());
+    }
+
+    public String getStepenStudija(int stepen, int nivo) {
+        return switch (stepen) {
+            case 1 -> (nivo == 1) ? OAS : OSS;
+            case 2 -> (nivo == 1) ? MAS : MSS;
+            default -> "";
+        };
     }
 }

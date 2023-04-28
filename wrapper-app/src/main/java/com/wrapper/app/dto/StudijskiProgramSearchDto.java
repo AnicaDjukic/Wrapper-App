@@ -9,12 +9,11 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class StudijskiProgramResponseDto {
+public class StudijskiProgramSearchDto {
 
-    private String id;
-    private int stepen;
-    private int nivo;
-    private String stepenStudija;
     private String oznaka;
+
     private String naziv;
+
+    private String stepenStudija;
 }

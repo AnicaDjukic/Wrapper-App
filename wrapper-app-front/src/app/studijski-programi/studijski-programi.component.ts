@@ -12,7 +12,7 @@ import { StudijskiProgramDialogComponent } from '../studijski-program-dialog/stu
   styleUrls: ['./studijski-programi.component.scss']
 })
 export class StudijskiProgramiComponent {
-  displayedColumns: string[] = ['oznaka', 'naziv', /*'tip',*/ 'actions'];
+  displayedColumns: string[] = ['oznaka', 'naziv', 'stepenStudija', 'actions'];
   dataSource! : MatTableDataSource<StudijskiProgramDto>;
 
   @ViewChild(MatPaginator)
@@ -24,12 +24,16 @@ export class StudijskiProgramiComponent {
 
   constructor(private api: StudijskiProgramService, public dialog: MatDialog) {}
 
+  oznaka = '';
+  naziv = '';
+  stepenStudija = 'SVE';
+
   getAll() {
     this.api.getAll()
     .subscribe({
       next:(res) => {
         this.dataSource = new MatTableDataSource(res);
-        this.dataSource.paginator = this.paginator
+        this.dataSource.paginator = this.paginator;
       }
     })
   }
@@ -70,12 +74,18 @@ export class StudijskiProgramiComponent {
     })
   }
 
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
-
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
+  applyFilter() {
+    let studijskiProgramSearchDto = {
+      oznaka: this.oznaka,
+      naziv: this.naziv,
+      stepenStudija: this.stepenStudija
     }
+    
+    this.api.search(studijskiProgramSearchDto).subscribe({
+      next: (res) => {
+        this.dataSource = new MatTableDataSource(res);
+        this.dataSource.paginator = this.paginator;
+      }
+    });
   }
 }

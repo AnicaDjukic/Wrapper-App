@@ -5,13 +5,20 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class StudijskiProgramService {
-
+  
   private studijskiProgramiUrl = "http://localhost:8080/api/v1/studijski-programi"
 
   constructor(private http: HttpClient) { }
 
   getAll() {
     return this.http.get<any>(`${this.studijskiProgramiUrl}`);
+  }
+
+  search(searchParams: { oznaka: string; naziv: string; stepenStudija: string; }) {
+    return this.http.get<any>(`${this.studijskiProgramiUrl}/search?` 
+    + `&oznaka=` + searchParams.oznaka
+    + `&naziv=`+ searchParams.naziv
+    + `&stepenStudija=` + searchParams.stepenStudija);
   }
 
   post(data: any) {

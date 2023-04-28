@@ -48,7 +48,7 @@ export class RealizacijaComponent {
         next: (res) => {
           this.studijskiProgrami = res
           res.forEach((element: StudijskiProgramDto) => {
-            this.options.push(element.oznaka + ' ' + element.naziv)
+            this.options.push(element.oznaka + ' ' + element.naziv + ' (' + element.stepenStudija + ")")
           });
         }
       })
