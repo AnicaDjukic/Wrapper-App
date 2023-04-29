@@ -8,7 +8,7 @@
         <mat-form-field class="tip">
             <mat-select [(value)]="tip" value="SVE" class="font-bold"
                 (selectionChange)="oznaka || tip != 'SVE' || kapacitetStr || orgJedinica ? applyFilter(0, pageSize) : getAll(0, pageSize)">
-                <mat-option value="SVE">Sve</mat-option>
+                <mat-option value="SVE">Svi tipovi</mat-option>
                 <mat-option value="RAC">Računarske</mat-option>
                 <mat-option value="AUD">Auditorne</mat-option>
                 <mat-option value="LAB">Laboratorijske</mat-option>

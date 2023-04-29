@@ -19,7 +19,7 @@ export class ProstorijaService {
     + `&oznaka=` + searchParams.oznaka
     + `&tip=`+ searchParams.tip
     + `&kapacitet=` + searchParams.kapacitet
-    + '&org_jed=' + searchParams.orgJedinica);
+    + '&orgJed=' + searchParams.orgJedinica);
   }
 
   post(data: any) {

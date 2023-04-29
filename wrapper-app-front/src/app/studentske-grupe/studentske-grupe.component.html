@@ -2,31 +2,31 @@
   <div class="header">
     <mat-form-field class="oznaka">
       <mat-label>Pretražite po oznaci</mat-label>
-      <input matInput (keyup)="applyFilter($event)">
+      <input [(ngModel)]="oznaka" matInput
+        (keyup)="oznaka || godina != 'SVE' || brojStudenata || studijskiProgram ? applyFilter(0, pageSize) : getAll(0, pageSize)">
     </mat-form-field>
     <mat-form-field class="godina">
-      <mat-select value="SVE" class="font-bold">
-        <mat-option value="SVE">SVE</mat-option>
-        <mat-option value="1">1</mat-option>
-        <mat-option value="2">2</mat-option>
-        <mat-option value="3">3</mat-option>
-        <mat-option value="4">4</mat-option>
-        <mat-option value="5">5</mat-option>
-        <mat-option value="6">6</mat-option>
+      <mat-select [(value)]="godina" value="SVE" class="font-bold"
+        (selectionChange)="oznaka || godina != 'SVE' || brojStudenata || studijskiProgram ? applyFilter(0, pageSize) : getAll(0, pageSize)">
+        <mat-option value="SVE">Sve godine</mat-option>
+        <mat-option value="1">1 godina</mat-option>
+        <mat-option value="2">2 godina</mat-option>
+        <mat-option value="3">3 godina</mat-option>
+        <mat-option value="4">4 godina</mat-option>
+        <mat-option value="5">5 godina</mat-option>
+        <mat-option value="6">6 godina</mat-option>
       </mat-select>
     </mat-form-field>
     <mat-form-field class="br-stud">
       <mat-label>Pretražite po broju studenata</mat-label>
-      <input matInput type="number" (keyup)="applyFilter($event)">
+      <input (input)="onInputChange($event)" matInput type="number"
+        (keyup)="oznaka || godina != 'SVE' || brojStudenata || studijskiProgram ? applyFilter(0, pageSize) : getAll(0, pageSize)">
     </mat-form-field>
     <mat-form-field class="stud-prog">
-      <mat-label>Pretražite po studijskom programu</mat-label>
-      <input matInput type="number" (keyup)="applyFilter($event)">
+      <mat-label>Pretražite po nazivu studijskog programa</mat-label>
+      <input [(ngModel)]="studijskiProgram" matInput
+        (keyup)="oznaka || godina != 'SVE' || brojStudenata || studijskiProgram ? applyFilter(0, pageSize) : getAll(0, pageSize)">
     </mat-form-field>
-    <button class="search-button" mat-raised-button color="primary">
-      <mat-icon>search</mat-icon>
-      Traži
-    </button>
   </div>
 
   <div>
@@ -85,7 +85,7 @@
     </div>
     <div class="footer">
       <mat-paginator #paginator [length]="totalElements" [pageSize]="pageSize" [pageIndex]="pageIndex"
-        [pageSizeOptions]="[10, 15, 20, 25]" (page)="getAll($event.pageIndex, $event.pageSize)" showFirstLastButtons>
+        [pageSizeOptions]="[10, 15, 20, 25]" (page)="oznaka || godina != 'SVE' || brojStudenata || studijskiProgram ? applyFilter($event.pageIndex, $event.pageSize) : getAll($event.pageIndex, $event.pageSize)" showFirstLastButtons>
       </mat-paginator>
     </div>
   </div>

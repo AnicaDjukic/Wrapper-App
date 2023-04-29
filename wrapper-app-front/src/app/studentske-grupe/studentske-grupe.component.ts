@@ -18,6 +18,12 @@ export class StudentskeGrupeComponent {
   @ViewChild(MatPaginator)
   paginator!: MatPaginator;
 
+  oznaka = '';
+  godina = 'SVE';
+  brojStudenata = 0;
+  brojStudenataStr = '';
+  studijskiProgram = '';
+
   pageSize = 10;
   totalElements = 0;
   pageIndex = 0;
@@ -76,12 +82,28 @@ export class StudentskeGrupeComponent {
     })
   }
 
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
-
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
+  onInputChange(event: Event) {
+    const inputValue = (event.target as HTMLInputElement)?.value || '';
+    if(inputValue != '') {
+      this.brojStudenata = Number(inputValue);
     }
+    this.brojStudenataStr = inputValue;
+  }
+
+  applyFilter(page: number, size: number) {
+    let studentskaGrupaSearchDto = {
+      oznaka: this.oznaka,
+      godina: this.godina != 'SVE' ? this.godina : '',
+      brojStudenata: this.brojStudenataStr,
+      studijskiProgram: this.studijskiProgram
+    }
+
+    this.api.search(page, size, studentskaGrupaSearchDto).subscribe({
+      next: (res) => {
+        this.dataSource = new MatTableDataSource(res.content);
+        this.totalElements = res.totalElements;
+        this.pageIndex = res.pageable.pageNumber;
+      }
+    });
   }
 }

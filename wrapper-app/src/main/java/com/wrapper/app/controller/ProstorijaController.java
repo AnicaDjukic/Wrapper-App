@@ -4,14 +4,10 @@ import com.wrapper.app.domain.Prostorija;
 import com.wrapper.app.dto.*;
 import com.wrapper.app.service.ProstorijaService;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @RestController
 @RequestMapping("api/v1/prostorije")
@@ -42,8 +38,8 @@ public class ProstorijaController {
                                            @RequestParam String oznaka,
                                            @RequestParam String tip,
                                            @RequestParam String kapacitet,
-                                           @RequestParam String org_jed) {
-        ProstorijaSearchDto searchDto = new ProstorijaSearchDto(oznaka.trim(), tip.trim(), kapacitet, org_jed);
+                                           @RequestParam String orgJed) {
+        ProstorijaSearchDto searchDto = new ProstorijaSearchDto(oznaka.trim(), tip.trim(), kapacitet, orgJed);
         return service.search(searchDto, PageRequest.of(page, size)).map(p -> modelMapper.map(p, ProstorijaResponseDto.class));
     }
 

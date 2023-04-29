@@ -36,10 +36,11 @@ public class ProstorijaService {
 
     public Page<Prostorija> search(ProstorijaSearchDto searchDto, Pageable pageable) {
         List<Prostorija> results;
-        if(searchDto.getOrgJedinica().isEmpty())
+        if(searchDto.getOrgJedinica().isEmpty()) {
             results = repository.searchWithoutOrgJedinica(searchDto.getOznaka(), searchDto.getTip(), searchDto.getKapacitet());
-        else
+        } else {
             results = search(searchDto);
+        }
         Page<Prostorija> page = createPage(results, pageable);
         return mapOrgJedinice(page);
     }

@@ -37,7 +37,9 @@ public class StudijskiProgramController {
     @CrossOrigin(origins = "*")
     @GetMapping("search")
     @ResponseStatus(HttpStatus.OK)
-    public List<StudijskiProgramResponseDto> search(@RequestParam String oznaka, @RequestParam String naziv, @RequestParam String stepenStudija) {
+    public List<StudijskiProgramResponseDto> search(@RequestParam String oznaka,
+                                                    @RequestParam String naziv,
+                                                    @RequestParam String stepenStudija) {
         StudijskiProgramSearchDto searchDto = new StudijskiProgramSearchDto(oznaka.trim(), naziv.trim(), stepenStudija);
         List<StudijskiProgramResponseDto> results = service.search(searchDto).stream()
                 .map(p -> modelMapper.map(p, StudijskiProgramResponseDto.class)).toList();

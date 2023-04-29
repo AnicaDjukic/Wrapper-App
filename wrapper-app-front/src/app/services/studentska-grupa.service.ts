@@ -14,6 +14,14 @@ export class StudentskaGrupaService {
     return this.http.get<any>(`${this.studentskeGrupeUrl}?page=` + page + `&size=` + size);
   }
 
+  search(page: number, size: number, searchParams: { oznaka: string; godina: string; brojStudenata: string; studijskiProgram: string; }) {
+    return this.http.get<any>(`${this.studentskeGrupeUrl}/search?page=` + page + `&size=` + size 
+    + `&oznaka=` + searchParams.oznaka
+    + `&godina=`+ searchParams.godina
+    + `&brojStudenata=` + searchParams.brojStudenata
+    + '&studProg=' + searchParams.studijskiProgram);
+  }
+
   post(data: any) {
     return this.http.post<any>(`${this.studentskeGrupeUrl}`, data);
   }

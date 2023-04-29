@@ -18,7 +18,7 @@ export class ApiService {
     return this.http.get<any>(`${this.predmetiUrl}/search?page=` + page + `&size=` + size 
     + `&oznaka=` + searchParams.oznaka
     + `&naziv=`+ searchParams.naziv
-    + '&stud_prog=' + searchParams.studijskiProgram);
+    + '&studProg=' + searchParams.studijskiProgram);
   }
 
   get(id: string) {
