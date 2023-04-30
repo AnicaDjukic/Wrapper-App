@@ -6,19 +6,31 @@ import { Injectable } from '@angular/core';
 })
 export class RealizacijaService {
 
-  private realizacijaUrl = "http://localhost:8080/api/v1/realizacije/studijski-programi"
+  private realizacijaUrl = "http://localhost:8080/api/v1/realizacije"
 
   constructor(private http: HttpClient) { }
 
   get(studijskiProgramId: string) {
-    return this.http.get<any>(`${this.realizacijaUrl}/` + studijskiProgramId);
+    return this.http.get<any>(`${this.realizacijaUrl}/studijski-programi/` + studijskiProgramId);
   }
 
   post(studijskiProgramId : string, realizacijaPredmetDto: any) {
-    return this.http.post<any>(`${this.realizacijaUrl}/` + studijskiProgramId + '/predmeti', realizacijaPredmetDto);
+    return this.http.post<any>(`${this.realizacijaUrl}/studijski-programi/` + studijskiProgramId + '/predmeti', realizacijaPredmetDto);
   }
 
   delete(studijskiProgramId: string, predmetId: string) {
-    return this.http.delete<any>(`${this.realizacijaUrl}/` + studijskiProgramId + '/predmeti/' + predmetId);
+    return this.http.delete<any>(`${this.realizacijaUrl}/studijski-programi/` + studijskiProgramId + '/predmeti/' + predmetId);
+  }
+
+  deletePredmet(predmetId: string) {
+    return this.http.delete<any>(`${this.realizacijaUrl}/predmeti/` + predmetId);
+  }
+
+  deletePredavac(predavacId: string) {
+    return this.http.delete<any>(`${this.realizacijaUrl}/predavaci/` + predavacId);
+  }
+
+  deleteStudijskiProgram(studijskiProgramId: string) {
+    return this.http.delete<any>(`${this.realizacijaUrl}/studijski-programi/` + studijskiProgramId);
   }
 }

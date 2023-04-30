@@ -1,19 +1,25 @@
 <div>
     <h1 mat-dialog-title>Brisanje {{title}}</h1>
-    <div mat-dialog-content style="align-content: center;">
-        <div style="color: black;">
+    <div mat-dialog-content>
+        <div *ngIf="!warn" style="color: black;">
             Da li ste sigurni da želite da obrišete
             <b>{{message}}</b>?
         </div>
-        <div *ngIf="warn" style="color: black; margin-top: 2%;">
+        <div *ngIf="warn" style="color: black;">
+            Unesite <b>{{message}}</b> da biste potvrdili brisanje:
+        </div>
+        <mat-form-field *ngIf="warn" appearance="outline" style="width: 100%; margin-top: 1%;">
+            <input [(ngModel)]="text" type="text" matInput>
+        </mat-form-field>
+        <div *ngIf="warn" style="color: black;">
             <b>
-            Upozorenje:
-            {{warn}}
-        </b>
+                Upozorenje:
+                {{warn}}
+            </b>
         </div>
     </div>
     <div mat-dialog-actions [align]="'end'">
-        <button mat-raised-button color="warn" (click)="dialogRef.close(true)">Potvrdi</button>
+        <button mat-raised-button color="warn" [disabled]="warn && text != message" (click)="dialogRef.close(true)">Potvrdi</button>
         <button mat-raised-button color="primary" mat-dialog-close (click)="dialogRef.close(false)">Odustani</button>
     </div>
 </div>

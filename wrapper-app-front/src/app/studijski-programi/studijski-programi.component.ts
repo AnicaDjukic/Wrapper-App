@@ -7,6 +7,7 @@ import { StudijskiProgramService } from '../services/studijski-program.service';
 import { StudijskiProgramDialogComponent } from '../studijski-program-dialog/studijski-program-dialog.component';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 import { ToastrService } from 'ngx-toastr';
+import { RealizacijaService } from '../services/realizacija.service';
 
 @Component({
   selector: 'app-studijski-programi',
@@ -24,7 +25,10 @@ export class StudijskiProgramiComponent {
     this.getAll()
   }
 
-  constructor(private api: StudijskiProgramService, public dialog: MatDialog, private toastr: ToastrService) {}
+  constructor(private api: StudijskiProgramService,
+    private realizacijaApi: RealizacijaService, 
+    public dialog: MatDialog, 
+    private toastr: ToastrService) {}
 
   oznaka = '';
   naziv = '';
@@ -62,19 +66,6 @@ export class StudijskiProgramiComponent {
       }
     });
   }
-  
-  delete(id : string) {
-    this.api.delete(id)
-    .subscribe({
-      next: () => {
-        this.toastr.success('Studijski program je uspešno obrisan!', 'Uspešno!');
-        this.getAll()
-      },
-      error: () => {
-        alert("Greška!");
-      }
-    })
-  }
 
   openConfirmationDialog(element: any) {
     this.dialog.open(ConfirmationDialogComponent, {
@@ -85,6 +76,19 @@ export class StudijskiProgramiComponent {
         this.delete(element.id);
       }
     });
+  }
+  
+  delete(id : string) {
+    this.realizacijaApi.deleteStudijskiProgram(id)
+    .subscribe({
+      next: () => {
+        this.toastr.success('Studijski program je uspešno obrisan!', 'Uspešno!');
+        this.getAll()
+      },
+      error: () => {
+        this.toastr.error('Greška prilikom brisanja studijskog programa!','Greška!');
+      }
+    })
   }
 
   applyFilter() {

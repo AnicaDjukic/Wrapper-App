@@ -51,9 +51,28 @@ public class RealizacijaController {
     }
 
     @CrossOrigin(origins = "*")
+    @DeleteMapping("studijski-programi/{studProgramId}")
+    @ResponseStatus(HttpStatus.OK)
+    public void removeStudijskiProgram(@PathVariable String studProgramId) {
+        service.removeStudijskiProgram(studProgramId);
+    }
+
+    @CrossOrigin(origins = "*")
     @DeleteMapping("studijski-programi/{studProgramId}/predmeti/{predmetId}")
     @ResponseStatus(HttpStatus.OK)
     public void deletePredmetFromStudijskiProgram(@PathVariable String studProgramId, @PathVariable String predmetId) {
         service.deletePredmetInStudijskiProgram(studProgramId, predmetId);
+    }
+
+    @CrossOrigin(origins = "*")
+    @DeleteMapping("predmeti/{predmetId}")
+    public void removePredmetFromRealizacija(@PathVariable String predmetId) {
+        service.removePredmet(predmetId);
+    }
+
+    @CrossOrigin(origins = "*")
+    @DeleteMapping("predavaci/{predavacId}")
+    public void removePredavacFromRealizacija(@PathVariable String predavacId) {
+        service.removePredavac(predavacId);
     }
 }

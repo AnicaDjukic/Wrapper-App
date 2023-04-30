@@ -86,4 +86,8 @@ public class PredmetService {
     public List<Predmet> getByStudijskiProgram(String studijskiProgram) {
         return repository.findByStudijskiProgram(studijskiProgram);
     }
+
+    public void deleteAllByStudijskiProgram(String studProgramId) {
+        repository.deleteAllByStudijskiProgram(studProgramId);
+    }
 }

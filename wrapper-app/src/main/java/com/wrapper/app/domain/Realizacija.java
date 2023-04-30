@@ -7,6 +7,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
+import java.util.Optional;
 
 @Data
 @Document(collection = "Realizacija")
@@ -44,6 +45,49 @@ public class Realizacija {
         predmetPredavac.setOstaliProfesori(dto.getOstaliProfesori());
         predmetPredavac.setAsistentZauzeca(dto.getAsistentZauzeca());
         studijskiProgram.getPredmetPredavaci().add(predmetPredavac);
+        return this;
+    }
+
+    public Realizacija removePredmet(String predmetId) {
+        for(StudijskiProgramPredmeti studijskiProgramPredmet : studijskiProgramPredmeti){
+            Optional<PredmetPredavac> predmet = studijskiProgramPredmet.getPredmetPredavaci()
+                    .stream().filter(spp -> spp.getPredmetId().equals(predmetId)).findFirst();
+            if(predmet.isPresent()) {
+                studijskiProgramPredmet.getPredmetPredavaci().remove(predmet.get());
+                break;
+            }
+        }
+        return this;
+    }
+
+    public Realizacija removePredavac(String predavacId) {
+        studijskiProgramPredmeti.forEach(sp -> {
+            removeProfesor(sp, predavacId);
+            removeOstaliProfesor(sp, predavacId);
+            removeAsistent(sp, predavacId);
+        });
+        return this;
+    }
+
+    private void removeProfesor(StudijskiProgramPredmeti studijskiProgramPredmet, String predavacId) {
+        Optional<PredmetPredavac> predmet = studijskiProgramPredmet.getPredmetPredavaci()
+                .stream().filter(spp -> spp.getProfesorId().equals(predavacId)).findFirst();
+        predmet.ifPresent(predmetPredavac -> predmetPredavac.setProfesorId(""));
+    }
+
+    private void removeOstaliProfesor(StudijskiProgramPredmeti studijskiProgramPredmet, String predavacId) {
+        Optional<PredmetPredavac> predmet = studijskiProgramPredmet.getPredmetPredavaci()
+                .stream().filter(spp -> spp.getOstaliProfesori().contains(predavacId)).findFirst();
+        predmet.ifPresent(predmetPredavac -> predmetPredavac.getOstaliProfesori().remove(predavacId));
+    }
+
+    private void removeAsistent(StudijskiProgramPredmeti studijskiProgramPredmet, String predavacId) {
+        studijskiProgramPredmet.getPredmetPredavaci()
+                .forEach(spp -> spp.getAsistentZauzeca().removeIf(a -> a.getAsistentId().equals(predavacId)));
+    }
+
+    public Realizacija removeStudijskiProgram(String studProgramId) {
+        studijskiProgramPredmeti.removeIf(sp -> sp.getStudijskiProgramId().equals(studProgramId));
         return this;
     }
 }

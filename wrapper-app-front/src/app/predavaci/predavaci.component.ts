@@ -7,6 +7,7 @@ import { PredavacDialogComponent } from '../predavac-dialog/predavac-dialog.comp
 import { PredavacService } from '../services/predavac.service';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 import { ToastrService } from 'ngx-toastr';
+import { RealizacijaService } from '../services/realizacija.service';
 
 @Component({
   selector: 'app-predavaci',
@@ -19,7 +20,10 @@ export class PredavaciComponent implements OnInit {
   dataSource = new MatTableDataSource<PredavacDto>();
   @ViewChild(MatPaginator, { static: true }) paginator!: MatPaginator;
 
-  constructor(private api: PredavacService, public dialog: MatDialog, private toastr: ToastrService) { }
+  constructor(private api: PredavacService,
+    private realizacijaApi: RealizacijaService, 
+    public dialog: MatDialog, 
+    private toastr: ToastrService) { }
 
   oznaka = '';
   ime = '';
@@ -66,19 +70,6 @@ export class PredavaciComponent implements OnInit {
     });
   }
 
-  delete(id: string) {
-    this.api.delete(id)
-      .subscribe({
-        next: () => {
-          this.toastr.success('Predavač je uspešno obrisan!', 'Uspešno!');
-          this.getAll(0, this.pageSize)
-        },
-        error: () => {
-          alert("Greška!");
-        }
-      })
-  }
-
   openConfirmationDialog(element: any) {
     this.dialog.open(ConfirmationDialogComponent, {
       width: '40%',
@@ -89,6 +80,19 @@ export class PredavaciComponent implements OnInit {
         this.delete(element.id);
       }
     });
+  }
+
+  delete(id: string) {
+    this.realizacijaApi.deletePredavac(id)
+      .subscribe({
+        next: () => {
+          this.toastr.success('Predavač je uspešno obrisan!', 'Uspešno!');
+          this.getAll(0, this.pageSize)
+        },
+        error: () => {
+          this.toastr.error('Greška prilikom brisanja predavača!', 'Greška!');
+        }
+      })
   }
 
   applyFilter(page: number, size: number) {

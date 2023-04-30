@@ -14,6 +14,8 @@ export class ConfirmationDialogComponent implements OnInit {
     public title!: string;
     public message!: string;
     public warn!: string;
+    
+    text = '';
 
   ngOnInit(): void {
     if(this.data.plan) {
@@ -30,7 +32,7 @@ export class ConfirmationDialogComponent implements OnInit {
     } else if (this.data.stepenStudija) {
       this.title = 'studijskog programa';
       this.message = this.data.oznaka + ' ' + this.data.naziv;
-      this.warn = 'Obrisan studijski program se briše iz realizacije, a samim tim se brišu i svi njegovi predmeti';
+      this.warn = 'Obrisan studijski program se briše i iz realizacije, a samim tim se brišu i svi njegovi predmeti!';
     } else if(this.data.brojStudenata) {
       this.title = 'studentske grupe';
       this.message = this.data.oznaka + '. grupu na ' + this.data.godina + '. godini na studijskom programu \"' + this.data.studijskiProgram + '\"';

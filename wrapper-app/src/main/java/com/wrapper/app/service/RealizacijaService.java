@@ -133,4 +133,23 @@ public class RealizacijaService {
         studijskiProgramPredmeti.getPredmetPredavaci().remove(predmetPredavac);
         repository.save(realizacija);
     }
+
+    public void removePredmet(String predmetId) {
+        Realizacija realizacija = repository.findAll().get(0);
+        repository.save(realizacija.removePredmet(predmetId));
+        predmetService.deleteById(predmetId);
+    }
+
+    public void removePredavac(String predavacId) {
+        Realizacija realizacija = repository.findAll().get(0);
+        repository.save(realizacija.removePredavac(predavacId));
+        predavacService.deleteById(predavacId);
+    }
+
+    public void removeStudijskiProgram(String studProgramId) {
+        Realizacija realizacija = repository.findAll().get(0);
+        repository.save(realizacija.removeStudijskiProgram(studProgramId));
+        studijskiProgramService.deleteById(studProgramId);
+        predmetService.deleteAllByStudijskiProgram(studProgramId);
+    }
 }
