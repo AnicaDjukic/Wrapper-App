@@ -16,7 +16,7 @@ public class Predavac {
     private String prezime;
     private boolean organizacijaFakulteta;
     private boolean dekanat;
-    private String orgJedinica;     // TODO: katedra
+    private String orgJedinica;     // TODO: katedra ili departman
     private String titula;
 
 }

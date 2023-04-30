@@ -28,6 +28,7 @@ import { RouterModule } from '@angular/router';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { RealizacijaDialogComponent } from './realizacija-dialog/realizacija-dialog.component';
 import { FormsModule } from '@angular/forms';
+import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
 
 @NgModule({
   declarations: [
@@ -44,7 +45,8 @@ import { FormsModule } from '@angular/forms';
     StudijskiProgramDialogComponent,
     StudentskaGrupaDialogComponent,
     ProstorijaDialogComponent,
-    RealizacijaDialogComponent
+    RealizacijaDialogComponent,
+    ConfirmationDialogComponent
   ],
   imports: [
     BrowserModule,

@@ -124,7 +124,7 @@ export class RealizacijaDialogComponent {
         next: (res) => {
           console.log(res);
           for (let predmet of res) {
-            this.predmetiOptions.push("(20) " + predmet.oznaka + " " + predmet.naziv);
+            this.predmetiOptions.push("(" + predmet.plan + ") " + predmet.oznaka + " " + predmet.naziv);
           }
           this.predmeti = res;
         }

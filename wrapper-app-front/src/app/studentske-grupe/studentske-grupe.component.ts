@@ -5,6 +5,8 @@ import { MatTableDataSource } from '@angular/material/table';
 import { StudentskaGrupaDto } from '../dtos/StudentskaGrupaDto';
 import { StudentskaGrupaService } from '../services/studentska-grupa.service';
 import { StudentskaGrupaDialogComponent } from '../studentska-grupa-dialog/studentska-grupa-dialog.component';
+import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-studentske-grupe',
@@ -33,7 +35,7 @@ export class StudentskeGrupeComponent {
     this.getAll(0, this.pageSize);
   }
 
-  constructor(private api: StudentskaGrupaService, public dialog: MatDialog) {}
+  constructor(private api: StudentskaGrupaService, public dialog: MatDialog, private toastr: ToastrService) {}
 
   getAll(page: number, size: number) {
     this.api.getAll(page, size)
@@ -73,13 +75,25 @@ export class StudentskeGrupeComponent {
     this.api.delete(id)
     .subscribe({
       next: () => {
-        alert("Studentska grupa je uspešno obrisana!");
+        this.toastr.success('Studentska grupa je uspešno obrisana!', 'Uspešno!');
         this.getAll(0, this.pageSize)
       },
       error: () => {
         alert("Greška!");
       }
     })
+  }
+
+  openConfirmationDialog(element: any) {
+    this.dialog.open(ConfirmationDialogComponent, {
+      width: '40%',
+      data: element
+    }).afterClosed().subscribe((val) => {
+      console.log(val);
+      if(val) {
+        this.delete(element.id);
+      }
+    });
   }
 
   onInputChange(event: Event) {

@@ -5,6 +5,8 @@ import { PredmetDto } from '../dtos/PredmetDto';
 import { ApiService } from '../services/api.service';
 import { MatDialog } from '@angular/material/dialog';
 import { PredmetDialogComponent } from '../predmet-dialog/predmet-dialog.component';
+import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-predmeti',
@@ -16,7 +18,7 @@ export class PredmetiComponent implements OnInit {
   displayedColumns: string[] = ['oznaka', 'plan', 'naziv', 'godina', 'studijskiProgram',
     'brojCasovaPred', 'brojCasovaAud', 'brojCasovaLab', 'brojCasovaRac', 'actions'];
 
-  constructor(private api: ApiService, public dialog: MatDialog) { }
+  constructor(private api: ApiService, public dialog: MatDialog, private toastr: ToastrService) { }
 
   dataSource = new MatTableDataSource<PredmetDto>();
   @ViewChild(MatPaginator, { static: true }) paginator!: MatPaginator;
@@ -69,13 +71,25 @@ export class PredmetiComponent implements OnInit {
     this.api.delete(id)
       .subscribe({
         next: () => {
-          alert("Predmet je uspešno obrisan!");
+          this.toastr.success('Predmet je uspešno obrisan!', 'Uspešno!');
           this.getAll(this.pageIndex, this.pageSize)
         },
         error: () => {
           alert("Greška!");
         }
       })
+  }
+
+  openConfirmationDialog(element: any) {
+    this.dialog.open(ConfirmationDialogComponent, {
+      width: '40%',
+      data: element
+    }).afterClosed().subscribe((val) => {
+      console.log(val);
+      if(val) {
+        this.delete(element.id);
+      }
+    });
   }
 
   applyFilter(page: number, size: number) {

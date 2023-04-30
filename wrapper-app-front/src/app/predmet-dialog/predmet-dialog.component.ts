@@ -4,7 +4,7 @@ import { map, Observable, startWith } from 'rxjs';
 import { StudijskiProgramDto } from '../dtos/StudijskiProgramDto';
 import { ApiService } from '../services/api.service';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { ToastrService } from 'ngx-toastr'
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-predmet-dialog',

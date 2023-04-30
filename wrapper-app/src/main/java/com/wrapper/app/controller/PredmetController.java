@@ -66,7 +66,7 @@ public class PredmetController {
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
     public PredmetResponseDto create(@RequestBody PredmetRequestDto dto) {
-        Predmet saved =  service.create(modelMapper.map(dto, Predmet.class));
+        Predmet saved = service.create(modelMapper.map(dto, Predmet.class));
         return modelMapper.map(saved, PredmetResponseDto.class);
     }
 

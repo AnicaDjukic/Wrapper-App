@@ -5,6 +5,8 @@ import { MatTableDataSource } from '@angular/material/table';
 import { ProstorijaDto } from '../dtos/ProstorijaDto';
 import { ProstorijaDialogComponent } from '../prostorija-dialog/prostorija-dialog.component';
 import { ProstorijaService } from '../services/prostorija.service';
+import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-prostorije',
@@ -23,7 +25,7 @@ export class ProstorijeComponent {
     this.getAll(0, this.pageSize);
   }
 
-  constructor(private api: ProstorijaService, public dialog: MatDialog) {}
+  constructor(private api: ProstorijaService, public dialog: MatDialog, private toastr: ToastrService) {}
 
   oznaka = '';
   tip = 'SVE';
@@ -73,13 +75,25 @@ export class ProstorijeComponent {
     this.api.delete(id)
     .subscribe({
       next: () => {
-        alert("Prostorija je uspešno obrisana!");
+        this.toastr.success('Prostorija je uspešno obrisana!', 'Uspešno!');
         this.getAll(0, this.pageSize)
       },
       error: () => {
         alert("Greška!");
       }
     })
+  }
+
+  openConfirmationDialog(element: any) {
+    this.dialog.open(ConfirmationDialogComponent, {
+      width: '40%',
+      data: element
+    }).afterClosed().subscribe((val) => {
+      console.log(val);
+      if(val) {
+        this.delete(element.id);
+      }
+    });
   }
 
   onInputChange(event: Event) {

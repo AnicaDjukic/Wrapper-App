@@ -5,6 +5,8 @@ import { MatTableDataSource } from '@angular/material/table';
 import { PredavacDto } from '../dtos/PredavacDto';
 import { PredavacDialogComponent } from '../predavac-dialog/predavac-dialog.component';
 import { PredavacService } from '../services/predavac.service';
+import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-predavaci',
@@ -17,7 +19,7 @@ export class PredavaciComponent implements OnInit {
   dataSource = new MatTableDataSource<PredavacDto>();
   @ViewChild(MatPaginator, { static: true }) paginator!: MatPaginator;
 
-  constructor(private api: PredavacService, public dialog: MatDialog) { }
+  constructor(private api: PredavacService, public dialog: MatDialog, private toastr: ToastrService) { }
 
   oznaka = '';
   ime = '';
@@ -68,13 +70,25 @@ export class PredavaciComponent implements OnInit {
     this.api.delete(id)
       .subscribe({
         next: () => {
-          alert("Predavac je uspešno obrisan!");
+          this.toastr.success('Predavač je uspešno obrisan!', 'Uspešno!');
           this.getAll(0, this.pageSize)
         },
         error: () => {
           alert("Greška!");
         }
       })
+  }
+
+  openConfirmationDialog(element: any) {
+    this.dialog.open(ConfirmationDialogComponent, {
+      width: '40%',
+      data: element
+    }).afterClosed().subscribe((val) => {
+      console.log(val);
+      if(val) {
+        this.delete(element.id);
+      }
+    });
   }
 
   applyFilter(page: number, size: number) {

@@ -5,6 +5,8 @@ import { MatTableDataSource } from '@angular/material/table';
 import { StudijskiProgramDto } from '../dtos/StudijskiProgramDto';
 import { StudijskiProgramService } from '../services/studijski-program.service';
 import { StudijskiProgramDialogComponent } from '../studijski-program-dialog/studijski-program-dialog.component';
+import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-studijski-programi',
@@ -22,7 +24,7 @@ export class StudijskiProgramiComponent {
     this.getAll()
   }
 
-  constructor(private api: StudijskiProgramService, public dialog: MatDialog) {}
+  constructor(private api: StudijskiProgramService, public dialog: MatDialog, private toastr: ToastrService) {}
 
   oznaka = '';
   naziv = '';
@@ -65,13 +67,24 @@ export class StudijskiProgramiComponent {
     this.api.delete(id)
     .subscribe({
       next: () => {
-        alert("Studijski program je uspešno obrisan!");
+        this.toastr.success('Studijski program je uspešno obrisan!', 'Uspešno!');
         this.getAll()
       },
       error: () => {
         alert("Greška!");
       }
     })
+  }
+
+  openConfirmationDialog(element: any) {
+    this.dialog.open(ConfirmationDialogComponent, {
+      width: '40%',
+      data: element
+    }).afterClosed().subscribe((val) => {
+      if(val) {
+        this.delete(element.id);
+      }
+    });
   }
 
   applyFilter() {
