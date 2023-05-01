@@ -19,23 +19,26 @@ export class ConfirmationDialogComponent implements OnInit {
 
   ngOnInit(): void {
     if(this.data.plan) {
-      this.title = 'predmeta';
+      this.title = 'Brisanje predmeta';
       this.message = '(' + this.data.plan + ') ' + this.data.oznaka + ' ' + this.data.naziv; 
       this.warn = 'Obrisan predmet se briše i iz realizacije!';
     } else if (this.data.ime) {
-      this.title = 'predavača';
+      this.title = 'Brisanje predavača';
       this.message = this.data.oznaka + ' ' + this.data.ime + ' ' + this.data.prezime;
       this.warn = 'Obrisan predavač se briše i iz realizacije!';
     } else if (this.data.kapacitet){
-      this.title = 'prostorije';
+      this.title = 'Brisanje prostorije';
       this.message = this.data.oznaka;
     } else if (this.data.stepenStudija) {
-      this.title = 'studijskog programa';
+      this.title = 'Brisanje studijskog programa';
       this.message = this.data.oznaka + ' ' + this.data.naziv;
       this.warn = 'Obrisan studijski program se briše i iz realizacije, a samim tim se brišu i svi njegovi predmeti!';
     } else if(this.data.brojStudenata) {
-      this.title = 'studentske grupe';
+      this.title = 'Brisanje studentske grupe';
       this.message = this.data.oznaka + '. grupu na ' + this.data.godina + '. godini na studijskom programu \"' + this.data.studijskiProgram + '\"';
+    } else {
+      this.title = 'Uklanjanje predmeta iz realizacije';
+      this.message = '(' + this.data.predmetPlan + ') ' + this.data.predmetOznaka + ' ' + this.data.predmetNaziv;
     }
   }
 

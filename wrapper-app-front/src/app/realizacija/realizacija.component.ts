@@ -11,6 +11,7 @@ import { StudijskiProgramDto } from '../dtos/StudijskiProgramDto';
 import { RealizacijaDialogComponent } from '../realizacija-dialog/realizacija-dialog.component';
 import { ApiService } from '../services/api.service';
 import { RealizacijaService } from '../services/realizacija.service';
+import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 
 @Component({
   selector: 'app-realizacija',
@@ -81,6 +82,18 @@ export class RealizacijaComponent {
       if (val == 'update') {
         console.log('The dialog was closed');
         this.get(this.selected);
+      }
+    });
+  }
+
+  openConfirmationDialog(element: any) {
+    this.dialog.open(ConfirmationDialogComponent, {
+      width: '40%',
+      data: element
+    }).afterClosed().subscribe((val) => {
+      console.log(val);
+      if(val) {
+        this.delete(element.predmetId);
       }
     });
   }

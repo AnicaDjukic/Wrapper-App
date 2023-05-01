@@ -11,6 +11,7 @@ import java.util.List;
 public class PredmetPredavacDto {
 
     private String predmetId;
+    private int predmetPlan;
     private String predmetOznaka;
     private String predmetNaziv;
     private int predmetGodina;

@@ -80,6 +80,7 @@ public class RealizacijaService {
     private void fillPredmetInfo(String predmetId, PredmetPredavacDto predmetPredavacDto) {
         Predmet predmet = predmetService.getById(predmetId);
         predmetPredavacDto.setPredmetId(predmet.getId());
+        predmetPredavacDto.setPredmetPlan(predmet.getPlan());
         predmetPredavacDto.setPredmetOznaka(predmet.getOznaka());
         predmetPredavacDto.setPredmetNaziv(predmet.getNaziv());
         predmetPredavacDto.setPredmetGodina(predmet.getGodina());

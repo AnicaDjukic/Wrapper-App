@@ -1,6 +1,8 @@
 import { AsistentZauzeceDto } from "./AsistentZauzeceDto";
 
 export interface PredmetPredavacDto {
+    predmetId: string;
+    predmetPlan: number;
     predmetOznaka: string;
     predmetNaziv: string;
     predmetGodina: number;
