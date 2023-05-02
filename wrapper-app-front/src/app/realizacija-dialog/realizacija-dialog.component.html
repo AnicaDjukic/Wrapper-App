@@ -44,9 +44,10 @@
                 <mat-form-field class="example-full-width" appearance="fill">
                     <mat-label>Profesor</mat-label>
                     <input type="text" placeholder="Izaberite profesora..." matInput [formControlName]="i"
-                        [matAutocomplete]="auto3">
+                        [matAutocomplete]="auto3" (input)="_filterOstaliProfesoriOptions($event, i)">
                     <mat-autocomplete autoActiveFirstOption #auto3="matAutocomplete">
-                        <mat-option *ngFor="let option of filteredOstaliProfesoriOptions | async" [value]="option">
+                        <mat-option *ngFor="let option of options[i]"
+                            [value]="option">
                             {{option}}
                         </mat-option>
                     </mat-autocomplete>
@@ -64,9 +65,9 @@
                     <mat-form-field appearance="fill" style="width: 80%;">
                         <mat-label>Asistent</mat-label>
                         <input type="text" placeholder="Izaberite asistenta..." matInput formControlName="asistentId"
-                            [matAutocomplete]="auto4">
+                            [matAutocomplete]="auto4" (input)="_filterAsistentiOptions($event, i)">
                         <mat-autocomplete autoActiveFirstOption #auto4="matAutocomplete">
-                            <mat-option *ngFor="let option of filteredAsistentiOptions | async" [value]="option">
+                            <mat-option *ngFor="let option of optionsAsistenti[i]" [value]="option">
                                 {{option}}
                             </mat-option>
                         </mat-autocomplete>
@@ -90,6 +91,6 @@
             <mat-icon>add</mat-icon> asistenta
         </button>
         <button mat-raised-button color="warn" mat-dialog-close>Zatvori</button>
-        <button mat-raised-button color="primary" (click)="add()" [disabled]="!predmetForm.valid">{{actionBtn}}</button>
+        <button mat-raised-button color="primary" (click)="data.studijskiProgramId ? add() : update()" [disabled]="!predmetForm.valid">{{actionBtn}}</button>
     </div>
 </div>

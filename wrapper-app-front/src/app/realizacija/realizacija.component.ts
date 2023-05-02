@@ -4,7 +4,7 @@ import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { ToastrService } from 'ngx-toastr';
-import { Observable, of } from 'rxjs';
+import { Observable, lastValueFrom, of } from 'rxjs';
 import { map, startWith, switchMap } from 'rxjs/operators';
 import { PredmetPredavacDto } from '../dtos/PredmetPredavacDto';
 import { StudijskiProgramDto } from '../dtos/StudijskiProgramDto';
@@ -44,13 +44,14 @@ export class RealizacijaComponent {
   selected!: string
   studijskiProgramId!: string
   predavaciOptions: string[] = [];
+  predavaci: PredavacDto[] = [];
 
   dataSource!: MatTableDataSource<PredmetPredavacDto>;
   columnsToDisplay = ['planPredmeta', 'predmetOznaka', 'predmetNaziv', 'predmetGodina', 'profesor', 'ostaliProfesori', 'expand', 'actions'];
   columnsToDisplayWithExpand = [...this.columnsToDisplay];
   expandedElement!: PredmetPredavacDto;
 
-  ngOnInit() {
+  async ngOnInit() {
     this.api.getAllStudijskiProgram()
       .subscribe({
         next: (res) => {
@@ -65,13 +66,19 @@ export class RealizacijaComponent {
       startWith(''),
       map(value => this._filter(value || '')),
     );
+    await this.getPredavaciOptions();
   }
 
-  openDialog(): void {
+  openDialog() {
     let studijskiProgramId = this.studijskiProgrami.filter(sp => sp.oznaka == this.selected.split(' ')[0]).map(value => value.id)[0];
     this.dialog.open(RealizacijaDialogComponent, {
       width: '60%',
-      data: studijskiProgramId
+      data: {
+        studijskiProgramId: studijskiProgramId,
+        predavaciOptions: this.predavaciOptions,
+        predavaci: this.predavaci
+      }
+
     }).afterClosed().subscribe((val) => {
       if (val == 'save') {
         console.log('The dialog was closed');
@@ -80,14 +87,14 @@ export class RealizacijaComponent {
     });
   }
 
-  async edit(element: any) {
+  edit(element: any) {
     element.studijskiProgramId = this.studijskiProgramId;
-    await this.getPredavaciOptions();    
     this.dialog.open(RealizacijaDialogComponent, {
       width: '60%',
       data: {
         element: element,
-        predavaciOptions: this.predavaciOptions
+        predavaciOptions: this.predavaciOptions,
+        predavaci: this.predavaci
       }
     }).afterClosed().subscribe((val) => {
       if (val == 'update') {
@@ -99,21 +106,25 @@ export class RealizacijaComponent {
 
   async getPredavaciOptions() {
     this.predavaciOptions = [];
-    const predavaci = await this.getPredavaci(0, 1000);
+    const predavaci = await lastValueFrom(this.getPredavaci(0, 200));
     for (let predavac of predavaci) {
       let opt = predavac.titula + " " + predavac.ime + " " + predavac.prezime + " (" + predavac.orgJedinica + ")";
       this.predavaciOptions.push(opt.trim());
     }
+    this.predavaci = predavaci;
   }
 
-  async getPredavaci(page: number, size: number, data: any[] = []): Promise<any[]> {
-    const res = await this.predavacApi.getAll(page, size).toPromise();
-    data.push(...res.content);
-    if (res.pageable.pageNumber + 1 < res.totalPages) {
-      return await this.getPredavaci(res.pageable.pageNumber + 1, size, data);
-    } else {
-      return data;
-    }
+  getPredavaci(page: number, size: number, data: any[] = []): Observable<any[]> {
+    return this.predavacApi.getAll(page, size).pipe(
+      switchMap((res: any) => {
+        data.push(...res.content);
+        if (res.pageable.pageNumber + 1 < res.totalPages) {
+          return this.getPredavaci(res.pageable.pageNumber + 1, size, data);
+        } else {
+          return of(data);
+        }
+      })
+    );
   }
 
   openConfirmationDialog(element: any) {

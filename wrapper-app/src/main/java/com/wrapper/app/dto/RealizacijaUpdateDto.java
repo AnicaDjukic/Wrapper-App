@@ -12,13 +12,11 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-public class RealizacijaRequestDto {
-
-    private String predmetId;
+public class RealizacijaUpdateDto {
 
     private String profesorId;
 
     private List<String> ostaliProfesori;
-    
+
     private List<AsistentZauzece> asistentZauzeca;
 }

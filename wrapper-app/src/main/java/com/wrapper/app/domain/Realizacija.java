@@ -1,6 +1,7 @@
 package com.wrapper.app.domain;
 
 import com.wrapper.app.dto.RealizacijaRequestDto;
+import com.wrapper.app.dto.RealizacijaUpdateDto;
 import com.wrapper.app.exception.NotFoundException;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
@@ -39,13 +40,42 @@ public class Realizacija {
                 studijskiProgramPredmeti.stream()
                         .filter(sp -> sp.getStudijskiProgramId().equals(studijskiProgramId))
                         .findFirst().orElseThrow(() -> new NotFoundException(StudijskiProgram.class.getSimpleName()));
+        PredmetPredavac predmetPredavac = createPredmetPredavac(dto);
+        studijskiProgram.getPredmetPredavaci().add(predmetPredavac);
+        return this;
+    }
+
+    public Realizacija updatePredmet(String studijskiProgramId, String predmetId, RealizacijaUpdateDto dto) {
+        StudijskiProgramPredmeti studijskiProgram =
+                studijskiProgramPredmeti.stream()
+                        .filter(sp -> sp.getStudijskiProgramId().equals(studijskiProgramId))
+                        .findFirst().orElseThrow(() -> new NotFoundException(StudijskiProgram.class.getSimpleName()));
+        PredmetPredavac predmet = studijskiProgram.getPredmetPredavaci().stream()
+                .filter(p -> p.getPredmetId().equals(predmetId))
+                .findFirst().orElseThrow(() -> new NotFoundException(PredmetPredavac.class.getSimpleName()));
+        int index = studijskiProgram.getPredmetPredavaci().indexOf(predmet);
+        studijskiProgram.getPredmetPredavaci().remove(index);
+        PredmetPredavac update = createPredmetPredavac(predmetId, dto);
+        studijskiProgram.getPredmetPredavaci().add(index, update);
+        return this;
+    }
+
+    private PredmetPredavac createPredmetPredavac(RealizacijaRequestDto dto) {
         PredmetPredavac predmetPredavac = new PredmetPredavac();
         predmetPredavac.setPredmetId(dto.getPredmetId());
         predmetPredavac.setProfesorId(dto.getProfesorId());
         predmetPredavac.setOstaliProfesori(dto.getOstaliProfesori());
         predmetPredavac.setAsistentZauzeca(dto.getAsistentZauzeca());
-        studijskiProgram.getPredmetPredavaci().add(predmetPredavac);
-        return this;
+        return predmetPredavac;
+    }
+
+    private PredmetPredavac createPredmetPredavac(String predmetId, RealizacijaUpdateDto dto) {
+        PredmetPredavac predmetPredavac = new PredmetPredavac();
+        predmetPredavac.setPredmetId(predmetId);
+        predmetPredavac.setProfesorId(dto.getProfesorId());
+        predmetPredavac.setOstaliProfesori(dto.getOstaliProfesori());
+        predmetPredavac.setAsistentZauzeca(dto.getAsistentZauzeca());
+        return predmetPredavac;
     }
 
     public Realizacija removePredmet(String predmetId) {

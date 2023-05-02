@@ -14,8 +14,12 @@ export class RealizacijaService {
     return this.http.get<any>(`${this.realizacijaUrl}/studijski-programi/` + studijskiProgramId);
   }
 
-  post(studijskiProgramId : string, realizacijaPredmetDto: any) {
+  addPredmet(studijskiProgramId : string, realizacijaPredmetDto: any) {
     return this.http.post<any>(`${this.realizacijaUrl}/studijski-programi/` + studijskiProgramId + '/predmeti', realizacijaPredmetDto);
+  }
+
+  updatePredmet(studijskiProgramId: string, predmetId: string, realizacijaPredmetDto: any) {
+    return this.http.put<any>(`${this.realizacijaUrl}/studijski-programi/` + studijskiProgramId + '/predmeti/' + predmetId, realizacijaPredmetDto);
   }
 
   delete(studijskiProgramId: string, predmetId: string) {

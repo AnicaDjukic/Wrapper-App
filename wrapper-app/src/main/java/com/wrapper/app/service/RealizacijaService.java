@@ -1,10 +1,7 @@
 package com.wrapper.app.service;
 
 import com.wrapper.app.domain.*;
-import com.wrapper.app.dto.AsistentiZauzecaDto;
-import com.wrapper.app.dto.PredmetPredavacDto;
-import com.wrapper.app.dto.RealizacijaRequestDto;
-import com.wrapper.app.dto.StudijskiProgramPredmetiDto;
+import com.wrapper.app.dto.*;
 import com.wrapper.app.exception.NotFoundException;
 import com.wrapper.app.repository.RealizacijaRepository;
 import org.springframework.stereotype.Service;
@@ -49,8 +46,22 @@ public class RealizacijaService {
         return repository.save(updated);
     }
 
+    public Realizacija updatePredmet(String studProgramId, String predmetId, RealizacijaUpdateDto dto) {
+        predmetService.getById(predmetId); // check if predmet exists
+        Realizacija realizacija = getAll().get(0);
+        checkPredavaci(dto);    // provera da li predavaci postoje
+        Realizacija updated = realizacija.updatePredmet(studProgramId, predmetId, dto);
+        return repository.save(updated);
+    }
+
     // provera da li predavaci postoje
     private void checkPredavaci(RealizacijaRequestDto dto) {
+        predavacService.getById(dto.getProfesorId());
+        dto.getOstaliProfesori().forEach(predavacService::getById);
+        dto.getAsistentZauzeca().forEach(az -> predavacService.getById(az.getAsistentId()));
+    }
+
+    private void checkPredavaci(RealizacijaUpdateDto dto) {
         predavacService.getById(dto.getProfesorId());
         dto.getOstaliProfesori().forEach(predavacService::getById);
         dto.getAsistentZauzeca().forEach(az -> predavacService.getById(az.getAsistentId()));
