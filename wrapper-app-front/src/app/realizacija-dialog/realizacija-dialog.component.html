@@ -28,8 +28,8 @@
             <mat-form-field class="example-full-width" style="margin-top: 10px;">
                 <mat-label>Glavni profesor</mat-label>
                 <input type="text" placeholder="Izaberite profesora..." matInput formControlName="profesorId"
-                    [matAutocomplete]="auto2">
-                <mat-autocomplete autoActiveFirstOption #auto2="matAutocomplete" matAutocompleteSingleOption>
+                    [matAutocomplete]="auto2" (focus)="populateOptions()">
+                <mat-autocomplete #auto2="matAutocomplete">
                     <mat-option *ngFor="let option of filteredProfesorOptions | async" [value]="option">
                         {{option}}
                     </mat-option>

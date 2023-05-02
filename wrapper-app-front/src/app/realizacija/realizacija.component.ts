@@ -4,14 +4,16 @@ import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { ToastrService } from 'ngx-toastr';
-import { Observable } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { map, startWith, switchMap } from 'rxjs/operators';
 import { PredmetPredavacDto } from '../dtos/PredmetPredavacDto';
 import { StudijskiProgramDto } from '../dtos/StudijskiProgramDto';
 import { RealizacijaDialogComponent } from '../realizacija-dialog/realizacija-dialog.component';
 import { ApiService } from '../services/api.service';
 import { RealizacijaService } from '../services/realizacija.service';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
+import { PredavacService } from '../services/predavac.service';
+import { PredavacDto } from '../dtos/PredavacDto';
 
 @Component({
   selector: 'app-realizacija',
@@ -28,7 +30,11 @@ import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation
 export class RealizacijaComponent {
 
 
-  constructor(private api: ApiService, private realizacijaService: RealizacijaService, public dialog: MatDialog, private toastr: ToastrService) { }
+  constructor(private api: ApiService,
+    private realizacijaService: RealizacijaService,
+    private predavacApi: PredavacService,
+    public dialog: MatDialog,
+    private toastr: ToastrService) { }
 
   studijskiProgrami: StudijskiProgramDto[] = [];
   options: string[] = [];
@@ -37,6 +43,7 @@ export class RealizacijaComponent {
   show!: boolean
   selected!: string
   studijskiProgramId!: string
+  predavaciOptions: string[] = [];
 
   dataSource!: MatTableDataSource<PredmetPredavacDto>;
   columnsToDisplay = ['planPredmeta', 'predmetOznaka', 'predmetNaziv', 'predmetGodina', 'profesor', 'ostaliProfesori', 'expand', 'actions'];
@@ -73,11 +80,15 @@ export class RealizacijaComponent {
     });
   }
 
-  edit(element: any) {
+  async edit(element: any) {
     element.studijskiProgramId = this.studijskiProgramId;
+    await this.getPredavaciOptions();    
     this.dialog.open(RealizacijaDialogComponent, {
       width: '60%',
-      data: element
+      data: {
+        element: element,
+        predavaciOptions: this.predavaciOptions
+      }
     }).afterClosed().subscribe((val) => {
       if (val == 'update') {
         console.log('The dialog was closed');
@@ -86,13 +97,32 @@ export class RealizacijaComponent {
     });
   }
 
+  async getPredavaciOptions() {
+    this.predavaciOptions = [];
+    const predavaci = await this.getPredavaci(0, 1000);
+    for (let predavac of predavaci) {
+      let opt = predavac.titula + " " + predavac.ime + " " + predavac.prezime + " (" + predavac.orgJedinica + ")";
+      this.predavaciOptions.push(opt.trim());
+    }
+  }
+
+  async getPredavaci(page: number, size: number, data: any[] = []): Promise<any[]> {
+    const res = await this.predavacApi.getAll(page, size).toPromise();
+    data.push(...res.content);
+    if (res.pageable.pageNumber + 1 < res.totalPages) {
+      return await this.getPredavaci(res.pageable.pageNumber + 1, size, data);
+    } else {
+      return data;
+    }
+  }
+
   openConfirmationDialog(element: any) {
     this.dialog.open(ConfirmationDialogComponent, {
       width: '40%',
       data: element
     }).afterClosed().subscribe((val) => {
       console.log(val);
-      if(val) {
+      if (val) {
         this.delete(element.predmetId);
       }
     });

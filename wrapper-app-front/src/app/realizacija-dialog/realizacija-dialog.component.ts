@@ -1,6 +1,6 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, Input } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormControl, FormArray } from '@angular/forms';
-import { concatMap, map, Observable, of, startWith, switchMap, tap } from 'rxjs';
+import { map, Observable, of, startWith, switchMap } from 'rxjs';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr'
 import { RealizacijaService } from '../services/realizacija.service';
@@ -21,19 +21,21 @@ export class RealizacijaDialogComponent {
   predmeti: PredmetDto[] = [];
   predavaci: PredavacDto[] = [];
   predmetiOptions: string[] = [];
-  predavaciOptions: string[] = [];
+  //predavaciOptions: string[] = [];
   filteredPredmetOptions!: Observable<string[]>;
   filteredProfesorOptions!: Observable<string[]>;
   filteredOstaliProfesoriOptions!: Observable<string[]>;
   filteredAsistentiOptions!: Observable<string[]>;
   predmetForm!: FormGroup;
   show = false;
+  predavaciOptions!: string[];
+  sviPredavaci!: string[];
 
   constructor(private formBuilder: FormBuilder,
     private api: RealizacijaService,
     private predmetApi: ApiService,
     private predavacApi: PredavacService,
-    @Inject(MAT_DIALOG_DATA) public editData: any,
+    @Inject(MAT_DIALOG_DATA) public data: any,
     private dialogRef: MatDialogRef<RealizacijaDialogComponent>,
     private toastr: ToastrService) { }
 
@@ -45,11 +47,11 @@ export class RealizacijaDialogComponent {
       profesorId: [''],
       ostaliProfesori: this.formBuilder.array([]),
       asistentZauzeca: this.formBuilder.array([])
-    })
+    });
 
-    this.getPredavaciOptions();
+    this.sviPredavaci = this.data.predavaciOptions;
 
-    if (this.editData && typeof this.editData === 'string') {
+    if (this.data && typeof this.data === 'string') {
       this.prepareForAdd();
     } else {
       this.prepareForEdit();
@@ -76,35 +78,15 @@ export class RealizacijaDialogComponent {
     );
   }
 
-  getPredavaciOptions() {
-    this.getPredavaci(0, 100)
-      .subscribe(res => {
-        for (let predavac of res) {
-          let opt = predavac.titula + " " + predavac.ime + " " + predavac.prezime + " (" + predavac.orgJedinica + ")";
-          this.predavaciOptions.push(opt.trim());
-        }
-        this.predavaci = res;
-      });
-  }
-
-  getPredavaci(page: number, size: number, data: any[] = []): Observable<any[]> {
-    return this.predavacApi.getAll(page, size).pipe(
-      switchMap((res: any) => {
-        data.push(...res.content);
-        if (res.pageable.pageNumber + 1 < res.totalPages) {
-          return this.getPredavaci(res.pageable.pageNumber + 1, size, data);
-        } else {
-          return of(data);
-        }
-      })
-    );
+  populateOptions() {
+    this.predavaciOptions = this.data.predavaciOptions;
   }
 
   prepareForAdd() {
     this.title = "Dodavanje predmeta u realizaciju"
-    console.log(this.editData);
-    this.setStudijskiProgram(this.editData);
-    this.getPredmetOptions(this.editData)
+    console.log(this.data);
+    this.setStudijskiProgram(this.data);
+    this.getPredmetOptions(this.data)
   }
 
   setStudijskiProgram(studijskiProgramId: any) {
@@ -133,26 +115,28 @@ export class RealizacijaDialogComponent {
 
   prepareForEdit() {
     this.title = "Izmena predmeta u realizaciju"
-    console.log(this.editData);
-    this.setStudijskiProgram(this.editData.studijskiProgramId);
-    this.predmetForm.controls['predmetId'].setValue("(20) " + this.editData.predmetOznaka + " " + this.editData.predmetNaziv);
+    console.log(this.data);
+    this.setStudijskiProgram(this.data.element.studijskiProgramId);
+    this.predmetForm.controls['predmetId'].setValue('(' + this.data.element.predmetPlan + ') ' + this.data.element.predmetOznaka + ' ' + this.data.element.predmetNaziv);
     this.predmetForm.controls['predmetId'].disable();
-    this.predmetForm.controls['godina'].setValue(this.editData.predmetGodina);
+    this.predmetForm.controls['godina'].setValue(this.data.element.predmetGodina);
     this.show = true;
     this.predmetForm.controls['godina'].disable();
-    let profesori = this.predavaciOptions; // ovdee
-    let profesor = profesori.filter(p => p.split("(")[0].trim() == this.editData.profesor).map(value => value)[0];
+    let profesori = this.sviPredavaci; // ovdee
+    let profesor = profesori.filter(p => p.split("(")[0].trim() == this.data.element.profesor).map(value => value)[0];
     this.predmetForm.controls['profesorId'].setValue(profesor);
-    if (this.editData.ostaliProfesori) {
-      for (let prof of this.editData.ostaliProfesori) {
-        let profesori = this.predavaciOptions;
+    if (this.data.element.ostaliProfesori) {
+      for (let prof of this.data.element.ostaliProfesori) {
+        let profesori = this.sviPredavaci;
         let profesor = profesori.filter(p => p.split("(")[0].trim() == prof)
         this.ostaliProfesoriFieldsAsFormArray.push(this.formBuilder.control(profesor));
       }
     }
-    if (this.editData.asistentiZauzeca) {
-      for (let asist of this.editData.asistentiZauzeca) {
-        this.asistentZauzecaFieldsAsFormArray.push(this.asistentZauzece(asist.asistent, asist.brojTermina));
+    if (this.data.element.asistentiZauzeca) {
+      for (let asist of this.data.element.asistentiZauzeca) {
+        let asistenti = this.sviPredavaci;
+        let asistent = asistenti.filter(p => p.split("(")[0].trim() == asist.asistent).map(value => value)[0];
+        this.asistentZauzecaFieldsAsFormArray.push(this.asistentZauzece(asistent, asist.brojTermina));
       }
     }
     console.log(this.predmetForm.value);
