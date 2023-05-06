@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 @RestController
 @RequestMapping("api/v1/studijski-programi")
@@ -40,7 +41,8 @@ public class StudijskiProgramController {
     public List<StudijskiProgramResponseDto> search(@RequestParam String oznaka,
                                                     @RequestParam String naziv,
                                                     @RequestParam String stepenStudija) {
-        StudijskiProgramSearchDto searchDto = new StudijskiProgramSearchDto(oznaka.trim(), naziv.trim(), stepenStudija);
+        StudijskiProgramSearchDto searchDto = new StudijskiProgramSearchDto(Pattern.quote(oznaka.trim()),
+                Pattern.quote(naziv.trim()), stepenStudija);
         List<StudijskiProgramResponseDto> results = service.search(searchDto).stream()
                 .map(p -> modelMapper.map(p, StudijskiProgramResponseDto.class)).toList();
         results.forEach(sp -> sp.setStepenStudija(service.getStepenStudija(sp.getStepen(), sp.getNivo())));

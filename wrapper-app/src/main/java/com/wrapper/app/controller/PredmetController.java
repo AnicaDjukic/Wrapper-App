@@ -5,6 +5,7 @@ import com.wrapper.app.dto.PredmetRequestDto;
 import com.wrapper.app.dto.PredmetResponseDto;
 import com.wrapper.app.dto.PredmetSearchDto;
 import com.wrapper.app.service.PredmetService;
+import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.data.domain.Page;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 @RestController
 @RequestMapping("api/v1/predmeti")
@@ -44,7 +46,7 @@ public class PredmetController {
                                            @RequestParam String oznaka,
                                            @RequestParam String naziv,
                                            @RequestParam String studProg) {
-        PredmetSearchDto searchDto = new PredmetSearchDto(oznaka.trim(), naziv.trim(), studProg.trim());
+        PredmetSearchDto searchDto = new PredmetSearchDto(Pattern.quote(oznaka.trim()), Pattern.quote(naziv.trim()), Pattern.quote(studProg.trim()));
         return service.search(searchDto, PageRequest.of(page, size)).map(p -> modelMapper.map(p, PredmetResponseDto.class));
     }
 
@@ -65,7 +67,7 @@ public class PredmetController {
     @CrossOrigin(origins = "*")
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
-    public PredmetResponseDto create(@RequestBody PredmetRequestDto dto) {
+    public PredmetResponseDto create(@RequestBody @Valid PredmetRequestDto dto) {
         Predmet saved = service.create(modelMapper.map(dto, Predmet.class));
         return modelMapper.map(saved, PredmetResponseDto.class);
     }

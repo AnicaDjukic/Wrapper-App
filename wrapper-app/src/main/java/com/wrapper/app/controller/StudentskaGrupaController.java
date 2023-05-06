@@ -11,6 +11,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.regex.Pattern;
+
 @RestController
 @RequestMapping("api/v1/studentske-grupe")
 public class StudentskaGrupaController {
@@ -41,7 +43,7 @@ public class StudentskaGrupaController {
                                               @RequestParam String godina,
                                               @RequestParam String brojStudenata,
                                               @RequestParam String studProg) {
-        StudentskaGrupaSearchDto searchDto = new StudentskaGrupaSearchDto(oznaka.trim(), godina, brojStudenata, studProg.trim());
+        StudentskaGrupaSearchDto searchDto = new StudentskaGrupaSearchDto(Pattern.quote(oznaka.trim()), godina, brojStudenata, Pattern.quote(studProg.trim()));
         return service.search(searchDto, PageRequest.of(page, size)).map(p -> modelMapper.map(p, StudentskaGrupaResponseDto.class));
     }
 

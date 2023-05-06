@@ -5,6 +5,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface PredmetRepository extends MongoRepository<Predmet, String> {
 
@@ -14,4 +15,6 @@ public interface PredmetRepository extends MongoRepository<Predmet, String> {
     List<Predmet> search(String oznaka, String naziv, String studijskiProgram);
 
     void deleteAllByStudijskiProgram(String studijskiProgram);
+
+    Optional<Predmet> findByOznakaAndPlanAndStudijskiProgram(String oznaka, int plan, String studijskiProgram);
 }

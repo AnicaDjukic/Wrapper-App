@@ -3,6 +3,7 @@ package com.wrapper.app.service;
 import com.wrapper.app.domain.Predmet;
 import com.wrapper.app.domain.StudijskiProgram;
 import com.wrapper.app.dto.PredmetSearchDto;
+import com.wrapper.app.exception.AlreadyExistsException;
 import com.wrapper.app.exception.NotFoundException;
 import com.wrapper.app.repository.PredmetRepository;
 import org.springframework.data.domain.Page;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -58,6 +60,10 @@ public class PredmetService {
     public Predmet create(Predmet predmet) {
         if(!studijskiProgramService.existsById(predmet.getStudijskiProgram()))
             throw new NotFoundException(StudijskiProgram.class.getSimpleName());
+        Optional<Predmet> existing = repository.findByOznakaAndPlanAndStudijskiProgram(predmet.getOznaka(), predmet.getPlan(), predmet.getStudijskiProgram());
+        if(existing.isPresent()) {
+            throw new AlreadyExistsException(Predmet.class.getSimpleName());
+        }
         predmet.setId(UUID.randomUUID().toString());
         //realizacijaService.addPredmetPredavac(predmet)  // TODO: add to realizacija
         return repository.save(predmet);

@@ -10,6 +10,9 @@
             <mat-form-field class="example-full-width">
                 <mat-label>Plan</mat-label>
                 <input formControlName="plan" matInput placeholder="Unesite plan..." type="number">
+                <mat-error *ngIf="predmetForm.get('plan')?.hasError('min')">
+                    Plan mora biti broj veći od 0
+                </mat-error>
             </mat-form-field>
 
             <mat-form-field class="example-full-width">
@@ -19,8 +22,11 @@
 
             <mat-form-field class="example-full-width">
                 <mat-label>Godina</mat-label>
-                <input formControlName="godina" matInput placeholder="Unesite godinu na kojoj se sluša..."
-                    type="number">
+                <input formControlName="godina" matInput placeholder="Unesite godinu na kojoj se sluša..." type="number"
+                    min="1">
+                <mat-error *ngIf="predmetForm.get('godina')?.hasError('min')">
+                    Plan mora biti broj veći od 0
+                </mat-error>
             </mat-form-field>
 
             <mat-form-field class="example-full-width">
@@ -37,36 +43,52 @@
                         {{option}}
                     </mat-option>
                 </mat-autocomplete>
+                <mat-error *ngIf="predmetForm.get('studijskiProgram')?.hasError('invalidOption')">
+                    Morate izabrati jedan studijski program
+                </mat-error>
             </mat-form-field>
 
             <mat-form-field class="example-full-width">
                 <mat-label>Broj časova predavanja</mat-label>
                 <input formControlName="brojCasovaPred" matInput placeholder="Unesite broj časova predavanja..."
                     type="number">
+                <mat-error *ngIf="predmetForm.get('brojCasovaPred')?.hasError('min')">
+                    Broj časova predavanja mora biti broj veći od 0
+                </mat-error>
             </mat-form-field>
+
 
             <mat-form-field class="example-full-width">
                 <mat-label>Broj časova auditornih vežbi</mat-label>
                 <input formControlName="brojCasovaAud" matInput placeholder="Unesite broj časova auditornih vežbi..."
-                    type="number">
+                    type="number" min="0">
+                <mat-error *ngIf="predmetForm.get('brojCasovaAud')?.hasError('min')">
+                    Broj časova auditornih vežbi mora biti broj veći ili jednak od 0
+                </mat-error>
             </mat-form-field>
 
             <mat-form-field class="example-full-width">
                 <mat-label>Broj časova laboratorijskih vežbi</mat-label>
                 <input formControlName="brojCasovaLab" matInput
-                    placeholder="Unesite broj časova laboratorijskih vežbi..." type="number">
+                    placeholder="Unesite broj časova laboratorijskih vežbi..." type="number" min="0">
+                <mat-error *ngIf="predmetForm.get('brojCasovaLab')?.hasError('min')">
+                    Broj časova laboratorijskih vežbi mora biti broj veći ili jednak od 0
+                </mat-error>
             </mat-form-field>
 
             <mat-form-field class="example-full-width">
                 <mat-label>Broj časova računarskih vežbi</mat-label>
                 <input formControlName="brojCasovaRac" matInput placeholder="Unesite broj časova računarskih vežbi..."
-                    type="number">
+                    type="number" min="0">
+                <mat-error *ngIf="predmetForm.get('brojCasovaRac')?.hasError('min')">
+                    Broj časova računarskih vežbi mora biti broj veći ili jednak od 0
+                </mat-error>
             </mat-form-field>
         </form>
     </div>
 
     <div mat-dialog-actions [align]="'end'">
         <button mat-raised-button color="warn" mat-dialog-close>Zatvori</button>
-        <button mat-raised-button color="primary" (click)="add()">{{actionBtn}}</button>
+        <button mat-raised-button color="primary" (click)="add()" [disabled]="!predmetForm.valid">{{actionBtn}}</button>
     </div>
 </div>

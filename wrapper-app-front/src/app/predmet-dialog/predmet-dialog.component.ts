@@ -5,6 +5,7 @@ import { StudijskiProgramDto } from '../dtos/StudijskiProgramDto';
 import { ApiService } from '../services/api.service';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
+import { autocompleteValidator } from '../validators/autocomplete-validator';
 
 @Component({
   selector: 'app-predmet-dialog',
@@ -18,53 +19,47 @@ export class PredmetDialogComponent implements OnInit {
   studijskiProgrami: StudijskiProgramDto[] = [];
   options: string[] = [];
   filteredOptions!: Observable<string[]>;
-  predmetForm!: FormGroup
+  predmetForm!: FormGroup;
 
-  constructor(private formBuilder: FormBuilder, 
+  constructor(private formBuilder: FormBuilder,
     private api: ApiService,
-    @Inject(MAT_DIALOG_DATA) public editData : any, 
+    @Inject(MAT_DIALOG_DATA) public data: any,
     private dialogRef: MatDialogRef<PredmetDialogComponent>,
-    private toastr: ToastrService) {}
+    private toastr: ToastrService) { }
 
-  ngOnInit(): void {
+  ngOnInit() {
+
+    this.options = this.data.options;
+    this.studijskiProgrami = this.data.studijskiProgrami;
+
     this.predmetForm = this.formBuilder.group({
-      oznaka : ['', Validators.required],
-      plan : ['', Validators.required],
+      oznaka: ['', Validators.required],
+      plan: ['', [Validators.required, Validators.min(1)]],
       naziv: ['', Validators.required],
-      godina: ['', Validators.required],
-      brojCasovaPred : ['', Validators.required],
-      studijskiProgram : ['', Validators.required],
+      godina: ['', [Validators.required, Validators.min(1)]],
+      brojCasovaPred: ['', [Validators.required, Validators.min(1)]],
+      studijskiProgram: ['', [Validators.required, autocompleteValidator(this.options)]],
       sifraStruke: [''],
-      brojCasovaAud: ['', Validators.required],
-      brojCasovaLab: ['', Validators.required],
-      brojCasovaRac: ['', Validators.required]
+      brojCasovaAud: ['', [Validators.required, Validators.min(0)]],
+      brojCasovaLab: ['', [Validators.required, Validators.min(0)]],
+      brojCasovaRac: ['', [Validators.required, Validators.min(0)]]
     })
 
-    if(this.editData) {
+    if (this.data.editData) {
       this.title = "Izmeni predmet";
       this.actionBtn = "Sačuvaj izmene";
-      this.predmetForm.controls['oznaka'].setValue(this.editData.oznaka);
-      this.predmetForm.controls['plan'].setValue(this.editData.plan);
-      this.predmetForm.controls['naziv'].setValue(this.editData.naziv);
-      this.predmetForm.controls['godina'].setValue(this.editData.godina);
-      this.predmetForm.controls['brojCasovaPred'].setValue(this.editData.brojCasovaPred);
-      this.predmetForm.controls['studijskiProgram'].setValue(this.editData.studijskiProgram);
-      this.predmetForm.controls['sifraStruke'].setValue(this.editData.sifraStruke);
-      this.predmetForm.controls['brojCasovaAud'].setValue(this.editData.brojCasovaAud);
-      this.predmetForm.controls['brojCasovaLab'].setValue(this.editData.brojCasovaLab);
-      this.predmetForm.controls['brojCasovaRac'].setValue(this.editData.brojCasovaRac);
+      this.predmetForm.controls['oznaka'].setValue(this.data.editData.oznaka);
+      this.predmetForm.controls['plan'].setValue(this.data.editData.plan);
+      this.predmetForm.controls['naziv'].setValue(this.data.editData.naziv);
+      this.predmetForm.controls['godina'].setValue(this.data.editData.godina);
+      this.predmetForm.controls['brojCasovaPred'].setValue(this.data.editData.brojCasovaPred);
+      this.predmetForm.controls['studijskiProgram'].setValue(this.data.editData.studijskiProgram);
+      this.predmetForm.controls['sifraStruke'].setValue(this.data.editData.sifraStruke);
+      this.predmetForm.controls['brojCasovaAud'].setValue(this.data.editData.brojCasovaAud);
+      this.predmetForm.controls['brojCasovaLab'].setValue(this.data.editData.brojCasovaLab);
+      this.predmetForm.controls['brojCasovaRac'].setValue(this.data.editData.brojCasovaRac);
     }
 
-
-    this.api.getAllStudijskiProgram()
-    .subscribe({
-      next: (res) => {
-        this.studijskiProgrami = res
-        res.forEach((element: StudijskiProgramDto) => {
-          this.options.push(element.oznaka + ' ' + element.naziv)
-        });
-      }
-    })
     this.filteredOptions = this.predmetForm.get('studijskiProgram')!.valueChanges.pipe(
       startWith(''),
       map(value => this._filter(value || '')),
@@ -78,44 +73,57 @@ export class PredmetDialogComponent implements OnInit {
   }
 
   add() {
-    if(!this.editData) {
-      if(this.predmetForm.valid) {
-        let studProg : string = this.predmetForm.value.studijskiProgram
+    if (!this.data.editData) {
+      if (this.predmetForm.valid) {
+        let studProg: string = this.predmetForm.value.studijskiProgram
         this.predmetForm.value.studijskiProgram = this.studijskiProgrami.filter(sp => sp.oznaka == studProg.split(' ')[0]).map(value => value.id)[0];
         this.api.post(this.predmetForm.value)
-        .subscribe({
-          next: () => {
-            this.toastr.success('Novi predmet je uspešno dodat!', 'Uspešno!');
-            this.predmetForm.reset();
-            this.dialogRef.close('save');
-          },
-          error:() => {
-            this.toastr.error('Došlo je do greške prilikom brisanja predmeta!', 'Greška!');
-          }
-        })
+          .subscribe({
+            next: () => {
+              this.toastr.success('Novi predmet je uspešno dodat!', 'Uspešno!');
+              this.predmetForm.reset();
+              this.dialogRef.close('save');
+            },
+            error: (message) => {
+              if (message.error.message) {
+                this.toastr.error('Predmet sa oznakom <b>' + this.predmetForm.value.oznaka
+                  + '</b> već postoji u studijskom programu <b>' + studProg
+                  + '</b> pod planom <b>' + this.predmetForm.value.plan + '</b>!',
+                  'Greška!', {
+                  enableHtml: true,
+                  closeButton: true,
+                  timeOut: 10000
+                });
+                console.log(message);
+              } else {
+                this.toastr.error('Došlo je do greške prilikom brisanja predmeta!', 'Greška!');
+              }
+
+            }
+          })
       }
     } else {
       this.update();
-    }   
+    }
   }
 
   update() {
-    if(!this.predmetForm.valid) {
+    if (!this.predmetForm.valid) {
       return
     }
-    let studProg : string = this.predmetForm.value.studijskiProgram
+    let studProg: string = this.predmetForm.value.studijskiProgram
     this.predmetForm.value.studijskiProgram = this.studijskiProgrami.filter(sp => sp.oznaka == studProg.split(' ')[0]).map(value => value.id)[0];
-    this.api.put(this.predmetForm.value, this.editData.id)
-    .subscribe({
-      next: () => {
-        this.toastr.success('Predmet je uspešno izmenjen!', 'Uspešno!');
-        this.predmetForm.reset();
-        this.dialogRef.close('update');
-      },
-      error: () => {
-        this.toastr.error('Došlo je do greške prilikom izmene predmeta!', 'Greška!');
-      }
-    })
+    this.api.put(this.predmetForm.value, this.data.editData.id)
+      .subscribe({
+        next: () => {
+          this.toastr.success('Predmet je uspešno izmenjen!', 'Uspešno!');
+          this.predmetForm.reset();
+          this.dialogRef.close('update');
+        },
+        error: () => {
+          this.toastr.error('Došlo je do greške prilikom izmene predmeta!', 'Greška!');
+        }
+      })
   }
 
 }

@@ -8,6 +8,7 @@ import { PredmetDialogComponent } from '../predmet-dialog/predmet-dialog.compone
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 import { ToastrService } from 'ngx-toastr';
 import { RealizacijaService } from '../services/realizacija.service';
+import { StudijskiProgramDto } from '../dtos/StudijskiProgramDto';
 
 @Component({
   selector: 'app-predmeti',
@@ -25,6 +26,8 @@ export class PredmetiComponent implements OnInit {
     private toastr: ToastrService) { }
 
   dataSource = new MatTableDataSource<PredmetDto>();
+  studijskiProgrami: StudijskiProgramDto[] = [];
+  options: string[] = [];
   @ViewChild(MatPaginator, { static: true }) paginator!: MatPaginator;
 
   oznaka = '';
@@ -38,6 +41,7 @@ export class PredmetiComponent implements OnInit {
   ngOnInit() {
     this.dataSource.paginator = this.paginator;
     this.getAll(0, this.pageSize);
+    this.getStudijskiProgramOptions();
   }
 
   getAll(page: number, size: number) {
@@ -48,13 +52,33 @@ export class PredmetiComponent implements OnInit {
     });
   }
 
+  getStudijskiProgramOptions() {
+    this.api.getAllStudijskiProgram()
+      .subscribe({
+        next: (res) => {
+          this.studijskiProgrami = res;
+          res.forEach((element: StudijskiProgramDto) => {
+            this.options.push(element.oznaka + ' ' + element.naziv);
+          });
+        }
+      })
+  }
+
   openDialog(): void {
     this.dialog.open(PredmetDialogComponent, {
-      width: '40%'
+      width: '40%',
+      data: {
+        options: this.options,
+        studijskiProgrami: this.studijskiProgrami
+      }
     }).afterClosed().subscribe((val) => {
       if (val == 'save') {
         console.log('The dialog was closed');
-        this.getAll(this.pageIndex, this.pageSize);
+        if(this.oznaka || this.naziv || this.studijskiProgram) {
+          this.applyFilter(this.pageIndex, this.pageSize);
+        } else {
+          this.getAll(this.pageIndex, this.pageSize);
+        }
       }
     });
   }
@@ -62,11 +86,19 @@ export class PredmetiComponent implements OnInit {
   edit(element: any) {
     this.dialog.open(PredmetDialogComponent, {
       width: '40%',
-      data: element
+      data: {
+        editData: element,
+        options: this.options,
+        studijskiProgrami: this.studijskiProgrami
+      }
     }).afterClosed().subscribe((val) => {
       if (val == 'update') {
         console.log('The dialog was closed');
-        this.getAll(this.pageIndex, this.pageSize);
+        if(this.oznaka || this.naziv || this.studijskiProgram) {
+          this.applyFilter(this.pageIndex, this.pageSize);
+        } else {
+          this.getAll(this.pageIndex, this.pageSize);
+        }
       }
     });
   }
@@ -88,7 +120,11 @@ export class PredmetiComponent implements OnInit {
       .subscribe({
         next: () => {
           this.toastr.success('Predmet je uspešno obrisan!', 'Uspešno!');
-          this.getAll(this.pageIndex, this.pageSize)
+          if(this.oznaka || this.naziv || this.studijskiProgram) {
+            this.applyFilter(this.pageIndex, this.pageSize);
+          } else {
+            this.getAll(this.pageIndex, this.pageSize);
+          }
         },
         error: () => {
           this.toastr.error('Greška prilikom brisanja predmeta!', 'Greška!');

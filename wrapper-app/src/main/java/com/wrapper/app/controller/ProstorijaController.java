@@ -9,6 +9,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.regex.Pattern;
+
 @RestController
 @RequestMapping("api/v1/prostorije")
 public class ProstorijaController {
@@ -39,7 +41,7 @@ public class ProstorijaController {
                                            @RequestParam String tip,
                                            @RequestParam String kapacitet,
                                            @RequestParam String orgJed) {
-        ProstorijaSearchDto searchDto = new ProstorijaSearchDto(oznaka.trim(), tip.trim(), kapacitet, orgJed);
+        ProstorijaSearchDto searchDto = new ProstorijaSearchDto(oznaka.trim(), tip, kapacitet, orgJed.trim());
         return service.search(searchDto, PageRequest.of(page, size)).map(p -> modelMapper.map(p, ProstorijaResponseDto.class));
     }
 
