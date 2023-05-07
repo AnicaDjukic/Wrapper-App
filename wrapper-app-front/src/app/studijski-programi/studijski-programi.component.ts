@@ -22,7 +22,7 @@ export class StudijskiProgramiComponent {
   paginator!: MatPaginator;
 
   ngOnInit() {
-    this.getAll()
+    this.getAll();
   }
 
   constructor(private api: StudijskiProgramService,
@@ -49,8 +49,11 @@ export class StudijskiProgramiComponent {
       width: '30%'
     }).afterClosed().subscribe((val) => {
       if(val == 'save') {
-        console.log('The dialog was closed');
-        this.getAll();
+        if(this.oznaka || this.naziv || this.stepenStudija != 'SVE') {
+          this.applyFilter();
+        } else {
+          this.getAll();
+        }
       }
     });
   }
@@ -61,8 +64,11 @@ export class StudijskiProgramiComponent {
       data: element
     }).afterClosed().subscribe((val) => {
       if(val == 'update') {
-        console.log('The dialog was closed');
-        this.getAll();
+        if(this.oznaka || this.naziv || this.stepenStudija != 'SVE') {
+          this.applyFilter();
+        } else {
+          this.getAll();
+        }
       }
     });
   }
@@ -83,7 +89,11 @@ export class StudijskiProgramiComponent {
     .subscribe({
       next: () => {
         this.toastr.success('Studijski program je uspešno obrisan!', 'Uspešno!');
-        this.getAll()
+        if(this.oznaka || this.naziv || this.stepenStudija != 'SVE') {
+          this.applyFilter();
+        } else {
+          this.getAll();
+        }
       },
       error: () => {
         this.toastr.error('Greška prilikom brisanja studijskog programa!','Greška!');

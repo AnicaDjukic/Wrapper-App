@@ -2,11 +2,13 @@ package com.wrapper.app.service;
 
 import com.wrapper.app.domain.StudijskiProgram;
 import com.wrapper.app.dto.StudijskiProgramSearchDto;
+import com.wrapper.app.exception.AlreadyExistsException;
 import com.wrapper.app.exception.NotFoundException;
 import com.wrapper.app.repository.StudijskiProgramRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -55,6 +57,9 @@ public class StudijskiProgramService {
     }
 
     public StudijskiProgram create(StudijskiProgram studijskiProgram) {
+        Optional<StudijskiProgram> existing = repository.findByOznaka(studijskiProgram.getOznaka());
+        if(existing.isPresent())
+            throw new AlreadyExistsException(StudijskiProgram.class.getSimpleName());
         studijskiProgram.setId(UUID.randomUUID().toString());
         return repository.save(studijskiProgram);
     }
@@ -62,6 +67,9 @@ public class StudijskiProgramService {
     public StudijskiProgram update(String id, StudijskiProgram studijskiProgram) {
         if(!repository.existsById(id))
             throw new NotFoundException(StudijskiProgram.class.getSimpleName());
+        Optional<StudijskiProgram> existing = repository.findByOznaka(studijskiProgram.getOznaka());
+        if(existing.isPresent() && !existing.get().getId().equals(id))
+            throw new AlreadyExistsException(StudijskiProgram.class.getSimpleName());
         studijskiProgram.setId(id);
         return repository.save(studijskiProgram);
     }
