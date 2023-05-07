@@ -5,6 +5,7 @@ import com.wrapper.app.dto.StudijskiProgramRequestDto;
 import com.wrapper.app.dto.StudijskiProgramResponseDto;
 import com.wrapper.app.dto.StudijskiProgramSearchDto;
 import com.wrapper.app.service.StudijskiProgramService;
+import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -57,15 +58,15 @@ public class StudijskiProgramController {
 
     @CrossOrigin(origins = "*")
     @PostMapping
-    @ResponseStatus(HttpStatus.OK)
-    public StudijskiProgramResponseDto create(@RequestBody StudijskiProgramRequestDto dto) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public StudijskiProgramResponseDto create(@RequestBody @Valid StudijskiProgramRequestDto dto) {
         StudijskiProgram saved =  service.create(modelMapper.map(dto, StudijskiProgram.class));
         return modelMapper.map(saved, StudijskiProgramResponseDto.class);
     }
 
     @CrossOrigin(origins = "*")
     @PutMapping("{id}")
-    public StudijskiProgramResponseDto update(@PathVariable String  id, @RequestBody StudijskiProgramRequestDto dto) {
+    public StudijskiProgramResponseDto update(@PathVariable String id, @RequestBody @Valid StudijskiProgramRequestDto dto) {
         StudijskiProgram updated = service.update(id, modelMapper.map(dto, StudijskiProgram.class));
         return modelMapper.map(updated, StudijskiProgramResponseDto.class);
     }

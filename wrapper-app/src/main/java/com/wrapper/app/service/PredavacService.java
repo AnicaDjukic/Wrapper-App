@@ -88,7 +88,7 @@ public class PredavacService {
             throw new AlreadyExistsException(Predavac.class.getSimpleName());
     }
 
-    public Predavac update(Predavac predavac, String id) {
+    public Predavac update(String id, Predavac predavac) {
         if (!repository.existsById(id))
             throw new NotFoundException(Predavac.class.getSimpleName());
         validate(predavac, id);

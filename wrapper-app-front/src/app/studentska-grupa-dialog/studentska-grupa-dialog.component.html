@@ -2,24 +2,41 @@
     <h1 mat-dialog-title>{{title}}</h1>
     <div mat-dialog-content>
         <form class="example-form" [formGroup]="studentskaGrupaForm">
-            <mat-form-field class="example-full-width">
+            <mat-form-field *ngIf="data.editData" class="example-full-width">
                 <mat-label>Oznaka</mat-label>
                 <input formControlName="oznaka" matInput placeholder="Unesite oznaku grupe..." type="number">
+                <mat-error *ngIf="studentskaGrupaForm.get('oznaka')?.hasError('min')">
+                    Oznaka mora biti broj veći od 0
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field *ngIf="!data.editData" class="example-full-width">
+                <mat-label>Broj grupa koje želite da dodate</mat-label>
+                <input formControlName="brojStudentskihGrupa" matInput placeholder="Unesite koliko grupa želite da dodate..." type="number">
+                <mat-error *ngIf="studentskaGrupaForm.get('brojStudentskihGrupa')?.hasError('min')">
+                    Broj grupa mora biti veći od 0
+                </mat-error>
             </mat-form-field>
 
             <mat-form-field class="example-full-width">
                 <mat-label>Godina</mat-label>
                 <input formControlName="godina" matInput placeholder="Unesite godinu..." type="number">
+                <mat-error *ngIf="studentskaGrupaForm.get('godina')?.hasError('min')">
+                    Godina mora biti veća od 0
+                </mat-error>
             </mat-form-field>
 
-            <mat-form-field class="example-full-width">
+            <!-- <mat-form-field class="example-full-width">
                 <mat-label>Semestar</mat-label>
                 <input formControlName="semestar" matInput placeholder="Unesite semestar...">
-            </mat-form-field>
+            </mat-form-field> -->
 
             <mat-form-field class="example-full-width">
                 <mat-label>Broj studenata</mat-label>
                 <input formControlName="brojStudenata" matInput placeholder="Unesite broj studenata..." type="number">
+                <mat-error *ngIf="studentskaGrupaForm.get('brojStudenata')?.hasError('min')">
+                    Broj studenata mora biti veći od 0
+                </mat-error>
             </mat-form-field>
 
             <mat-form-field class="example-full-width" appearance="fill">
@@ -34,12 +51,15 @@
                     {{option}}
                   </mat-option>
                 </mat-autocomplete>
+                <mat-error *ngIf="studentskaGrupaForm.get('studijskiProgram')?.hasError('invalidOption')">
+                    Morate izabrati studijski program
+                </mat-error>
               </mat-form-field>
         </form>
     </div>
 
     <div mat-dialog-actions [align]="'end'">
         <button mat-raised-button color="warn" mat-dialog-close>Zatvori</button>
-        <button mat-raised-button color="primary" (click)="add()">{{actionBtn}}</button>
+        <button mat-raised-button color="primary" (click)="add()" [disabled]="!studentskaGrupaForm.valid">{{actionBtn}}</button>
     </div>
 </div>

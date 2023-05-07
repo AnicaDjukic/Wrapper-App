@@ -66,7 +66,7 @@ public class PredmetController {
 
     @CrossOrigin(origins = "*")
     @PostMapping
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.CREATED)
     public PredmetResponseDto create(@RequestBody @Valid PredmetRequestDto dto) {
         Predmet saved = service.create(modelMapper.map(dto, Predmet.class));
         return modelMapper.map(saved, PredmetResponseDto.class);
@@ -74,7 +74,7 @@ public class PredmetController {
 
     @CrossOrigin(origins = "*")
     @PutMapping("{id}")
-    public PredmetResponseDto update(@PathVariable String  id, @RequestBody @Valid PredmetRequestDto dto) {
+    public PredmetResponseDto update(@PathVariable String id, @RequestBody @Valid PredmetRequestDto dto) {
         Predmet updated = service.update(id, modelMapper.map(dto, Predmet.class));
         return modelMapper.map(updated, PredmetResponseDto.class);
     }

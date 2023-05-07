@@ -56,7 +56,7 @@ public class PredavacController {
 
     @CrossOrigin(origins = "*")
     @PostMapping
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.CREATED)
     public PredavacResponseDto create(@RequestBody @Valid PredavacRequestDto dto) {
         Predavac saved =  service.create(modelMapper.map(dto, Predavac.class));
         return modelMapper.map(saved, PredavacResponseDto.class);
@@ -64,8 +64,8 @@ public class PredavacController {
 
     @CrossOrigin(origins = "*")
     @PutMapping("{id}")
-    public PredavacResponseDto update(@PathVariable String  id, @RequestBody @Valid PredavacRequestDto dto) {
-        Predavac updated = service.update(modelMapper.map(dto, Predavac.class), id);
+    public PredavacResponseDto update(@PathVariable String id, @RequestBody @Valid PredavacRequestDto dto) {
+        Predavac updated = service.update(id, modelMapper.map(dto, Predavac.class));
         return modelMapper.map(updated, PredavacResponseDto.class);
     }
 

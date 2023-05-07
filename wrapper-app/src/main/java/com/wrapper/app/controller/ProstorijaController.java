@@ -54,7 +54,7 @@ public class ProstorijaController {
 
     @CrossOrigin(origins = "*")
     @PostMapping
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.CREATED)
     public ProstorijaResponseDto create(@RequestBody @Valid ProstorijaRequestDto dto) {
         Prostorija saved =  service.create(modelMapper.map(dto, Prostorija.class));
         return modelMapper.map(saved, ProstorijaResponseDto.class);
@@ -62,8 +62,8 @@ public class ProstorijaController {
 
     @CrossOrigin(origins = "*")
     @PutMapping("{id}")
-    public ProstorijaResponseDto update(@PathVariable String  id, @RequestBody @Valid ProstorijaRequestDto dto) {
-        Prostorija updated = service.update(modelMapper.map(dto, Prostorija.class), id);
+    public ProstorijaResponseDto update(@PathVariable String id, @RequestBody @Valid ProstorijaRequestDto dto) {
+        Prostorija updated = service.update(id, modelMapper.map(dto, Prostorija.class));
         return modelMapper.map(updated, ProstorijaResponseDto.class);
     }
 

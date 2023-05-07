@@ -5,6 +5,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface StudentskaGrupaRepository extends MongoRepository<StudentskaGrupa, String> {
 
@@ -13,4 +14,8 @@ public interface StudentskaGrupaRepository extends MongoRepository<StudentskaGru
             "{ $expr: { $regexMatch: { input: { $toString: '$brojStudenata' }, regex: { $cond: [ { $eq: [ '?2', '' ] }, '.*', '^?2$' ] }, options: 'i' } } }," +
             " {'studijskiProgram': ?3}]}")
     List<StudentskaGrupa> search(String oznaka, String godina, String brojStudenata, String studProgId);
+
+    List<StudentskaGrupa> findAllByGodinaAndSemestarAndStudijskiProgram(int godina, String semestar, String studijskiProgram);
+
+    Optional<StudentskaGrupa> findByOznakaAndGodinaAndSemestarAndStudijskiProgram(int oznaka, int godina, String semestar, String studijskiProgram);
 }

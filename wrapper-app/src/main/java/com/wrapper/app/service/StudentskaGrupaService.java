@@ -2,6 +2,8 @@ package com.wrapper.app.service;
 
 import com.wrapper.app.domain.*;
 import com.wrapper.app.dto.StudentskaGrupaSearchDto;
+import com.wrapper.app.dto.StudentskeGrupeRequestDto;
+import com.wrapper.app.exception.AlreadyExistsException;
 import com.wrapper.app.exception.NotFoundException;
 import com.wrapper.app.repository.StudentskaGrupaRepository;
 import org.springframework.data.domain.Page;
@@ -9,9 +11,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class StudentskaGrupaService {
@@ -60,16 +60,48 @@ public class StudentskaGrupaService {
         return repository.findById(id).orElseThrow(() -> new NotFoundException(StudentskaGrupa.class.getSimpleName()));
     }
 
-    public StudentskaGrupa create(StudentskaGrupa studentskaGrupa) {
-        // TODO: do checks
-        studentskaGrupa.setId(UUID.randomUUID().toString());
-        return repository.save(studentskaGrupa);
+    public List<StudentskaGrupa> create(StudentskeGrupeRequestDto studentskeGrupe) {
+        if(!studijskiProgramService.existsById(studentskeGrupe.getStudijskiProgram()))
+            throw new NotFoundException(StudijskiProgram.class.getSimpleName());
+        int maxOznaka = getMaxOznaka(studentskeGrupe);
+        return generateNewStudentskeGrupe(studentskeGrupe, maxOznaka);
+    }
+
+    private int getMaxOznaka(StudentskeGrupeRequestDto studentskeGrupe) {
+        List<StudentskaGrupa> existing = repository.findAllByGodinaAndSemestarAndStudijskiProgram(studentskeGrupe.getGodina(),
+                studentskeGrupe.getSemestar(),
+                studentskeGrupe.getStudijskiProgram());
+        Optional<StudentskaGrupa> grupaWithMaxOznaka = existing.stream().max(Comparator.comparing(StudentskaGrupa::getOznaka));
+        int maxOznaka = 1;
+        if(grupaWithMaxOznaka.isPresent()) {
+            maxOznaka = grupaWithMaxOznaka.get().getOznaka() + 1;
+        }
+        return maxOznaka;
+    }
+
+    private List<StudentskaGrupa> generateNewStudentskeGrupe(StudentskeGrupeRequestDto studentskeGrupe, int maxOznaka) {
+        List<StudentskaGrupa> results = new ArrayList<>();
+        for(int i = 0; i < studentskeGrupe.getBrojStudentskihGrupa(); i++) {
+            StudentskaGrupa studentskaGrupa = new StudentskaGrupa(
+                    UUID.randomUUID().toString(),
+                    maxOznaka + i,
+                    studentskeGrupe.getGodina(),
+                    studentskeGrupe.getSemestar(),
+                    studentskeGrupe.getBrojStudenata(),
+                    studentskeGrupe.getStudijskiProgram());
+            StudentskaGrupa saved = repository.save(studentskaGrupa);
+            results.add(saved);
+        }
+        return results;
     }
 
     public StudentskaGrupa update(String id, StudentskaGrupa studentskaGrupa) {
-        // TODO: do checks
         if(!repository.existsById(id))
             throw new NotFoundException(StudentskaGrupa.class.getSimpleName());
+        Optional<StudentskaGrupa> existing = repository.findByOznakaAndGodinaAndSemestarAndStudijskiProgram(studentskaGrupa.getOznaka(),
+                studentskaGrupa.getGodina(), studentskaGrupa.getSemestar(), studentskaGrupa.getStudijskiProgram());
+        if(existing.isPresent() && !existing.get().getId().equals(id))
+            throw new AlreadyExistsException(StudentskaGrupa.class.getSimpleName());
         studentskaGrupa.setId(id);
         return repository.save(studentskaGrupa);
     }

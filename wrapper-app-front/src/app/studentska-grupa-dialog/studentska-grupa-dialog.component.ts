@@ -1,10 +1,11 @@
 import { Component, Inject } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { map, Observable, startWith } from 'rxjs';
 import { StudijskiProgramDto } from '../dtos/StudijskiProgramDto';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { StudentskaGrupaService } from '../services/studentska-grupa.service';
-import { StudijskiProgramService } from '../services/studijski-program.service';
+import { autocompleteValidator } from '../validators/autocomplete-validator';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-studentska-grupa-dialog',
@@ -13,7 +14,7 @@ import { StudijskiProgramService } from '../services/studijski-program.service';
 })
 export class StudentskaGrupaDialogComponent {
   
-  title: string = "Nova studentska grupa"
+  title: string = "Dodavanje novih studentskih grupa"
   actionBtn: string = "Sačuvaj"
   studijskiProgrami: StudijskiProgramDto[] = [];
   options: string[] = [];
@@ -22,39 +23,35 @@ export class StudentskaGrupaDialogComponent {
 
   constructor(private formBuilder: FormBuilder, 
     private api: StudentskaGrupaService,
-    private studijskiProgramApi: StudijskiProgramService,
-    @Inject(MAT_DIALOG_DATA) public editData : any, 
-    private dialogRef: MatDialogRef<StudentskaGrupaDialogComponent>) {}
+    @Inject(MAT_DIALOG_DATA) public data : any, 
+    private dialogRef: MatDialogRef<StudentskaGrupaDialogComponent>,
+    private toastr: ToastrService) {}
 
   ngOnInit(): void {
+
+    this.options = this.data.options;
+    this.studijskiProgrami = this.data.studijskiProgrami;
+
     this.studentskaGrupaForm = this.formBuilder.group({
-      oznaka : ['', Validators.required],
-      godina : ['', Validators.required],
-      semestar: ['', Validators.required],
-      brojStudenata: ['', Validators.required],
-      studijskiProgram: ['', Validators.required]
+      godina : ['', [Validators.required, Validators.min(1)]],
+      //semestar: ['', Validators.required],
+      brojStudenata: ['', [Validators.required, Validators.min(1)]],
+      studijskiProgram: ['', [Validators.required, autocompleteValidator(this.options)]]
     })
 
-    if(this.editData) {
+    if(this.data.editData) {
       this.title = "Izmeni studentsku grupu";
       this.actionBtn = "Sačuvaj izmene";
-      this.studentskaGrupaForm.controls['oznaka'].setValue(this.editData.oznaka);
-      this.studentskaGrupaForm.controls['godina'].setValue(this.editData.godina);
-      this.studentskaGrupaForm.controls['semestar'].setValue(this.editData.semestar);
-      this.studentskaGrupaForm.controls['brojStudenata'].setValue(this.editData.brojStudenata);
-      this.studentskaGrupaForm.controls['studijskiProgram'].setValue(this.editData.studijskiProgram);
+      this.studentskaGrupaForm.addControl('oznaka', new FormControl('', [Validators.required, Validators.min(1)]));
+      this.studentskaGrupaForm.controls['oznaka'].setValue(this.data.editData.oznaka);
+      this.studentskaGrupaForm.controls['godina'].setValue(this.data.editData.godina);
+      //this.studentskaGrupaForm.controls['semestar'].setValue(this.editData.semestar);
+      this.studentskaGrupaForm.controls['brojStudenata'].setValue(this.data.editData.brojStudenata);
+      this.studentskaGrupaForm.controls['studijskiProgram'].setValue(this.data.editData.studijskiProgram);
+    } else {
+      this.studentskaGrupaForm.addControl('brojStudentskihGrupa', new FormControl('', [Validators.required, Validators.min(1)]));
     }
 
-
-    this.studijskiProgramApi.getAll()
-    .subscribe({
-      next: (res) => {
-        this.studijskiProgrami = res
-        res.forEach((element: StudijskiProgramDto) => {
-          this.options.push(element.oznaka + ' ' + element.naziv)
-        });
-      }
-    })
     this.filteredOptions = this.studentskaGrupaForm.get('studijskiProgram')!.valueChanges.pipe(
       startWith(''),
       map(value => this._filter(value || '')),
@@ -63,24 +60,24 @@ export class StudentskaGrupaDialogComponent {
 
   private _filter(value: string): string[] {
     const filterValue = value.toLowerCase();
-
     return this.options.filter(option => option.toLowerCase().includes(filterValue));
   }
 
   add() {
-    if(!this.editData) {
+    if(!this.data.editData) {
       if(this.studentskaGrupaForm.valid) {
         let studProg : string = this.studentskaGrupaForm.value.studijskiProgram
         this.studentskaGrupaForm.value.studijskiProgram = this.studijskiProgrami.filter(sp => sp.oznaka == studProg.split(' ')[0]).map(value => value.id)[0];
+        this.studentskaGrupaForm.value.semestar = 'Z';
         this.api.post(this.studentskaGrupaForm.value)
         .subscribe({
           next: () => {
-            alert("Nova studentska grupa je uspešno dodata!");
+            this.toastr.success('Nove studentske grupe su uspešno dodate!', 'Uspešno!');
             this.studentskaGrupaForm.reset();
             this.dialogRef.close('save');
           },
           error:() => {
-            alert("Greška")
+            this.toastr.error('Došlo je do greške prilikom dodavanja novih studentskih grupa!', 'Greška!');
           }
         })
       }
@@ -92,17 +89,31 @@ export class StudentskaGrupaDialogComponent {
     if(!this.studentskaGrupaForm.valid) {
       return
     }
-    let studProg : string = this.studentskaGrupaForm.value.studijskiProgram
+    let studProg : string = this.studentskaGrupaForm.value.studijskiProgram;
     this.studentskaGrupaForm.value.studijskiProgram = this.studijskiProgrami.filter(sp => sp.oznaka == studProg.split(' ')[0]).map(value => value.id)[0];
-    this.api.put(this.studentskaGrupaForm.value, this.editData.id)
+    this.studentskaGrupaForm.value.semestar = 'Z';
+    this.api.put(this.studentskaGrupaForm.value, this.data.editData.id)
     .subscribe({
       next: () => {
-        alert("Studentska grupa je uspešno izmenjena!");
+        this.toastr.success('Studentska grupa je uspešno izmenjena!', 'Uspešno!');
         this.studentskaGrupaForm.reset();
         this.dialogRef.close('update');
       },
-      error: () => {
-        alert("Greška!");
+      error: (message) => {
+        if (message.error.message) {
+          this.toastr.error('Studentska grupa sa oznakom <b>' + this.studentskaGrupaForm.value.oznaka + '</b>'
+          + ' na <b>' + this.studentskaGrupaForm.value.godina + '.</b> godini u <b>' 
+          + 'zimskom' +'</b> semestru' 
+          +' na studijskom programu <b>' + studProg + '</b> već postoji!',
+            'Greška!', {
+            enableHtml: true,
+            closeButton: true,
+            timeOut: 10000
+          });
+          console.log(message);
+        } else {
+          this.toastr.error('Došlo je do greške prilikom izmene prostorije!', 'Greška!');
+        }
       }
     })
   }

@@ -7,6 +7,8 @@ import { StudentskaGrupaService } from '../services/studentska-grupa.service';
 import { StudentskaGrupaDialogComponent } from '../studentska-grupa-dialog/studentska-grupa-dialog.component';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 import { ToastrService } from 'ngx-toastr';
+import { StudijskiProgramService } from '../services/studijski-program.service';
+import { StudijskiProgramDto } from '../dtos/StudijskiProgramDto';
 
 @Component({
   selector: 'app-studentske-grupe',
@@ -15,8 +17,10 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class StudentskeGrupeComponent {
   displayedColumns: string[] = ['oznaka', 'godina', 'brojStudenata', 'studijskiProgram', 'actions'];
-  
+
   dataSource = new MatTableDataSource<StudentskaGrupaDto>();
+  studijskiProgrami: StudijskiProgramDto[] = [];
+  options: string[] = [];
   @ViewChild(MatPaginator)
   paginator!: MatPaginator;
 
@@ -33,55 +37,72 @@ export class StudentskeGrupeComponent {
   ngOnInit() {
     this.dataSource.paginator = this.paginator;
     this.getAll(0, this.pageSize);
+    this.getStudijskiProgramiOptions();
   }
 
-  constructor(private api: StudentskaGrupaService, public dialog: MatDialog, private toastr: ToastrService) {}
+  constructor(private api: StudentskaGrupaService,
+    private studijskiProgramApi: StudijskiProgramService, 
+    public dialog: MatDialog, 
+    private toastr: ToastrService) { }
 
   getAll(page: number, size: number) {
     this.api.getAll(page, size)
-    .subscribe({
-      next:(res) => {
-        this.dataSource = new MatTableDataSource(res.content);
-      this.totalElements = res.totalElements;
-      this.pageIndex = res.pageable.pageNumber;
-      }
-    })
+      .subscribe({
+        next: (res) => {
+          this.dataSource = new MatTableDataSource(res.content);
+          this.totalElements = res.totalElements;
+          this.pageIndex = res.pageable.pageNumber;
+        }
+      })
+  }
+
+  getStudijskiProgramiOptions() {
+    this.studijskiProgramApi.getAll()
+      .subscribe({
+        next: (res) => {
+          this.studijskiProgrami = res;
+          res.forEach((element: StudijskiProgramDto) => {
+            this.options.push(element.oznaka + ' ' + element.naziv);
+          });
+        }
+      });
   }
 
   openDialog(): void {
     this.dialog.open(StudentskaGrupaDialogComponent, {
-      width: '30%'
+      width: '30%',
+      data: {
+        options: this.options,
+        studijskiProgrami: this.studijskiProgrami
+      }
     }).afterClosed().subscribe((val) => {
-      if(val == 'save') {
-        console.log('The dialog was closed');
-        this.getAll(0, this.pageSize);
+      if (val == 'save') {
+        if(this.oznaka || this.godina != 'SVE' || this.brojStudenata || this.studijskiProgram) {
+          this.applyFilter(this.pageIndex, this.pageSize);
+        } else {
+          this.getAll(this.pageIndex, this.pageSize);
+        }
       }
     });
   }
 
-  edit(element : any) {
+  edit(element: any) {
     this.dialog.open(StudentskaGrupaDialogComponent, {
       width: '30%',
-      data: element
+      data: {
+        editData: element,
+        options: this.options,
+        studijskiProgrami: this.studijskiProgrami
+      }
     }).afterClosed().subscribe((val) => {
-      if(val == 'update') {
-        console.log('The dialog was closed');
-        this.getAll(0, this.pageSize);
+      if (val == 'update') {
+        if(this.oznaka || this.godina != 'SVE' || this.brojStudenata || this.studijskiProgram) {
+          this.applyFilter(this.pageIndex, this.pageSize);
+        } else {
+          this.getAll(this.pageIndex, this.pageSize);
+        }
       }
     });
-  }
-  
-  delete(id : string) {
-    this.api.delete(id)
-    .subscribe({
-      next: () => {
-        this.toastr.success('Studentska grupa je uspešno obrisana!', 'Uspešno!');
-        this.getAll(0, this.pageSize)
-      },
-      error: () => {
-        alert("Greška!");
-      }
-    })
   }
 
   openConfirmationDialog(element: any) {
@@ -90,15 +111,32 @@ export class StudentskeGrupeComponent {
       data: element
     }).afterClosed().subscribe((val) => {
       console.log(val);
-      if(val) {
+      if (val) {
         this.delete(element.id);
       }
     });
   }
 
+  delete(id: string) {
+    this.api.delete(id)
+      .subscribe({
+        next: () => {
+          this.toastr.success('Studentska grupa je uspešno obrisana!', 'Uspešno!');
+          if(this.oznaka || this.godina != 'SVE' || this.brojStudenata || this.studijskiProgram) {
+            this.applyFilter(this.pageIndex, this.pageSize);
+          } else {
+            this.getAll(this.pageIndex, this.pageSize);
+          }
+        },
+        error: () => {
+          this.toastr.error('Greška prilikom brisanja studentske grupe!', 'Greška!');
+        }
+      })
+  }
+
   onInputChange(event: Event) {
     const inputValue = (event.target as HTMLInputElement)?.value || '';
-    if(inputValue != '') {
+    if (inputValue != '') {
       this.brojStudenata = Number(inputValue);
     }
     this.brojStudenataStr = inputValue;

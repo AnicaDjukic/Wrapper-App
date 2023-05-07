@@ -4,13 +4,16 @@ import com.wrapper.app.domain.StudentskaGrupa;
 import com.wrapper.app.dto.StudentskaGrupaRequestDto;
 import com.wrapper.app.dto.StudentskaGrupaResponseDto;
 import com.wrapper.app.dto.StudentskaGrupaSearchDto;
+import com.wrapper.app.dto.StudentskeGrupeRequestDto;
 import com.wrapper.app.service.StudentskaGrupaService;
+import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.regex.Pattern;
 
 @RestController
@@ -44,7 +47,7 @@ public class StudentskaGrupaController {
                                               @RequestParam String brojStudenata,
                                               @RequestParam String studProg) {
         StudentskaGrupaSearchDto searchDto = new StudentskaGrupaSearchDto(Pattern.quote(oznaka.trim()), godina, brojStudenata, Pattern.quote(studProg.trim()));
-        return service.search(searchDto, PageRequest.of(page, size)).map(p -> modelMapper.map(p, StudentskaGrupaResponseDto.class));
+        return service.search(searchDto, PageRequest.of(page, size)).map(s -> modelMapper.map(s, StudentskaGrupaResponseDto.class));
     }
 
     @GetMapping("{id}")
@@ -55,15 +58,15 @@ public class StudentskaGrupaController {
 
     @CrossOrigin(origins = "*")
     @PostMapping
-    @ResponseStatus(HttpStatus.OK)
-    public StudentskaGrupaResponseDto create(@RequestBody StudentskaGrupaRequestDto dto) {
-        StudentskaGrupa saved =  service.create(modelMapper.map(dto, StudentskaGrupa.class));
-        return modelMapper.map(saved, StudentskaGrupaResponseDto.class);
+    @ResponseStatus(HttpStatus.CREATED)
+    public List<StudentskaGrupaResponseDto> create(@RequestBody StudentskeGrupeRequestDto dto) {
+        List<StudentskaGrupa> saved =  service.create(dto);
+        return saved.stream().map(s -> modelMapper.map(s, StudentskaGrupaResponseDto.class)).toList();
     }
 
     @CrossOrigin(origins = "*")
     @PutMapping("{id}")
-    public StudentskaGrupaResponseDto update(@PathVariable String  id, @RequestBody StudentskaGrupaRequestDto dto) {
+    public StudentskaGrupaResponseDto update(@PathVariable String id, @RequestBody @Valid StudentskaGrupaRequestDto dto) {
         StudentskaGrupa updated = service.update(id, modelMapper.map(dto, StudentskaGrupa.class));
         return modelMapper.map(updated, StudentskaGrupaResponseDto.class);
     }

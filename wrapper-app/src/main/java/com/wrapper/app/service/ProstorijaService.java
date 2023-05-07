@@ -111,13 +111,13 @@ public class ProstorijaService {
             throw new AlreadyExistsException(Prostorija.class.getSimpleName());
     }
 
-    public Prostorija update(Prostorija prostorija, String id) {
-        validate(prostorija, id);
+    public Prostorija update(String id, Prostorija prostorija) {
+        validate(id, prostorija);
         prostorija.setId(id);
         return repository.save(prostorija);
     }
 
-    private void validate(Prostorija prostorija, String id) {
+    private void validate(String id, Prostorija prostorija) {
         if (!repository.existsById(id))
             throw new NotFoundException(Prostorija.class.getSimpleName());
         prostorija.getOrgJedinica().forEach(orgJed -> {

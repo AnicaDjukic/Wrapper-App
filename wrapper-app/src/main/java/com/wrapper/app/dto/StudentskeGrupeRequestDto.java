@@ -11,21 +11,27 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public class StudijskiProgramRequestDto {
+public class StudentskeGrupeRequestDto {
 
     @Min(1)
-    @Max(2)
-    private int stepen;     // TODO: moguce vrednosti: 1, 2
+    private int brojStudentskihGrupa;
 
+    // TODO: moguce vrednosti: 1, 2, 3, 4, 5 i 6
     @Min(1)
-    @Max(5)
-    private int nivo;       // TODO: moguce vrednosti: 1, 2, 5
+    @Max(6)
+    private int godina;
 
+    // TODO: moguce vrednosti: Z, L
     @NotNull
     @NotBlank
-    private String oznaka;  // TODO: ne sme biti null ili prazan string, mozda i jedinstveno
+    private String semestar;
 
+    // TODO: veci od nule, jel treba gledati neki max
+    @Min(1)
+    private int brojStudenata;
+
+    // TODO: ne sme biti null ili prazan string
     @NotNull
     @NotBlank
-    private String naziv;   // TODO: ne sme biti null ili prazan string
+    private String studijskiProgram;
 }
