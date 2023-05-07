@@ -4,6 +4,7 @@ import com.wrapper.app.domain.Departman;
 import com.wrapper.app.domain.Katedra;
 import com.wrapper.app.domain.Predavac;
 import com.wrapper.app.dto.PredavacSearchDto;
+import com.wrapper.app.exception.AlreadyExistsException;
 import com.wrapper.app.exception.NotFoundException;
 import com.wrapper.app.repository.PredavacRepository;
 import org.springframework.data.domain.Page;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -70,25 +72,39 @@ public class PredavacService {
     }
 
     public Predavac create(Predavac predavac) {
-        if(!katedraService.existsById(predavac.getOrgJedinica())) {
-            if(!departmanService.existsById(predavac.getOrgJedinica())) {
-                throw new NotFoundException("Organizaciona jedinica");
-            }
-        }
+        validate(predavac);
         predavac.setId(UUID.randomUUID().toString());
         return repository.save(predavac);
     }
 
-    public Predavac update(String id, Predavac predavac) {
-        if (!repository.existsById(id))
-            throw new NotFoundException(Predavac.class.getSimpleName());
+    private void validate(Predavac predavac) {
         if(!katedraService.existsById(predavac.getOrgJedinica())) {
             if(!departmanService.existsById(predavac.getOrgJedinica())) {
                 throw new NotFoundException("Organizaciona jedinica");
             }
         }
+        Optional<Predavac> existing = repository.findByOznaka(predavac.getOznaka());
+        if(existing.isPresent())
+            throw new AlreadyExistsException(Predavac.class.getSimpleName());
+    }
+
+    public Predavac update(Predavac predavac, String id) {
+        if (!repository.existsById(id))
+            throw new NotFoundException(Predavac.class.getSimpleName());
+        validate(predavac, id);
         predavac.setId(id);
         return repository.save(predavac);
+    }
+
+    private void validate(Predavac predavac, String id) {
+        if(!katedraService.existsById(predavac.getOrgJedinica())) {
+            if(!departmanService.existsById(predavac.getOrgJedinica())) {
+                throw new NotFoundException("Organizaciona jedinica");
+            }
+        }
+        Optional<Predavac> existing = repository.findByOznaka(predavac.getOznaka());
+        if(existing.isPresent() && !existing.get().getId().equals(id))
+            throw new AlreadyExistsException(Predavac.class.getSimpleName());
     }
 
     public Predavac deleteById(String id) {

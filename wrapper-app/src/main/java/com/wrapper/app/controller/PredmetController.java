@@ -74,7 +74,7 @@ public class PredmetController {
 
     @CrossOrigin(origins = "*")
     @PutMapping("{id}")
-    public PredmetResponseDto update(@PathVariable String  id, @RequestBody PredmetRequestDto dto) {
+    public PredmetResponseDto update(@PathVariable String  id, @RequestBody @Valid PredmetRequestDto dto) {
         Predmet updated = service.update(id, modelMapper.map(dto, Predmet.class));
         return modelMapper.map(updated, PredmetResponseDto.class);
     }

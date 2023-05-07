@@ -58,15 +58,18 @@ public class PredmetService {
     }
 
     public Predmet create(Predmet predmet) {
+        validate(predmet);
+        predmet.setId(UUID.randomUUID().toString());
+        return repository.save(predmet);
+    }
+
+    private void validate(Predmet predmet) {
         if(!studijskiProgramService.existsById(predmet.getStudijskiProgram()))
             throw new NotFoundException(StudijskiProgram.class.getSimpleName());
         Optional<Predmet> existing = repository.findByOznakaAndPlanAndStudijskiProgram(predmet.getOznaka(), predmet.getPlan(), predmet.getStudijskiProgram());
         if(existing.isPresent()) {
             throw new AlreadyExistsException(Predmet.class.getSimpleName());
         }
-        predmet.setId(UUID.randomUUID().toString());
-        //realizacijaService.addPredmetPredavac(predmet)  // TODO: add to realizacija
-        return repository.save(predmet);
     }
 
     public Predmet getById(String id) {
@@ -83,10 +86,18 @@ public class PredmetService {
     public Predmet update(String id, Predmet predmet) {
         if (!repository.existsById(id))
             throw new NotFoundException(Predmet.class.getSimpleName());
-        if(!studijskiProgramService.existsById(predmet.getStudijskiProgram()))
-            throw new NotFoundException(StudijskiProgram.class.getSimpleName());
+        validate(predmet, id);
         predmet.setId(id);
         return repository.save(predmet);
+    }
+
+    private void validate(Predmet predmet, String id) {
+        if(!studijskiProgramService.existsById(predmet.getStudijskiProgram()))
+            throw new NotFoundException(StudijskiProgram.class.getSimpleName());
+        Optional<Predmet> existing = repository.findByOznakaAndPlanAndStudijskiProgram(predmet.getOznaka(), predmet.getPlan(), predmet.getStudijskiProgram());
+        if(existing.isPresent() && !existing.get().getId().equals(id)) {
+            throw new AlreadyExistsException(Predmet.class.getSimpleName());
+        }
     }
 
     public List<Predmet> getByStudijskiProgram(String studijskiProgram) {

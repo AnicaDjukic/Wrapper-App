@@ -35,12 +35,15 @@
                         {{option}}
                     </mat-option>
                 </mat-autocomplete>
+                <mat-error *ngIf="predavacForm.get('orgJedinica')?.hasError('invalidOption')">
+                    Morate izabrati jednu organizacionu jedinicu
+                </mat-error>
             </mat-form-field>
         </form>
     </div>
 
     <div mat-dialog-actions [align]="'end'">
         <button mat-raised-button color="warn" mat-dialog-close>Zatvori</button>
-        <button mat-raised-button color="primary" (click)="add()">{{actionBtn}}</button>
+        <button mat-raised-button color="primary" (click)="add()" [disabled]="!predavacForm.valid">{{actionBtn}}</button>
     </div>
 </div>

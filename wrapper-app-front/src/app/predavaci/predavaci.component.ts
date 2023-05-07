@@ -8,6 +8,7 @@ import { PredavacService } from '../services/predavac.service';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 import { ToastrService } from 'ngx-toastr';
 import { RealizacijaService } from '../services/realizacija.service';
+import { OrganizacionaJedinicaDto } from '../dtos/OrganizacionaJedinicaDto';
 
 @Component({
   selector: 'app-predavaci',
@@ -18,6 +19,8 @@ export class PredavaciComponent implements OnInit {
   displayedColumns: string[] = ['oznaka', 'ime', 'prezime', 'titula', 'organizacijaFakulteta', 'dekanat', 'orgJedinica', 'actions'];
 
   dataSource = new MatTableDataSource<PredavacDto>();
+  organizacioneJedinice: OrganizacionaJedinicaDto[] = [];
+  options: string[] = [];
   @ViewChild(MatPaginator, { static: true }) paginator!: MatPaginator;
 
   constructor(private api: PredavacService,
@@ -37,6 +40,7 @@ export class PredavaciComponent implements OnInit {
   ngOnInit() {
     this.dataSource.paginator = this.paginator;
     this.getAll(0, this.pageSize);
+    this.getOrganizacioneJediniceOptions();
   }
 
   getAll(page: number, size: number) {
@@ -47,13 +51,42 @@ export class PredavaciComponent implements OnInit {
     });
   }
 
+  getOrganizacioneJediniceOptions() {
+    this.api.getAllKatedra()
+    .subscribe({
+      next: (res) => {
+        this.organizacioneJedinice = res;
+        res.forEach((element: OrganizacionaJedinicaDto) => {
+          this.options.push(element.naziv)
+        });
+      }
+    })
+
+    this.api.getAllDepartman()
+    .subscribe({
+      next: (res) => {
+        this.organizacioneJedinice.push(...res);
+        res.forEach((element: OrganizacionaJedinicaDto) => {
+          this.options.push(element.naziv)
+        });
+      }
+    })
+  }
+
   openDialog(): void {
     this.dialog.open(PredavacDialogComponent, {
-      width: '40%'
+      width: '40%',
+      data: {
+        options: this.options,
+        organizacioneJedinice: this.organizacioneJedinice
+      }
     }).afterClosed().subscribe((val) => {
       if (val == 'save') {
-        console.log('The dialog was closed');
-        this.getAll(0, this.pageSize);
+        if(this.oznaka || this.ime || this.prezime || this.orgJedinica) {
+          this.applyFilter(this.pageIndex, this.pageSize);
+        } else {
+          this.getAll(this.pageIndex, this.pageSize);
+        }
       }
     });
   }
@@ -61,11 +94,18 @@ export class PredavaciComponent implements OnInit {
   edit(element: any) {
     this.dialog.open(PredavacDialogComponent, {
       width: '40%',
-      data: element
+      data: {
+        editData: element,
+        options: this.options,
+        organizacioneJedinice: this.organizacioneJedinice
+      }
     }).afterClosed().subscribe((val) => {
       if (val == 'update') {
-        console.log('The dialog was closed');
-        this.getAll(0, this.pageSize);
+        if(this.oznaka || this.ime || this.prezime || this.orgJedinica) {
+          this.applyFilter(this.pageIndex, this.pageSize);
+        } else {
+          this.getAll(this.pageIndex, this.pageSize);
+        }
       }
     });
   }
@@ -87,7 +127,11 @@ export class PredavaciComponent implements OnInit {
       .subscribe({
         next: () => {
           this.toastr.success('Predavač je uspešno obrisan!', 'Uspešno!');
-          this.getAll(0, this.pageSize)
+          if(this.oznaka || this.ime || this.prezime || this.orgJedinica) {
+            this.applyFilter(this.pageIndex, this.pageSize);
+          } else {
+            this.getAll(this.pageIndex, this.pageSize);
+          }
         },
         error: () => {
           this.toastr.error('Greška prilikom brisanja predavača!', 'Greška!');

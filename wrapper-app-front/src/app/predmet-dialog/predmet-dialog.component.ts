@@ -68,7 +68,6 @@ export class PredmetDialogComponent implements OnInit {
 
   private _filter(value: string): string[] {
     const filterValue = value.toLowerCase();
-
     return this.options.filter(option => option.toLowerCase().includes(filterValue));
   }
 
@@ -96,7 +95,7 @@ export class PredmetDialogComponent implements OnInit {
                 });
                 console.log(message);
               } else {
-                this.toastr.error('Došlo je do greške prilikom brisanja predmeta!', 'Greška!');
+                this.toastr.error('Došlo je do greške prilikom dodavanja novog predmeta!', 'Greška!');
               }
 
             }
@@ -120,8 +119,20 @@ export class PredmetDialogComponent implements OnInit {
           this.predmetForm.reset();
           this.dialogRef.close('update');
         },
-        error: () => {
-          this.toastr.error('Došlo je do greške prilikom izmene predmeta!', 'Greška!');
+        error: (message) => {
+          if (message.error.message) {
+            this.toastr.error('Predmet sa oznakom <b>' + this.predmetForm.value.oznaka
+              + '</b> već postoji u studijskom programu <b>' + studProg
+              + '</b> pod planom <b>' + this.predmetForm.value.plan + '</b>!',
+              'Greška!', {
+              enableHtml: true,
+              closeButton: true,
+              timeOut: 10000
+            });
+            console.log(message);
+          } else {
+            this.toastr.error('Došlo je do greške prilikom izmene predmeta!', 'Greška!');
+          }
         }
       })
   }

@@ -73,7 +73,6 @@ export class PredmetiComponent implements OnInit {
       }
     }).afterClosed().subscribe((val) => {
       if (val == 'save') {
-        console.log('The dialog was closed');
         if(this.oznaka || this.naziv || this.studijskiProgram) {
           this.applyFilter(this.pageIndex, this.pageSize);
         } else {
@@ -93,7 +92,6 @@ export class PredmetiComponent implements OnInit {
       }
     }).afterClosed().subscribe((val) => {
       if (val == 'update') {
-        console.log('The dialog was closed');
         if(this.oznaka || this.naziv || this.studijskiProgram) {
           this.applyFilter(this.pageIndex, this.pageSize);
         } else {

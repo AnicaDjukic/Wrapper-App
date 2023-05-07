@@ -3,6 +3,7 @@ package com.wrapper.app.controller;
 import com.wrapper.app.domain.Predavac;
 import com.wrapper.app.dto.*;
 import com.wrapper.app.service.PredavacService;
+import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -56,15 +57,15 @@ public class PredavacController {
     @CrossOrigin(origins = "*")
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
-    public PredavacResponseDto create(@RequestBody PredavacRequestDto dto) {
+    public PredavacResponseDto create(@RequestBody @Valid PredavacRequestDto dto) {
         Predavac saved =  service.create(modelMapper.map(dto, Predavac.class));
         return modelMapper.map(saved, PredavacResponseDto.class);
     }
 
     @CrossOrigin(origins = "*")
     @PutMapping("{id}")
-    public PredavacResponseDto update(@PathVariable String  id, @RequestBody PredavacRequestDto dto) {
-        Predavac updated = service.update(id, modelMapper.map(dto, Predavac.class));
+    public PredavacResponseDto update(@PathVariable String  id, @RequestBody @Valid PredavacRequestDto dto) {
+        Predavac updated = service.update(modelMapper.map(dto, Predavac.class), id);
         return modelMapper.map(updated, PredavacResponseDto.class);
     }
 
