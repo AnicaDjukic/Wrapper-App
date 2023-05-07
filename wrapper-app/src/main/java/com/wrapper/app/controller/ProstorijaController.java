@@ -3,6 +3,7 @@ package com.wrapper.app.controller;
 import com.wrapper.app.domain.Prostorija;
 import com.wrapper.app.dto.*;
 import com.wrapper.app.service.ProstorijaService;
+import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -54,15 +55,15 @@ public class ProstorijaController {
     @CrossOrigin(origins = "*")
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
-    public ProstorijaResponseDto create(@RequestBody ProstorijaRequestDto dto) {
+    public ProstorijaResponseDto create(@RequestBody @Valid ProstorijaRequestDto dto) {
         Prostorija saved =  service.create(modelMapper.map(dto, Prostorija.class));
         return modelMapper.map(saved, ProstorijaResponseDto.class);
     }
 
     @CrossOrigin(origins = "*")
     @PutMapping("{id}")
-    public ProstorijaResponseDto update(@PathVariable String  id, @RequestBody ProstorijaRequestDto dto) {
-        Prostorija updated = service.update(id, modelMapper.map(dto, Prostorija.class));
+    public ProstorijaResponseDto update(@PathVariable String  id, @RequestBody @Valid ProstorijaRequestDto dto) {
+        Prostorija updated = service.update(modelMapper.map(dto, Prostorija.class), id);
         return modelMapper.map(updated, ProstorijaResponseDto.class);
     }
 

@@ -6,7 +6,7 @@ import { HttpClient } from '@angular/common/http';
 })
 export class PredavacService {
 
-  private predavaciUrl = "http://localhost:8080/api/v1/predavaci"
+  private predavaciUrl = "http://localhost:8080/api/v1/predavaci";
 
   constructor(private http: HttpClient) { }
 
@@ -32,13 +32,5 @@ export class PredavacService {
 
   delete(id: string) {
     return this.http.delete(`${this.predavaciUrl}/` + id);
-  }
-
-  getAllKatedra() {
-    return this.http.get<any>("http://localhost:8080/api/v1/katedre");
-  }
-
-  getAllDepartman() {
-    return this.http.get<any>("http://localhost:8080/api/v1/departmani");
   }
 }

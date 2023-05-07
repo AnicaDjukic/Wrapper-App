@@ -4,6 +4,7 @@ import com.wrapper.app.domain.Departman;
 import com.wrapper.app.domain.Katedra;
 import com.wrapper.app.domain.Prostorija;
 import com.wrapper.app.dto.ProstorijaSearchDto;
+import com.wrapper.app.exception.AlreadyExistsException;
 import com.wrapper.app.exception.NotFoundException;
 import com.wrapper.app.repository.ProstorijaRepository;
 import org.springframework.data.domain.Page;
@@ -93,17 +94,30 @@ public class ProstorijaService {
     }
 
     public Prostorija create(Prostorija prostorija) {
+        validate(prostorija);
+        prostorija.setId(UUID.randomUUID().toString());
+        return repository.save(prostorija);
+    }
+
+    private void validate(Prostorija prostorija) {
         prostorija.getOrgJedinica().forEach(orgJed -> {
             if(!katedraService.existsById(orgJed)) {
                 if (!departmanService.existsById(orgJed))
                     throw new NotFoundException("Organizaciona jedinica");
             }
         });
-        prostorija.setId(UUID.randomUUID().toString());
+        Optional<Prostorija> existing = repository.findByOznaka(prostorija.getOznaka());
+        if(existing.isPresent())
+            throw new AlreadyExistsException(Prostorija.class.getSimpleName());
+    }
+
+    public Prostorija update(Prostorija prostorija, String id) {
+        validate(prostorija, id);
+        prostorija.setId(id);
         return repository.save(prostorija);
     }
 
-    public Prostorija update(String id, Prostorija prostorija) {
+    private void validate(Prostorija prostorija, String id) {
         if (!repository.existsById(id))
             throw new NotFoundException(Prostorija.class.getSimpleName());
         prostorija.getOrgJedinica().forEach(orgJed -> {
@@ -112,8 +126,9 @@ public class ProstorijaService {
                     throw new NotFoundException("Organizaciona jedinica");
             }
         });
-        prostorija.setId(id);
-        return repository.save(prostorija);
+        Optional<Prostorija> existing = repository.findByOznaka(prostorija.getOznaka());
+        if(existing.isPresent() && !existing.get().getId().equals(id))
+            throw new AlreadyExistsException(Prostorija.class.getSimpleName());
     }
 
     public Prostorija deleteById(String id) {

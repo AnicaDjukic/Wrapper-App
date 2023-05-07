@@ -7,6 +7,8 @@ import { ProstorijaDialogComponent } from '../prostorija-dialog/prostorija-dialo
 import { ProstorijaService } from '../services/prostorija.service';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 import { ToastrService } from 'ngx-toastr';
+import { OrganizacionaJedinicaDto } from '../dtos/OrganizacionaJedinicaDto';
+import { OrgJedinicaService } from '../services/org-jedinica.service';
 
 @Component({
   selector: 'app-prostorije',
@@ -15,8 +17,10 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class ProstorijeComponent {
   displayedColumns: string[] = ['oznaka', 'tip', 'kapacitet', 'orgJedinica', 'actions'];
-  
+
   dataSource = new MatTableDataSource<ProstorijaDto>();
+  organizacioneJedinice: OrganizacionaJedinicaDto[] = [];
+  options: string[] = [];
   @ViewChild(MatPaginator)
   paginator!: MatPaginator;
 
@@ -25,7 +29,10 @@ export class ProstorijeComponent {
     this.getAll(0, this.pageSize);
   }
 
-  constructor(private api: ProstorijaService, public dialog: MatDialog, private toastr: ToastrService) {}
+  constructor(private api: ProstorijaService,
+    public dialog: MatDialog,
+    private orgjedinicaApi: OrgJedinicaService,
+    private toastr: ToastrService) { }
 
   oznaka = '';
   tip = 'SVE';
@@ -39,49 +46,73 @@ export class ProstorijeComponent {
 
   getAll(page: number, size: number) {
     this.api.getAll(page, size)
-    .subscribe({
-      next:(res) => {
-        this.dataSource = new MatTableDataSource(res.content);
-      this.totalElements = res.totalElements;
-      this.pageIndex = res.pageable.pageNumber;
-      }
-    })
+      .subscribe({
+        next: (res) => {
+          this.dataSource = new MatTableDataSource(res.content);
+          this.totalElements = res.totalElements;
+          this.pageIndex = res.pageable.pageNumber;
+        }
+      })
+    this.getOrganizacioneJediniceOptions();
+  }
+
+  getOrganizacioneJediniceOptions() {
+    this.orgjedinicaApi.getAllKatedra()
+      .subscribe({
+        next: (res) => {
+          this.organizacioneJedinice = res;
+          res.forEach((element: OrganizacionaJedinicaDto) => {
+            this.options.push(element.naziv)
+          });
+        }
+      })
+
+    this.orgjedinicaApi.getAllDepartman()
+      .subscribe({
+        next: (res) => {
+          this.organizacioneJedinice.push(...res);
+          res.forEach((element: OrganizacionaJedinicaDto) => {
+            this.options.push(element.naziv)
+          });
+        }
+      })
   }
 
   openDialog(): void {
     this.dialog.open(ProstorijaDialogComponent, {
-      width: '40%'
+      width: '40%',
+      data: {
+        options: this.options,
+        organizacioneJedinice: this.organizacioneJedinice
+      }
     }).afterClosed().subscribe((val) => {
-      if(val == 'save') {
-        console.log('The dialog was closed');
-        this.getAll(0, this.pageSize);
+      if (val == 'save') {
+        if(this.oznaka || this.tip != 'SVE' || this.kapacitet || this.orgJedinica) {
+          this.applyFilter(this.pageIndex, this.pageSize);
+        } else {
+          this.getAll(this.pageIndex, this.pageSize);
+        }
       }
     });
   }
 
-  edit(element : any) {
+  edit(element: any) {
     this.dialog.open(ProstorijaDialogComponent, {
       width: '40%',
-      data: element
+      data: {
+        editData: element,
+        options: this.options,
+        organizacioneJedinice: this.organizacioneJedinice
+      }
     }).afterClosed().subscribe((val) => {
-      if(val == 'update') {
-        console.log('The dialog was closed');
-        this.getAll(0, this.pageSize);
+      if (val == 'update') {
+        if(this.oznaka || this.tip != 'SVE' || this.kapacitet || this.orgJedinica) {
+          this.applyFilter(this.pageIndex, this.pageSize);
+        } else {
+          this.getAll(this.pageIndex, this.pageSize);
+        }
       }
     });
-  }
-  
-  delete(id : string) {
-    this.api.delete(id)
-    .subscribe({
-      next: () => {
-        this.toastr.success('Prostorija je uspešno obrisana!', 'Uspešno!');
-        this.getAll(0, this.pageSize)
-      },
-      error: () => {
-        alert("Greška!");
-      }
-    })
   }
 
   openConfirmationDialog(element: any) {
@@ -90,15 +121,32 @@ export class ProstorijeComponent {
       data: element
     }).afterClosed().subscribe((val) => {
       console.log(val);
-      if(val) {
+      if (val) {
         this.delete(element.id);
       }
     });
   }
 
+  delete(id: string) {
+    this.api.delete(id)
+      .subscribe({
+        next: () => {
+          this.toastr.success('Prostorija je uspešno obrisana!', 'Uspešno!');
+          if(this.oznaka || this.tip != 'SVE' || this.kapacitet || this.orgJedinica) {
+            this.applyFilter(this.pageIndex, this.pageSize);
+          } else {
+            this.getAll(this.pageIndex, this.pageSize);
+          }
+        },
+        error: () => {
+          this.toastr.error('Greška prilikom brisanja prostorije!', 'Greška!');
+        }
+      })
+  }
+
   onInputChange(event: Event) {
     const inputValue = (event.target as HTMLInputElement)?.value || '';
-    if(inputValue != '') {
+    if (inputValue != '') {
       this.kapacitet = Number(inputValue);
     }
     this.kapacitetStr = inputValue;

@@ -9,6 +9,7 @@ import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation
 import { ToastrService } from 'ngx-toastr';
 import { RealizacijaService } from '../services/realizacija.service';
 import { OrganizacionaJedinicaDto } from '../dtos/OrganizacionaJedinicaDto';
+import { OrgJedinicaService } from '../services/org-jedinica.service';
 
 @Component({
   selector: 'app-predavaci',
@@ -24,6 +25,7 @@ export class PredavaciComponent implements OnInit {
   @ViewChild(MatPaginator, { static: true }) paginator!: MatPaginator;
 
   constructor(private api: PredavacService,
+    private orgjedinicaApi: OrgJedinicaService,
     private realizacijaApi: RealizacijaService, 
     public dialog: MatDialog, 
     private toastr: ToastrService) { }
@@ -52,7 +54,7 @@ export class PredavaciComponent implements OnInit {
   }
 
   getOrganizacioneJediniceOptions() {
-    this.api.getAllKatedra()
+    this.orgjedinicaApi.getAllKatedra()
     .subscribe({
       next: (res) => {
         this.organizacioneJedinice = res;
@@ -62,7 +64,7 @@ export class PredavaciComponent implements OnInit {
       }
     })
 
-    this.api.getAllDepartman()
+    this.orgjedinicaApi.getAllDepartman()
     .subscribe({
       next: (res) => {
         this.organizacioneJedinice.push(...res);

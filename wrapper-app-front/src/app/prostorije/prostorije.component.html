@@ -9,8 +9,8 @@
             <mat-select [(value)]="tip" value="SVE" class="font-bold"
                 (selectionChange)="oznaka || tip != 'SVE' || kapacitetStr || orgJedinica ? applyFilter(0, pageSize) : getAll(0, pageSize)">
                 <mat-option value="SVE">Svi tipovi</mat-option>
-                <mat-option value="RAC">Računarske</mat-option>
                 <mat-option value="AUD">Auditorne</mat-option>
+                <mat-option value="RAC">Računarske</mat-option>
                 <mat-option value="LAB">Laboratorijske</mat-option>
             </mat-select>
         </mat-form-field>
@@ -48,6 +48,7 @@
                 <ng-container matColumnDef="orgJedinica">
                     <th mat-header-cell *matHeaderCellDef> Organizacione jedinice </th>
                     <td mat-cell *matCellDef="let element">
+                        <div *ngIf="!element.orgJedinica || element.orgJedinica.length == 0" style="margin-left: 15%;">-</div>
                         <ng-container *ngFor="let item of element.orgJedinica">
                             <div>
                                 <span>{{item}}</span>

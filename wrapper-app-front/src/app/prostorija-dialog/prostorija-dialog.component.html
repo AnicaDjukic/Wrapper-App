@@ -9,40 +9,36 @@
 
             <mat-form-field class="example-full-width">
                 <mat-label>Tip</mat-label>
-                <input formControlName="tip" matInput placeholder="Izaberite tip prostorije...">
+                <mat-select formControlName="tip" value="SVE" class="font-bold">
+                    <mat-option value="">Izaberite tip prostorije</mat-option>
+                    <mat-option value="AUD">Auditorna</mat-option>
+                    <mat-option value="RAC">Računarska</mat-option>
+                    <mat-option value="LAB">Laboratorijska</mat-option>
+                </mat-select>
             </mat-form-field>
 
             <mat-form-field class="example-full-width">
                 <mat-label>Kapacitet</mat-label>
                 <input formControlName="kapacitet" matInput placeholder="Unesite kapacitet prostorije..." type="number">
+                <mat-error *ngIf="prostorijaForm.get('kapacitet')?.hasError('min')">
+                    Kapacitet mora biti broj veći od 0
+                </mat-error>
             </mat-form-field>
 
-            <!-- <mat-form-field class="example-full-width" appearance="fill">
-                <mat-label>Organizaciona jedinica</mat-label>
-                <input type="text"
-                       placeholder="Izaberite organizacionu jedinicu..."
-                       matInput
-                       formControlName="orgJedinica"
-                       [matAutocomplete]="auto">
-                <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
-                  <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
-                    {{option}}
-                  </mat-option>
-                </mat-autocomplete>
-            </mat-form-field> -->
-            <div *ngFor="let control of orgJedinicaFieldAsFormArray.controls; let i = index;" 
-            formArrayName="orgJedinica" class="field-container">
+            <div *ngFor="let control of orgJedinicaFieldAsFormArray.controls; let i = index;"
+                formArrayName="orgJedinica" class="field-container">
                 <mat-form-field class="example-full-width" appearance="fill">
                     <mat-label>Organizaciona jedinica</mat-label>
-                    <input type="text" 
-                    placeholder="Izaberite organizacionu jedinicu..."
-                    matInput [formControlName]="i"
-                    [matAutocomplete]="auto">
+                    <input type="text" placeholder="Izaberite organizacionu jedinicu..." matInput [formControlName]="i"
+                        [matAutocomplete]="auto" (input)="_filter($event, i)">
                     <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
-                        <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
-                          {{option}}
+                        <mat-option *ngFor="let option of options[i]" [value]="option">
+                            {{option}}
                         </mat-option>
                     </mat-autocomplete>
+                    <mat-error *ngIf="orgJedinicaFieldAsFormArray.at(i).hasError('invalidOption')">
+                        Morate izabrati organizacionu jedinicu
+                    </mat-error>
                 </mat-form-field>
                 <button mat-raised-button type="button" (click)="remove(i)"
                     style="margin-left: 3%; margin-bottom: 4%;">Ukloni</button>
@@ -55,6 +51,6 @@
             <mat-icon>add</mat-icon> org jedinicu
         </button>
         <button mat-raised-button color="warn" mat-dialog-close>Zatvori</button>
-        <button mat-raised-button color="primary" (click)="add()">{{actionBtn}}</button>
+        <button mat-raised-button color="primary" (click)="add()" [disabled]="!prostorijaForm.valid">{{actionBtn}}</button>
     </div>
 </div>
