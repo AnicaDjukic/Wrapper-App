@@ -14,6 +14,7 @@ import { RealizacijaService } from '../services/realizacija.service';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 import { PredavacService } from '../services/predavac.service';
 import { PredavacDto } from '../dtos/PredavacDto';
+import { PredmetDto } from '../dtos/PredmetDto';
 
 @Component({
   selector: 'app-realizacija',
@@ -43,6 +44,8 @@ export class RealizacijaComponent {
   show!: boolean
   selected!: string
   studijskiProgramId!: string
+  predmeti: PredmetDto[] = [];
+  predmetiOptions: string[] = [];
   predavaciOptions: string[] = [];
   predavaci: PredavacDto[] = [];
 
@@ -71,10 +74,13 @@ export class RealizacijaComponent {
 
   openDialog() {
     let studijskiProgramId = this.studijskiProgrami.filter(sp => sp.oznaka == this.selected.split(' ')[0]).map(value => value.id)[0];
+    this.getPredmetOptions(studijskiProgramId);
     this.dialog.open(RealizacijaDialogComponent, {
       width: '60%',
       data: {
         studijskiProgramId: studijskiProgramId,
+        predmetiOptions: this.predmetiOptions,
+        predmeti: this.predmeti,
         predavaciOptions: this.predavaciOptions,
         predavaci: this.predavaci
       }
@@ -87,12 +93,28 @@ export class RealizacijaComponent {
     });
   }
 
+  getPredmetOptions(studijskiProgramId: any) {
+    this.api.getByStudijskiProgram(studijskiProgramId)
+      .subscribe({
+        next: (res) => {
+          console.log(res);
+          for (let predmet of res) {
+            this.predmetiOptions.push("(" + predmet.plan + ") " + predmet.oznaka + " " + predmet.naziv);
+          }
+          this.predmeti = res;
+        }
+      });
+  }
+
   edit(element: any) {
     element.studijskiProgramId = this.studijskiProgramId;
+    this.getPredmetOptions(this.studijskiProgramId);
     this.dialog.open(RealizacijaDialogComponent, {
       width: '60%',
       data: {
         element: element,
+        predmetiOptions: this.predmetiOptions,
+        predmeti: this.predmeti,
         predavaciOptions: this.predavaciOptions,
         predavaci: this.predavaci
       }

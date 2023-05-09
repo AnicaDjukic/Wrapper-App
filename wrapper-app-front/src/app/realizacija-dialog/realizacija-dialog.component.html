@@ -51,6 +51,9 @@
                             {{option}}
                         </mat-option>
                     </mat-autocomplete>
+                    <mat-error *ngIf="ostaliProfesoriFieldsAsFormArray.at(i).hasError('invalidOption')">
+                        Morate izabrati profesora
+                    </mat-error>
                 </mat-form-field>
                 <button mat-raised-button type="button" (click)="remove(i)"
                     style="margin-left: 3%; margin-bottom: 3%;">Ukloni</button>
@@ -71,10 +74,17 @@
                                 {{option}}
                             </mat-option>
                         </mat-autocomplete>
+                        <mat-error *ngIf="asistentZauzecaFieldsAsFormArray.at(i).get('asistentId').hasError('invalidOption')">
+                            Morate izabrati asistenta
+                        </mat-error>
                     </mat-form-field>
-                    <mat-form-field style="padding-left: 3%; width: 20%;">
+                    <mat-form-field style="padding-left: 3%; width: 35%;">
                         <mat-label>Broj termina</mat-label>
                         <input formControlName="brojTermina" matInput type="number">
+                        <mat-error *ngIf="asistentZauzecaFieldsAsFormArray.at(i).get('brojTermina').hasError('min')"
+                        style="margin-left: -10%;">
+                            Broj termina mora biti veći od 0
+                        </mat-error>
                     </mat-form-field>
                     <button mat-raised-button type="button" (click)="removeAsistent(i)"
                         style="margin-left: 3%; margin-bottom: 3%;">Ukloni</button>

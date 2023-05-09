@@ -11,6 +11,7 @@
         (keyup)="oznaka || naziv || stepenStudija != 'SVE' ? applyFilter() : getAll()">
     </mat-form-field>
     <mat-form-field class="stepen">
+      <mat-label>Stepen studija</mat-label>
       <mat-select [(value)]="stepenStudija" value="SVE" class="font-bold"
         (selectionChange)="oznaka || naziv || stepenStudija != 'SVE' ? applyFilter() : getAll()">
         <mat-option value="SVE">SVI STEPENI STUDIJA</mat-option>

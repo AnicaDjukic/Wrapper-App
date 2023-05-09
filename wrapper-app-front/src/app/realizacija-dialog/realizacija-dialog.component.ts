@@ -7,6 +7,7 @@ import { RealizacijaService } from '../services/realizacija.service';
 import { ApiService } from '../services/api.service';
 import { PredmetDto } from '../dtos/PredmetDto';
 import { PredavacDto } from '../dtos/PredavacDto';
+import { autocompleteValidator } from '../validators/autocomplete-validator';
 
 @Component({
   selector: 'app-realizacija-dialog',
@@ -40,17 +41,20 @@ export class RealizacijaDialogComponent {
     private toastr: ToastrService) { }
 
   ngOnInit(): void {
+    this.predmetiOptions = this.data.predmetiOptions;
+    this.predmeti = this.data.predmeti;
+    this.predavaciOptions = this.data.predavaciOptions;
+    this.predavaci = this.data.predavaci;
+    //this.glavniProfesorOptions = this.predavaciOptions;
+
     this.predmetForm = this.formBuilder.group({
       studijskiProgramId: new FormControl({ value: '', disabled: true }),
       predmetId: ['', Validators.required],
       godina: new FormControl({ value: '', disabled: true }),
-      profesorId: [''],
+      profesorId: ['', [autocompleteValidator(this.predavaciOptions)]],
       ostaliProfesori: this.formBuilder.array([]),
       asistentZauzeca: this.formBuilder.array([])
     });
-
-    this.predavaciOptions = this.data.predavaciOptions;
-    this.predavaci = this.data.predavaci;
 
     if (this.data.studijskiProgramId) {
       this.prepareForAdd();
@@ -77,7 +81,6 @@ export class RealizacijaDialogComponent {
     this.title = "Dodavanje predmeta u realizaciju"
     console.log(this.data);
     this.setStudijskiProgram(this.data.studijskiProgramId);
-    this.getPredmetOptions(this.data.studijskiProgramId);
   }
 
   setStudijskiProgram(studijskiProgramId: any) {
@@ -87,19 +90,6 @@ export class RealizacijaDialogComponent {
         next: (res) => {
           console.log(res);
           this.predmetForm.controls['studijskiProgramId'].setValue(res.studijskiProgram);
-        }
-      });
-  }
-
-  getPredmetOptions(studijskiProgramId: any) {
-    this.predmetApi.getByStudijskiProgram(studijskiProgramId)
-      .subscribe({
-        next: (res) => {
-          console.log(res);
-          for (let predmet of res) {
-            this.predmetiOptions.push("(" + predmet.plan + ") " + predmet.oznaka + " " + predmet.naziv);
-          }
-          this.predmeti = res;
         }
       });
   }
@@ -131,7 +121,6 @@ export class RealizacijaDialogComponent {
       }
     }
     console.log(this.predmetForm.value);
-    this.getPredmetOptions(this.data.element.studijskiProgramId);
   }
 
   get ostaliProfesoriFieldsAsFormArray(): any {
@@ -140,7 +129,7 @@ export class RealizacijaDialogComponent {
 
   addControl(): void {
     this.options.push([]);
-    this.ostaliProfesoriFieldsAsFormArray.push(this.formBuilder.control(''));
+    this.ostaliProfesoriFieldsAsFormArray.push(this.formBuilder.control('', [Validators.required, autocompleteValidator(this.predavaciOptions)]));
   }
 
   remove(i: number): void {
@@ -150,16 +139,16 @@ export class RealizacijaDialogComponent {
 
   asistentZauzece(asistentId: string, brojTermina: number): any {
     return this.formBuilder.group({
-      asistentId: this.formBuilder.control(asistentId),
-      brojTermina: this.formBuilder.control(brojTermina)
+      asistentId: this.formBuilder.control(asistentId,[Validators.required, autocompleteValidator(this.predavaciOptions)]),
+      brojTermina: this.formBuilder.control(brojTermina, [Validators.required, Validators.min(1)])
     });
   }
 
   newAsistentZauzece(): any {
     this.optionsAsistenti.push([]);
     return this.formBuilder.group({
-      asistentId: this.formBuilder.control(''),
-      brojTermina: this.formBuilder.control('')
+      asistentId: this.formBuilder.control('', [Validators.required, autocompleteValidator(this.predavaciOptions)]),
+      brojTermina: this.formBuilder.control('', [Validators.required, Validators.min(1)])
     });
   }
 
