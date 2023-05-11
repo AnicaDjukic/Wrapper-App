@@ -14,4 +14,5 @@ public class StudijskiProgram {
     private int nivo;
     private String oznaka;
     private String naziv;
+    private boolean block;
 }

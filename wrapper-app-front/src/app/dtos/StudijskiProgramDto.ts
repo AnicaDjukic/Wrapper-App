@@ -3,6 +3,7 @@ export interface StudijskiProgramDto {
   stepen: number;
   nivo: number;
   stepenStudija: string;
-  oznaka: string
+  oznaka: string;
   naziv: string;
+  block: boolean;
 }

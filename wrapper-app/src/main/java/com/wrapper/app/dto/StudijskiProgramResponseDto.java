@@ -17,4 +17,5 @@ public class StudijskiProgramResponseDto {
     private String stepenStudija;
     private String oznaka;
     private String naziv;
+    private boolean block;
 }

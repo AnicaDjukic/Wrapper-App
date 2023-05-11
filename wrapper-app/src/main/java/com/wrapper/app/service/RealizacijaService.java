@@ -39,6 +39,7 @@ public class RealizacijaService {
     public Realizacija addPredmet(String studijskiProgramId, PredmetPredavac predmetPredavac) {
         boolean block = checkPredmet(predmetPredavac);
         predmetPredavac.setBlock(block);
+        checkStudijskiProgram(studijskiProgramId, predmetPredavac);
         checkPredavaci(predmetPredavac);
         Realizacija realizacija = getAll().get(0);
         Realizacija updated = realizacija.addPredmet(studijskiProgramId, predmetPredavac);
@@ -57,10 +58,26 @@ public class RealizacijaService {
     public Realizacija updatePredmet(String studProgramId, String predmetId, PredmetPredavac predmetPredavac) {
         boolean block = checkPredmet(predmetPredavac);
         predmetPredavac.setBlock(block);
-        Realizacija realizacija = getAll().get(0);
+        checkStudijskiProgram(studProgramId, predmetPredavac);
         checkPredavaci(predmetPredavac);
+        Realizacija realizacija = getAll().get(0);
         Realizacija updated = realizacija.updatePredmet(studProgramId, predmetId, predmetPredavac);
         return repository.save(updated);
+    }
+
+    private void checkStudijskiProgram(String studProgramId, PredmetPredavac predmetPredavac) {
+        boolean block = predmetPredavac.isBlock();
+        if(!block) {
+            Realizacija realizacija = repository.findStudijskiProgramPredmetiByStudijskiProgramId(studProgramId);
+            StudijskiProgramPredmeti studijskiProgramPredmeti = realizacija.getStudijskiProgramPredmeti().get(0);
+            for(PredmetPredavac predmet : studijskiProgramPredmeti.getPredmetPredavaci()) {
+                if(predmet.isBlock() && !predmet.getPredmetId().equals(predmetPredavac.getPredmetId())) {
+                    block = true;
+                    break;
+                }
+            }
+        }
+        studijskiProgramService.updateStatus(studProgramId, block);
     }
 
     private void checkPredavaci(PredmetPredavac predmetPredavac) {
@@ -108,6 +125,7 @@ public class RealizacijaService {
             String profesorNaziv = profesor.getTitula() + " " + profesor.getIme() + " " + profesor.getPrezime();
             predmetPredavacDto.setProfesor(profesorNaziv.trim());
         } else {
+            predmetPredavacDto.setBlock(true);
             System.out.println("Profesor: " + profesorId);
         }
     }
@@ -136,6 +154,11 @@ public class RealizacijaService {
             zauzeceDto.setAsistent(asistentNaziv.trim());
             zauzeceDto.setBrojTermina(zauzece.getBrojTermina());
             predmetPredavacDto.getAsistentiZauzeca().add(zauzeceDto);
+        }
+        Predmet predmet = predmetService.getById(predmetPredavacDto.getPredmetId());
+        if(predmetPredavacDto.getAsistentiZauzeca().isEmpty() &&
+                (predmet.getBrojCasovaAud() != 0 || predmet.getBrojCasovaRac() != 0 || predmet.getBrojCasovaLab() != 0)){
+            predmetPredavacDto.setBlock(true);
         }
     }
 

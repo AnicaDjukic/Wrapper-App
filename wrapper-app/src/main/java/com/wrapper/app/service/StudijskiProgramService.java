@@ -95,4 +95,10 @@ public class StudijskiProgramService {
             default -> "";
         };
     }
+
+    public void updateStatus(String id, boolean block) {
+        StudijskiProgram studijskiProgram = getById(id);
+        studijskiProgram.setBlock(block);
+        repository.save(studijskiProgram);
+    }
 }

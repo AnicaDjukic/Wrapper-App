@@ -6,7 +6,7 @@
                 [matAutocomplete]="auto">
             <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete" matAutocompleteSingleOption
                 (optionSelected)='get($event.option.value)'>
-                <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+                <mat-option *ngFor="let option of filteredOptions | async" [value]="option" [ngClass]="getColorClass(option)">
                     {{option}}
                 </mat-option>
             </mat-autocomplete>

@@ -55,6 +55,12 @@ export class RealizacijaComponent {
   expandedElement!: PredmetPredavacDto;
 
   async ngOnInit() {
+    this.getStudijskiProgrami();
+    await this.getPredavaciOptions();
+  }
+
+  getStudijskiProgrami() {
+    this.options = [];
     this.api.getAllStudijskiProgram()
       .subscribe({
         next: (res) => {
@@ -69,7 +75,15 @@ export class RealizacijaComponent {
       startWith(''),
       map(value => this._filter(value || '')),
     );
-    await this.getPredavaciOptions();
+  }
+
+  getColorClass(value: string): string {
+    let studProgram = this.studijskiProgrami.filter(sp => sp.oznaka == value.split(' ')[0]).map(value => value)[0];
+
+    if (studProgram.block) {
+      return 'block';
+    }
+    return '';
   }
 
   async openDialog() {
@@ -89,6 +103,7 @@ export class RealizacijaComponent {
       if (val == 'save') {
         console.log('The dialog was closed');
         this.get(this.selected);
+        this.getStudijskiProgrami();
       }
     });
   }
@@ -122,6 +137,7 @@ export class RealizacijaComponent {
       if (val == 'update') {
         console.log('The dialog was closed');
         this.get(this.selected);
+        this.getStudijskiProgrami();
       }
     });
   }

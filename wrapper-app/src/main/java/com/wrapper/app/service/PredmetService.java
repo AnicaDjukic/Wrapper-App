@@ -28,6 +28,10 @@ public class PredmetService {
         this.studijskiProgramService = studijskiProgramService;
     }
 
+    public List<Predmet> findAll() {
+        return repository.findAll();
+    }
+
     public Page<Predmet> getAll(Pageable pageable) {
         Page<Predmet> results = repository.findAll(pageable);
         return mapStudijskiProgram(results);
