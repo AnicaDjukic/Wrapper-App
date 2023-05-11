@@ -12,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-public class RealizacijaUpdateDto {
+public class RealizacijaPredavaciDto {
 
     private String profesorId;
 

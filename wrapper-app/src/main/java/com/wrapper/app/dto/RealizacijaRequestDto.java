@@ -1,6 +1,8 @@
 package com.wrapper.app.dto;
 
 import com.wrapper.app.domain.AsistentZauzece;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,11 +16,13 @@ import java.util.List;
 @Setter
 public class RealizacijaRequestDto {
 
+    @NotNull
+    @NotBlank
     private String predmetId;
 
     private String profesorId;
 
     private List<String> ostaliProfesori;
     
-    private List<AsistentZauzece> asistentZauzeca;
+    private List<AsistentZauzeceDto> asistentZauzeca;
 }

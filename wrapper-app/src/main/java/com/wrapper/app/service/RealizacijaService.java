@@ -36,35 +36,39 @@ public class RealizacijaService {
                 .orElseThrow(() -> new NotFoundException(Realizacija.class.getSimpleName()));
     }
 
-    // rukovanje predavacima na predmetima
-    public Realizacija addPredmet(String studijskiProgramId, RealizacijaRequestDto dto) {
-        predmetService.getById(dto.getPredmetId()); // check if predmet exists
+    public Realizacija addPredmet(String studijskiProgramId, PredmetPredavac predmetPredavac) {
+        boolean block = checkPredmet(predmetPredavac);
+        predmetPredavac.setBlock(block);
+        checkPredavaci(predmetPredavac);
         Realizacija realizacija = getAll().get(0);
-        checkPredavaci(dto);    // provera da li predavaci postoje
-        // TODO: provera da li ukupan broj termina vezbi odgovara broju termina vezbi na predmetu???
-        Realizacija updated = realizacija.addPredmet(studijskiProgramId, dto);
+        Realizacija updated = realizacija.addPredmet(studijskiProgramId, predmetPredavac);
+        predmetService.updateStatus(predmetPredavac.getPredmetId(), true);
         return repository.save(updated);
     }
 
-    public Realizacija updatePredmet(String studProgramId, String predmetId, RealizacijaUpdateDto dto) {
-        predmetService.getById(predmetId); // check if predmet exists
+    private boolean checkPredmet(PredmetPredavac predmetPredavac) {
+        Predmet predmet = predmetService.getById(predmetPredavac.getPredmetId());
+        boolean checkAsistentZauzeca = predmetPredavac.getAsistentZauzeca().isEmpty() &&
+                (predmet.getBrojCasovaAud() != 0 || predmet.getBrojCasovaLab() != 0
+                        || predmet.getBrojCasovaRac() != 0);
+        return predmetPredavac.getProfesorId() == null || checkAsistentZauzeca;
+    }
+
+    public Realizacija updatePredmet(String studProgramId, String predmetId, PredmetPredavac predmetPredavac) {
+        boolean block = checkPredmet(predmetPredavac);
+        predmetPredavac.setBlock(block);
         Realizacija realizacija = getAll().get(0);
-        checkPredavaci(dto);    // provera da li predavaci postoje
-        Realizacija updated = realizacija.updatePredmet(studProgramId, predmetId, dto);
+        checkPredavaci(predmetPredavac);
+        Realizacija updated = realizacija.updatePredmet(studProgramId, predmetId, predmetPredavac);
         return repository.save(updated);
     }
 
-    // provera da li predavaci postoje
-    private void checkPredavaci(RealizacijaRequestDto dto) {
-        predavacService.getById(dto.getProfesorId());
-        dto.getOstaliProfesori().forEach(predavacService::getById);
-        dto.getAsistentZauzeca().forEach(az -> predavacService.getById(az.getAsistentId()));
-    }
-
-    private void checkPredavaci(RealizacijaUpdateDto dto) {
-        predavacService.getById(dto.getProfesorId());
-        dto.getOstaliProfesori().forEach(predavacService::getById);
-        dto.getAsistentZauzeca().forEach(az -> predavacService.getById(az.getAsistentId()));
+    private void checkPredavaci(PredmetPredavac predmetPredavac) {
+        if(predmetPredavac.getProfesorId() != null) {
+            predavacService.getById(predmetPredavac.getProfesorId());
+        }
+        predmetPredavac.getOstaliProfesori().forEach(predavacService::getById);
+        predmetPredavac.getAsistentZauzeca().forEach(az -> predavacService.getById(az.getAsistentId()));
     }
 
     public StudijskiProgramPredmetiDto getStudijskiProgramById(String studijskiProgramId) {
@@ -78,6 +82,7 @@ public class RealizacijaService {
             fillProfesorInfo(predmetPredavac.getProfesorId(), predmetPredavacDto);
             fillOstaliProfesoriInfo(predmetPredavac.getOstaliProfesori(), predmetPredavacDto);
             fillAsistentiInfo(predmetPredavac.getAsistentZauzeca(), predmetPredavacDto);
+            predmetPredavacDto.setBlock(predmetPredavac.isBlock());
             studijskiProgramPredmetiDto.getPredmetPredavaci().add(predmetPredavacDto);
         }
         return studijskiProgramPredmetiDto;
@@ -98,7 +103,7 @@ public class RealizacijaService {
     }
 
     private void fillProfesorInfo(String profesorId, PredmetPredavacDto predmetPredavacDto) {
-        if(predavacService.existsById(profesorId)) {
+        if(profesorId != null && predavacService.existsById(profesorId)) {
             Predavac profesor = predavacService.getById(profesorId);
             String profesorNaziv = profesor.getTitula() + " " + profesor.getIme() + " " + profesor.getPrezime();
             predmetPredavacDto.setProfesor(profesorNaziv.trim());

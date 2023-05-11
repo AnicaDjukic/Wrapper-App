@@ -8,5 +8,6 @@ export interface PredmetPredavacDto {
     predmetGodina: number;
     profesor: string;
     ostaliProfesori: string[];
-    asistentiZauzeca: AsistentZauzeceDto[];
+    asistentiZauzeca: AsistentZauzeceDto[]
+    block: boolean;
 }

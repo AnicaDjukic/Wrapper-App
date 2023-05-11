@@ -13,4 +13,5 @@ public class PredmetPredavac {
     private String profesorId;
     private List<String> ostaliProfesori;
     private List<AsistentZauzece> asistentZauzeca;
+    private boolean block;      // true - ako je profesorId null ili nema asistenata a postoje vezbe (br. casova vezbi != null)
 }

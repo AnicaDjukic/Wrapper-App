@@ -23,5 +23,5 @@ public class Predmet {
     private int brojCasovaAud;          // TODO: proveriti jel moze 0 umesto -1
     private int brojCasovaLab;
     private int brojCasovaRac;
-
+    private boolean uRealizaciji;
 }

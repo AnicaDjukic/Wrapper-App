@@ -18,6 +18,7 @@ public class PredmetPredavacDto {
     private String profesor;
     private List<String> ostaliProfesori;
     private List<AsistentiZauzecaDto> asistentiZauzeca;
+    private boolean block;
 
     public PredmetPredavacDto() {
         this.ostaliProfesori = new ArrayList<>();

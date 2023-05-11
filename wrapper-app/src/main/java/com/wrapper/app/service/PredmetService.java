@@ -107,4 +107,12 @@ public class PredmetService {
     public void deleteAllByStudijskiProgram(String studProgramId) {
         repository.deleteAllByStudijskiProgram(studProgramId);
     }
+
+    public void updateStatus(String predmetId, boolean uRealizaciji) {
+        Optional<Predmet> predmet = repository.findById(predmetId);
+        if(predmet.isPresent()) {
+            predmet.get().setURealizaciji(uRealizaciji);
+            repository.save(predmet.get());
+        }
+    }
 }

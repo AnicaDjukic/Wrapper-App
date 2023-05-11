@@ -1,8 +1,9 @@
 package com.wrapper.app.controller;
 
+import com.wrapper.app.domain.PredmetPredavac;
 import com.wrapper.app.dto.RealizacijaRequestDto;
 import com.wrapper.app.dto.RealizacijaResponseDto;
-import com.wrapper.app.dto.RealizacijaUpdateDto;
+import com.wrapper.app.dto.RealizacijaPredavaciDto;
 import com.wrapper.app.dto.StudijskiProgramPredmetiDto;
 import com.wrapper.app.service.RealizacijaService;
 import org.modelmapper.ModelMapper;
@@ -41,13 +42,16 @@ public class RealizacijaController {
     @CrossOrigin(origins = "*")
     @PostMapping("studijski-programi/{studProgramId}/predmeti")
     public RealizacijaResponseDto addPredmet(@PathVariable String studProgramId, @RequestBody RealizacijaRequestDto dto) {
-        return modelMapper.map(service.addPredmet(studProgramId, dto), RealizacijaResponseDto.class);
+        PredmetPredavac predmetPredavac = modelMapper.map(dto, PredmetPredavac.class);
+        return modelMapper.map(service.addPredmet(studProgramId, predmetPredavac), RealizacijaResponseDto.class);
     }
 
     @CrossOrigin(origins = "*")
     @PutMapping("studijski-programi/{studProgramId}/predmeti/{predmetId}")
-    public RealizacijaResponseDto updatePredmet(@PathVariable String studProgramId, @PathVariable String predmetId, @RequestBody RealizacijaUpdateDto dto) {
-        return modelMapper.map(service.updatePredmet(studProgramId, predmetId, dto), RealizacijaResponseDto.class);
+    public RealizacijaResponseDto updatePredmet(@PathVariable String studProgramId, @PathVariable String predmetId, @RequestBody RealizacijaPredavaciDto dto) {
+        PredmetPredavac predmetPredavac = modelMapper.map(dto, PredmetPredavac.class);
+        predmetPredavac.setPredmetId(predmetId);
+        return modelMapper.map(service.updatePredmet(studProgramId, predmetId, predmetPredavac), RealizacijaResponseDto.class);
     }
 
     @CrossOrigin(origins = "*")

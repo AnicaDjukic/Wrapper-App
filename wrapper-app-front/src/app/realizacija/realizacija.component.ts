@@ -72,9 +72,9 @@ export class RealizacijaComponent {
     await this.getPredavaciOptions();
   }
 
-  openDialog() {
+  async openDialog() {
     let studijskiProgramId = this.studijskiProgrami.filter(sp => sp.oznaka == this.selected.split(' ')[0]).map(value => value.id)[0];
-    this.getPredmetOptions(studijskiProgramId);
+    await this.getPredmetOptions(studijskiProgramId);
     this.dialog.open(RealizacijaDialogComponent, {
       width: '60%',
       data: {
@@ -93,7 +93,7 @@ export class RealizacijaComponent {
     });
   }
 
-  getPredmetOptions(studijskiProgramId: any) {
+  async getPredmetOptions(studijskiProgramId: any) {
     this.api.getByStudijskiProgram(studijskiProgramId)
       .subscribe({
         next: (res) => {

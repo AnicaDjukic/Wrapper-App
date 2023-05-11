@@ -19,17 +19,18 @@ export class RealizacijaDialogComponent {
   title!: string;
   actionBtn: string = "Sačuvaj";
   studijskiProgramId!: string;
-  predmeti: PredmetDto[] = [];
-  predavaci: PredavacDto[] = [];
-  predmetiOptions: string[] = [];
+  predmeti: Set<PredmetDto> = new Set([]);
+  predavaci: Set<PredavacDto> = new Set([]);
+  predmetiOptions: Set<string> = new Set([]);
   filteredPredmetOptions!: Observable<string[]>;
   filteredProfesorOptions!: Observable<string[]>;
   filteredOstaliProfesoriOptions!: Observable<string[]>;
   filteredAsistentiOptions!: Observable<string[]>;
   predmetForm!: FormGroup;
   show = false;
-  predavaciOptions!: string[];
+  predavaciOptions!: Set<string>;
   glavniProfesorOptions!: string[];
+  glavniProfesorValidOptions!: string[];
   options: string[][] = [[]];
   optionsAsistenti: string[][] = [[]];
 
@@ -41,17 +42,19 @@ export class RealizacijaDialogComponent {
     private toastr: ToastrService) { }
 
   ngOnInit(): void {
-    this.predmetiOptions = this.data.predmetiOptions;
-    this.predmeti = this.data.predmeti;
-    this.predavaciOptions = this.data.predavaciOptions;
-    this.predavaci = this.data.predavaci;
+    this.predmeti = new Set(this.data.predmeti);
+    this.predmetiOptions = new Set(this.data.predmetiOptions);
+    this.predavaciOptions = new Set(this.data.predavaciOptions);
+    this.predavaci = new Set(this.data.predavaci);
+    this.glavniProfesorValidOptions = Array.from(this.predavaciOptions);
+    this.glavniProfesorValidOptions.push('');
     //this.glavniProfesorOptions = this.predavaciOptions;
 
     this.predmetForm = this.formBuilder.group({
       studijskiProgramId: new FormControl({ value: '', disabled: true }),
       predmetId: ['', Validators.required],
       godina: new FormControl({ value: '', disabled: true }),
-      profesorId: ['', [autocompleteValidator(this.predavaciOptions)]],
+      profesorId: ['', [autocompleteValidator(this.glavniProfesorValidOptions)]],
       ostaliProfesori: this.formBuilder.array([]),
       asistentZauzeca: this.formBuilder.array([])
     });
@@ -103,19 +106,19 @@ export class RealizacijaDialogComponent {
     this.predmetForm.controls['godina'].setValue(this.data.element.predmetGodina);
     this.show = true;
     this.predmetForm.controls['godina'].disable();
-    let profesori = this.predavaciOptions;
+    let profesori = Array.from(this.predavaciOptions);
     let profesor = profesori.filter(p => p.split("(")[0].trim() == this.data.element.profesor).map(value => value)[0];
     this.predmetForm.controls['profesorId'].setValue(profesor);
     if (this.data.element.ostaliProfesori) {
       for (let prof of this.data.element.ostaliProfesori) {
-        let profesori = this.predavaciOptions;
+        let profesori = Array.from(this.predavaciOptions);
         let profesor = profesori.filter(p => p.split("(")[0].trim() == prof)
         this.ostaliProfesoriFieldsAsFormArray.push(this.formBuilder.control(profesor));
       }
     }
     if (this.data.element.asistentiZauzeca) {
       for (let asist of this.data.element.asistentiZauzeca) {
-        let asistenti = this.predavaciOptions;
+        let asistenti = Array.from(this.predavaciOptions);
         let asistent = asistenti.filter(p => p.split("(")[0].trim() == asist.asistent).map(value => value)[0];
         this.asistentZauzecaFieldsAsFormArray.push(this.asistentZauzece(asistent, asist.brojTermina));
       }
@@ -129,7 +132,7 @@ export class RealizacijaDialogComponent {
 
   addControl(): void {
     this.options.push([]);
-    this.ostaliProfesoriFieldsAsFormArray.push(this.formBuilder.control('', [Validators.required, autocompleteValidator(this.predavaciOptions)]));
+    this.ostaliProfesoriFieldsAsFormArray.push(this.formBuilder.control('', [Validators.required, autocompleteValidator(Array.from(this.predavaciOptions))]));
   }
 
   remove(i: number): void {
@@ -139,7 +142,7 @@ export class RealizacijaDialogComponent {
 
   asistentZauzece(asistentId: string, brojTermina: number): any {
     return this.formBuilder.group({
-      asistentId: this.formBuilder.control(asistentId,[Validators.required, autocompleteValidator(this.predavaciOptions)]),
+      asistentId: this.formBuilder.control(asistentId,[Validators.required, autocompleteValidator(Array.from(this.predavaciOptions))]),
       brojTermina: this.formBuilder.control(brojTermina, [Validators.required, Validators.min(1)])
     });
   }
@@ -147,7 +150,7 @@ export class RealizacijaDialogComponent {
   newAsistentZauzece(): any {
     this.optionsAsistenti.push([]);
     return this.formBuilder.group({
-      asistentId: this.formBuilder.control('', [Validators.required, autocompleteValidator(this.predavaciOptions)]),
+      asistentId: this.formBuilder.control('', [Validators.required, autocompleteValidator(Array.from(this.predavaciOptions))]),
       brojTermina: this.formBuilder.control('', [Validators.required, Validators.min(1)])
     });
   }
@@ -167,11 +170,11 @@ export class RealizacijaDialogComponent {
 
   private _filterPredmetiOptions(value: string): string[] {
     if (value == '')
-      return this.predmetiOptions;
+      return Array.from(this.predmetiOptions);
 
     const filterValue = value.toLowerCase();
-
-    return this.predmetiOptions.filter(option => option.toLowerCase().includes(filterValue));
+    let filterOptions = Array.from(this.predmetiOptions);
+    return filterOptions.filter(option => option.toLowerCase().includes(filterValue));
   }
 
   private _filterGlavniProfesorOptions(value: string): string[] {
@@ -185,11 +188,11 @@ export class RealizacijaDialogComponent {
   public _filterOstaliProfesoriOptions($event: any, index: number) {
     const value = $event?.target?.value;
     if (value == '' || !value) {
-      this.options[index] = this.predavaciOptions
+      this.options[index] = Array.from(this.predavaciOptions);
       return;
     }
     const filterValue = value.toLowerCase();
-    let all = this.predavaciOptions;
+    let all = Array.from(this.predavaciOptions);
     let options = all.filter(option => option.toLowerCase().includes(filterValue));
     this.options[index] = options;
   }
@@ -197,17 +200,18 @@ export class RealizacijaDialogComponent {
   public _filterAsistentiOptions($event: any, index: number) {
     const value = $event?.target?.value;
     if (value == '' || !value) {
-      this.optionsAsistenti[index] = this.predavaciOptions
+      this.optionsAsistenti[index] = Array.from(this.predavaciOptions);
       return;
     }
     const filterValue = value.toLowerCase();
-    let all = this.predavaciOptions;
+    let all = Array.from(this.predavaciOptions);
     let options = all.filter(option => option.toLowerCase().includes(filterValue));
     this.optionsAsistenti[index] = options;
   }
 
   getGodina(predmet: string) {
-    let predmetId = this.predmeti.filter(sp => sp.oznaka == predmet.split(' ')[1]).map(value => value.id)[0];
+    let predmeti = Array.from(this.predmeti);
+    let predmetId = predmeti.filter(sp => sp.oznaka == predmet.split(' ')[1]).map(value => value.id)[0];
     this.predmetApi.get(predmetId)
       .subscribe({
         next: (res) => {
@@ -224,16 +228,17 @@ export class RealizacijaDialogComponent {
     console.log(this.predmetForm.value);
 
     if(this.predmetForm.value.predmetId) {
-      this.predmetForm.value.predmetId = this.predmeti.filter(sp => sp.oznaka == this.predmetForm.value.predmetId.split(' ')[1]).map(value => value.id)[0];
+      let predmeti = Array.from(this.predmeti);
+      this.predmetForm.value.predmetId = predmeti.filter(sp => sp.oznaka == this.predmetForm.value.predmetId.split(' ')[1]).map(value => value.id)[0];
     }
     
-    let profesori = this.predavaci;
+    let profesori = Array.from(this.predavaci);
     this.predmetForm.value.profesorId = profesori.filter(p =>
       (p.titula + " " + p.ime + " " + p.prezime + " (" + p.orgJedinica + ")").trim() == this.predmetForm.value.profesorId).map(value => value.id)[0];
 
     let izabraniProfesori = [];
     for (let prof of this.predmetForm.value.ostaliProfesori) {
-      let ostaliProfesori = this.predavaci;
+      let ostaliProfesori = Array.from(this.predavaci);
       izabraniProfesori.push(ostaliProfesori.filter(p =>
         (p.titula + " " + p.ime + " " + p.prezime + " (" + p.orgJedinica + ")").trim() == prof).map(value => value.id)[0]);
     }
@@ -241,7 +246,7 @@ export class RealizacijaDialogComponent {
 
     let asistentZauzeca = [];
     for (let zauzece of this.predmetForm.value.asistentZauzeca) {
-      let asistenti = this.predavaci;
+      let asistenti = Array.from(this.predavaci);
       let asistentId = asistenti.filter(p =>
         (p.titula + " " + p.ime + " " + p.prezime + " (" + p.orgJedinica + ")").trim() == zauzece.asistentId).map(value => value.id)[0];
       asistentZauzeca.push({ asistentId: asistentId, brojTermina: zauzece.brojTermina });
