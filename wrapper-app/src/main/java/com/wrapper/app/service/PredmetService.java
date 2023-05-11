@@ -2,6 +2,7 @@ package com.wrapper.app.service;
 
 import com.wrapper.app.domain.Predmet;
 import com.wrapper.app.domain.StudijskiProgram;
+import com.wrapper.app.dto.PredmetRequestDto;
 import com.wrapper.app.dto.PredmetSearchDto;
 import com.wrapper.app.exception.AlreadyExistsException;
 import com.wrapper.app.exception.NotFoundException;
@@ -33,8 +34,7 @@ public class PredmetService {
     }
 
     public Page<Predmet> getAll(Pageable pageable) {
-        Page<Predmet> results = repository.findAll(pageable);
-        return mapStudijskiProgram(results);
+        return repository.findAll(pageable);
     }
 
     public Page<Predmet> search(PredmetSearchDto searchDto, Pageable pageable) {
@@ -42,7 +42,7 @@ public class PredmetService {
         List<String> studProgramIds = studProgrami.stream().map(StudijskiProgram::getId).toList();
         List<Predmet> results = new ArrayList<>();
         studProgramIds.forEach(id -> results.addAll(repository.search(searchDto.getOznaka(), searchDto.getNaziv(), id)));
-        return mapStudijskiProgram(createPage(results, pageable));
+        return createPage(results, pageable);
     }
 
     private PageImpl<Predmet> createPage(List<Predmet> results, Pageable pageable) {
@@ -53,27 +53,14 @@ public class PredmetService {
         return new PageImpl<>(pageContent, pageable, results.size());
     }
 
-    private Page<Predmet> mapStudijskiProgram(Page<Predmet> list) {
-        list.forEach(result -> {
-            StudijskiProgram studijskiProgram = studijskiProgramService.getById(result.getStudijskiProgram());
-            result.setStudijskiProgram(studijskiProgram.getOznaka() + " " + studijskiProgram.getNaziv());
-        });
-        return list;
-    }
-
-    public Predmet create(Predmet predmet) {
-        validate(predmet);
-        predmet.setId(UUID.randomUUID().toString());
-        return repository.save(predmet);
-    }
-
-    private void validate(Predmet predmet) {
-        if(!studijskiProgramService.existsById(predmet.getStudijskiProgram()))
-            throw new NotFoundException(StudijskiProgram.class.getSimpleName());
-        Optional<Predmet> existing = repository.findByOznakaAndPlanAndStudijskiProgram(predmet.getOznaka(), predmet.getPlan(), predmet.getStudijskiProgram());
+    public Predmet create(PredmetRequestDto dto) {
+        Optional<Predmet> existing = repository.findByOznakaAndPlanAndStudijskiProgram(dto.getOznaka(), dto.getPlan(), dto.getStudijskiProgram());
         if(existing.isPresent()) {
             throw new AlreadyExistsException(Predmet.class.getSimpleName());
         }
+        Predmet predmet = createPredmet(dto);
+        predmet.setId(UUID.randomUUID().toString());
+        return repository.save(predmet);
     }
 
     public Predmet getById(String id) {
@@ -87,21 +74,24 @@ public class PredmetService {
         return predmet;
     }
 
-    public Predmet update(String id, Predmet predmet) {
-        if (!repository.existsById(id))
-            throw new NotFoundException(Predmet.class.getSimpleName());
-        validate(predmet, id);
+    public Predmet update(String id, PredmetRequestDto dto) {
+        Optional<Predmet> existing = repository.findByOznakaAndPlanAndStudijskiProgram(dto.getOznaka(), dto.getPlan(), dto.getStudijskiProgram());
+        if(existing.isPresent() && !existing.get().getId().equals(id)) {
+            throw new AlreadyExistsException(Predmet.class.getSimpleName());
+        }
+        Predmet predmet = createPredmet(dto);
         predmet.setId(id);
         return repository.save(predmet);
     }
 
-    private void validate(Predmet predmet, String id) {
-        if(!studijskiProgramService.existsById(predmet.getStudijskiProgram()))
-            throw new NotFoundException(StudijskiProgram.class.getSimpleName());
-        Optional<Predmet> existing = repository.findByOznakaAndPlanAndStudijskiProgram(predmet.getOznaka(), predmet.getPlan(), predmet.getStudijskiProgram());
-        if(existing.isPresent() && !existing.get().getId().equals(id)) {
-            throw new AlreadyExistsException(Predmet.class.getSimpleName());
-        }
+    private Predmet createPredmet(PredmetRequestDto dto) {
+        StudijskiProgram studijskiProgram = studijskiProgramService.getById(dto.getStudijskiProgram());
+        Predmet predmet = Predmet.builder().oznaka(dto.getOznaka())
+                .plan(dto.getPlan()).naziv(dto.getNaziv()).godina(dto.getGodina())
+                .brojCasovaPred(dto.getBrojCasovaPred()).brojCasovaAud(dto.getBrojCasovaAud())
+                .brojCasovaLab(dto.getBrojCasovaLab()).brojCasovaRac(dto.getBrojCasovaRac()).build();
+        predmet.setStudijskiProgram(studijskiProgram);
+        return predmet;
     }
 
     public List<Predmet> getByStudijskiProgram(String studijskiProgram) {

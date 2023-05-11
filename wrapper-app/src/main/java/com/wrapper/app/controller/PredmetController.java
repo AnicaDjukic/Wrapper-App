@@ -1,13 +1,13 @@
 package com.wrapper.app.controller;
 
 import com.wrapper.app.domain.Predmet;
+import com.wrapper.app.domain.StudijskiProgram;
 import com.wrapper.app.dto.PredmetRequestDto;
 import com.wrapper.app.dto.PredmetResponseDto;
 import com.wrapper.app.dto.PredmetSearchDto;
 import com.wrapper.app.service.PredmetService;
 import jakarta.validation.Valid;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
+import org.modelmapper.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -25,9 +25,10 @@ public class PredmetController {
 
     private final ModelMapper modelMapper;
 
-    public PredmetController(PredmetService service) {
+    public PredmetController(PredmetService service, ModelMapper modelMapper) {
         this.service = service;
-        this.modelMapper = new ModelMapper();
+        this.modelMapper = modelMapper;
+
     }
 
     @CrossOrigin(origins = "*")
@@ -68,14 +69,14 @@ public class PredmetController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public PredmetResponseDto create(@RequestBody @Valid PredmetRequestDto dto) {
-        Predmet saved = service.create(modelMapper.map(dto, Predmet.class));
+        Predmet saved = service.create(dto);
         return modelMapper.map(saved, PredmetResponseDto.class);
     }
 
     @CrossOrigin(origins = "*")
     @PutMapping("{id}")
     public PredmetResponseDto update(@PathVariable String id, @RequestBody @Valid PredmetRequestDto dto) {
-        Predmet updated = service.update(id, modelMapper.map(dto, Predmet.class));
+        Predmet updated = service.update(id, dto);
         return modelMapper.map(updated, PredmetResponseDto.class);
     }
 
