@@ -1,8 +1,8 @@
 package com.wrapper.app.service;
 
-import com.wrapper.app.domain.Departman;
-import com.wrapper.app.domain.Katedra;
+import com.wrapper.app.domain.OrganizacionaJedinica;
 import com.wrapper.app.domain.Predavac;
+import com.wrapper.app.dto.PredavacRequestDto;
 import com.wrapper.app.dto.PredavacSearchDto;
 import com.wrapper.app.exception.AlreadyExistsException;
 import com.wrapper.app.exception.NotFoundException;
@@ -22,28 +22,22 @@ public class PredavacService {
 
     private final PredavacRepository repository;
 
-    private final KatedraService katedraService;
+    private final OrganizacionaJedinicaService organizacionaJedinicaService;
 
-    private final DepartmanService departmanService;
-
-    public PredavacService(PredavacRepository repository, KatedraService katedraService, DepartmanService departmanService) {
+    public PredavacService(PredavacRepository repository, OrganizacionaJedinicaService organizacionaJedinicaService) {
         this.repository = repository;
-        this.katedraService = katedraService;
-        this.departmanService = departmanService;
+        this.organizacionaJedinicaService = organizacionaJedinicaService;
     }
 
     public Page<Predavac> getAll(Pageable pageable) {
-        Page<Predavac> results = repository.findAll(pageable);
-        return mapOrgJedinica(results);
+        return repository.findAll(pageable);
     }
 
     public Page<Predavac> search(PredavacSearchDto searchDto, Pageable pageable) {
-        List<String> departmanIds = departmanService.searchByNaziv(searchDto.getOrgJedinica()).stream().map(Departman::getId).toList();
-        List<String> katedraIds = katedraService.searchByNaziv(searchDto.getOrgJedinica()).stream().map(Katedra::getId).toList();
+        List<String> orgJedIds = organizacionaJedinicaService.searchByNaziv(searchDto.getOrgJedinica()).stream().map(OrganizacionaJedinica::getId).toList();
         List<Predavac> results = new ArrayList<>();
-        departmanIds.forEach(orgJedId -> results.addAll(repository.search(searchDto.getOznaka(), searchDto.getIme(), searchDto.getPrezime(), orgJedId)));
-        katedraIds.forEach(orgJedId -> results.addAll(repository.search(searchDto.getOznaka(), searchDto.getIme(), searchDto.getPrezime(), orgJedId)));
-        return mapOrgJedinica(createPage(results, pageable));
+        orgJedIds.forEach(orgJedId -> results.addAll(repository.search(searchDto.getOznaka(), searchDto.getIme(), searchDto.getPrezime(), orgJedId)));
+        return createPage(results, pageable);
     }
 
     private PageImpl<Predavac> createPage(List<Predavac> results, Pageable pageable) {
@@ -54,57 +48,40 @@ public class PredavacService {
         return new PageImpl<>(pageContent, pageable, results.size());
     }
 
-    private Page<Predavac> mapOrgJedinica(Page<Predavac> list) {
-        list.forEach(result -> {
-            if(katedraService.existsById(result.getOrgJedinica())) {
-                result.setOrgJedinica(katedraService.getById(result.getOrgJedinica()).getNaziv());
-            } else {
-                Departman departman = departmanService.getById(result.getOrgJedinica());
-                result.setOrgJedinica(departman.getNaziv());
-            }
-        });
-        return list;
-    }
-
     public Predavac getById(String id) {
         return repository.findById(id)
                 .orElseThrow(() -> new NotFoundException(Predavac.class.getSimpleName()));
     }
 
-    public Predavac create(Predavac predavac) {
-        validate(predavac);
+    public Predavac create(PredavacRequestDto dto) {
+        Optional<Predavac> existing = repository.findByOznaka(dto.getOznaka());
+        if(existing.isPresent())
+            throw new AlreadyExistsException(Predavac.class.getSimpleName());
+        Predavac predavac = createPredavac(dto);
         predavac.setId(UUID.randomUUID().toString());
         return repository.save(predavac);
     }
 
-    private void validate(Predavac predavac) {
-        if(!katedraService.existsById(predavac.getOrgJedinica())) {
-            if(!departmanService.existsById(predavac.getOrgJedinica())) {
-                throw new NotFoundException("Organizaciona jedinica");
-            }
-        }
-        Optional<Predavac> existing = repository.findByOznaka(predavac.getOznaka());
-        if(existing.isPresent())
-            throw new AlreadyExistsException(Predavac.class.getSimpleName());
-    }
-
-    public Predavac update(String id, Predavac predavac) {
+    public Predavac update(String id, PredavacRequestDto dto) {
         if (!repository.existsById(id))
             throw new NotFoundException(Predavac.class.getSimpleName());
-        validate(predavac, id);
+        Optional<Predavac> existing = repository.findByOznaka(dto.getOznaka());
+        if(existing.isPresent() && !existing.get().getId().equals(id))
+            throw new AlreadyExistsException(Predavac.class.getSimpleName());
+        Predavac predavac = createPredavac(dto);
         predavac.setId(id);
         return repository.save(predavac);
     }
 
-    private void validate(Predavac predavac, String id) {
-        if(!katedraService.existsById(predavac.getOrgJedinica())) {
-            if(!departmanService.existsById(predavac.getOrgJedinica())) {
-                throw new NotFoundException("Organizaciona jedinica");
-            }
-        }
-        Optional<Predavac> existing = repository.findByOznaka(predavac.getOznaka());
-        if(existing.isPresent() && !existing.get().getId().equals(id))
-            throw new AlreadyExistsException(Predavac.class.getSimpleName());
+    private Predavac createPredavac(PredavacRequestDto dto) {
+        OrganizacionaJedinica organizacionaJedinica = organizacionaJedinicaService.getById(dto.getOrgJedinica());
+        Predavac predavac = Predavac.builder().oznaka(dto.getOznaka())
+                .ime(dto.getIme()).prezime(dto.getPrezime())
+                .organizacijaFakulteta(dto.isOrganizacijaFakulteta())
+                .dekanat(dto.isDekanat())
+                .build();
+        predavac.setOrgJedinica(organizacionaJedinica);
+        return predavac;
     }
 
     public Predavac deleteById(String id) {

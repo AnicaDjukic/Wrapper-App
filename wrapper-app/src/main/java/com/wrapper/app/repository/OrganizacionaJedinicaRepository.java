@@ -1,0 +1,13 @@
+package com.wrapper.app.repository;
+
+import com.wrapper.app.domain.OrganizacionaJedinica;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
+
+import java.util.List;
+
+public interface OrganizacionaJedinicaRepository extends MongoRepository<OrganizacionaJedinica, String> {
+
+    @Query("{'naziv': {$regex : ?0, $options: 'i'}}")
+    List<OrganizacionaJedinica> searchByNaziv(String naziv);
+}

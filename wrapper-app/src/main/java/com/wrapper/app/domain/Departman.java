@@ -1,17 +1,11 @@
 package com.wrapper.app.domain;
 
 import lombok.Data;
-import org.springframework.data.annotation.Id;
+import lombok.EqualsAndHashCode;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
-@Document(collection = "Departmani")
-public class Departman {
-
-    @Id
-    private String id;
-    private int oznaka;
-    private int ssluzbaOznaka;
-    private String naziv;
-
+@Document(collection = "OrganizacioneJedinice")
+public class Departman extends OrganizacionaJedinica {
 }

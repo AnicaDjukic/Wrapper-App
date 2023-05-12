@@ -19,7 +19,7 @@ export class PredavacService {
     + `&oznaka=` + searchParams.oznaka
     + `&ime=`+ searchParams.ime
     + `&prezime=` + searchParams.prezime
-    + '&org_jed=' + searchParams.orgJedinica);
+    + '&orgJed=' + searchParams.orgJedinica);
   }
 
   post(data: any) {

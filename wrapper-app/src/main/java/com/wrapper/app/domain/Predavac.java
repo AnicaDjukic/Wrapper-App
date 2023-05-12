@@ -1,11 +1,13 @@
 package com.wrapper.app.domain;
 
-import ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy;
+import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
 @Data
+@Builder
 @Document(collection = "Predavaci")
 public class Predavac {
 
@@ -16,7 +18,9 @@ public class Predavac {
     private String prezime;
     private boolean organizacijaFakulteta;
     private boolean dekanat;
-    private String orgJedinica;     // TODO: katedra ili departman
+
+    @DocumentReference
+    private OrganizacionaJedinica orgJedinica;
     private String titula;
 
 }

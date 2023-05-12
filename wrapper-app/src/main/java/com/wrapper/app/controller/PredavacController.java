@@ -20,9 +20,9 @@ public class PredavacController {
 
     private final ModelMapper modelMapper;
 
-    public PredavacController(PredavacService service) {
+    public PredavacController(PredavacService service, ModelMapper modelMapper) {
         this.service = service;
-        this.modelMapper = new ModelMapper();
+        this.modelMapper = modelMapper;
     }
 
     @CrossOrigin(origins = "*")
@@ -41,9 +41,9 @@ public class PredavacController {
                                            @RequestParam String oznaka,
                                            @RequestParam String ime,
                                            @RequestParam String prezime,
-                                           @RequestParam String org_jed) {
+                                           @RequestParam String orgJed) {
         PredavacSearchDto searchDto = new PredavacSearchDto(Pattern.quote(oznaka.trim()), Pattern.quote(ime.trim()),
-                Pattern.quote(prezime.trim()), Pattern.quote(org_jed.trim()));
+                Pattern.quote(prezime.trim()), Pattern.quote(orgJed.trim()));
         return service.search(searchDto, PageRequest.of(page, size)).map(p -> modelMapper.map(p, PredavacResponseDto.class));
     }
 
@@ -58,14 +58,14 @@ public class PredavacController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public PredavacResponseDto create(@RequestBody @Valid PredavacRequestDto dto) {
-        Predavac saved =  service.create(modelMapper.map(dto, Predavac.class));
+        Predavac saved =  service.create(dto);
         return modelMapper.map(saved, PredavacResponseDto.class);
     }
 
     @CrossOrigin(origins = "*")
     @PutMapping("{id}")
     public PredavacResponseDto update(@PathVariable String id, @RequestBody @Valid PredavacRequestDto dto) {
-        Predavac updated = service.update(id, modelMapper.map(dto, Predavac.class));
+        Predavac updated = service.update(id, dto);
         return modelMapper.map(updated, PredavacResponseDto.class);
     }
 

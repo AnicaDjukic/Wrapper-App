@@ -1,7 +1,6 @@
 package com.wrapper.app.service;
 
-import com.wrapper.app.domain.Departman;
-import com.wrapper.app.domain.Katedra;
+import com.wrapper.app.domain.OrganizacionaJedinica;
 import com.wrapper.app.domain.Prostorija;
 import com.wrapper.app.dto.ProstorijaSearchDto;
 import com.wrapper.app.exception.AlreadyExistsException;
@@ -13,21 +12,17 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Stream;
 
 @Service
 public class ProstorijaService {
 
     private final ProstorijaRepository repository;
 
-    private final KatedraService katedraService;
+    private final OrganizacionaJedinicaService organizacionaJedinicaService;
 
-    private final DepartmanService departmanService;
-
-    public ProstorijaService(ProstorijaRepository repository, KatedraService katedraService, DepartmanService departmanService) {
+    public ProstorijaService(ProstorijaRepository repository, OrganizacionaJedinicaService organizacionaJedinicaService) {
         this.repository = repository;
-        this.katedraService = katedraService;
-        this.departmanService = departmanService;
+        this.organizacionaJedinicaService = organizacionaJedinicaService;
     }
 
     public Page<Prostorija> getAll(Pageable pageable) {
@@ -47,15 +42,10 @@ public class ProstorijaService {
     }
 
     private List<Prostorija> search(ProstorijaSearchDto searchDto) {
-        List<String> departmanIds = departmanService.searchByNaziv(searchDto.getOrgJedinica()).stream().map(Departman::getId).toList();
-        List<String> katedraIds = katedraService.searchByNaziv(searchDto.getOrgJedinica()).stream().map(Katedra::getId).toList();
-        List<Prostorija> firstResults = new ArrayList<>();
-        departmanIds.forEach(orgJedId -> firstResults.addAll(repository.search(searchDto.getOznaka(), searchDto.getTip(), searchDto.getKapacitet(), orgJedId)));
-        List<Prostorija> secondResults = new ArrayList<>();
-        katedraIds.forEach(orgJedId -> secondResults.addAll(repository.search(searchDto.getOznaka(), searchDto.getTip(), searchDto.getKapacitet(), orgJedId)));
-        // removing duplicates
-        Stream<Prostorija> stream = Stream.concat(firstResults.stream(), secondResults.stream());
-        return stream.distinct().toList();
+        List<String> orgJedinicaIds = organizacionaJedinicaService.searchByNaziv(searchDto.getOrgJedinica()).stream().map(OrganizacionaJedinica::getId).toList();
+        List<Prostorija> results = new ArrayList<>();
+        orgJedinicaIds.forEach(orgJedId -> results.addAll(repository.search(searchDto.getOznaka(), searchDto.getTip(), searchDto.getKapacitet(), orgJedId)));
+        return results;
     }
 
     private PageImpl<Prostorija> createPage(List<Prostorija> results, Pageable pageable) {
@@ -71,15 +61,10 @@ public class ProstorijaService {
             List<String> orgJedinice = new ArrayList<>();
             if(result.getOrgJedinica() != null) {
                 for (String orgJedId : result.getOrgJedinica()) {
-                    if (katedraService.existsById(orgJedId)) {
-                        orgJedinice.add(katedraService.getById(orgJedId).getNaziv());
+                    if (organizacionaJedinicaService.existsById(orgJedId)) {
+                        orgJedinice.add(organizacionaJedinicaService.getById(orgJedId).getNaziv());
                     } else {
-                        if(departmanService.existsById(orgJedId)) {
-                            Departman departman = departmanService.getById(orgJedId);
-                            orgJedinice.add(departman.getNaziv());
-                        } else {
-                            throw new NotFoundException("Organizaciona jedinica");
-                        }
+                        throw new NotFoundException(OrganizacionaJedinica.class.getSimpleName());
                     }
                 }
                 result.setOrgJedinica(orgJedinice);
@@ -101,9 +86,8 @@ public class ProstorijaService {
 
     private void validate(Prostorija prostorija) {
         prostorija.getOrgJedinica().forEach(orgJed -> {
-            if(!katedraService.existsById(orgJed)) {
-                if (!departmanService.existsById(orgJed))
-                    throw new NotFoundException("Organizaciona jedinica");
+            if(!organizacionaJedinicaService.existsById(orgJed)) {
+                throw new NotFoundException(OrganizacionaJedinica.class.getSimpleName());
             }
         });
         Optional<Prostorija> existing = repository.findByOznaka(prostorija.getOznaka());
@@ -121,9 +105,8 @@ public class ProstorijaService {
         if (!repository.existsById(id))
             throw new NotFoundException(Prostorija.class.getSimpleName());
         prostorija.getOrgJedinica().forEach(orgJed -> {
-            if(!katedraService.existsById(orgJed)) {
-                if (!departmanService.existsById(orgJed))
-                    throw new NotFoundException("Organizaciona jedinica");
+            if(!organizacionaJedinicaService.existsById(orgJed)) {
+                throw new NotFoundException(OrganizacionaJedinica.class.getSimpleName());
             }
         });
         Optional<Prostorija> existing = repository.findByOznaka(prostorija.getOznaka());
