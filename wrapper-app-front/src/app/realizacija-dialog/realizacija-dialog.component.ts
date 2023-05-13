@@ -234,7 +234,7 @@ export class RealizacijaDialogComponent {
     
     let profesori = Array.from(this.predavaci);
     this.predmetForm.value.profesorId = profesori.filter(p =>
-      (p.titula + " " + p.ime + " " + p.prezime + " (" + p.orgJedinica + ")").trim() == this.predmetForm.value.profesorId).map(value => value.id)[0];
+      (p.titula? p.titula : "" + " " + p.ime + " " + p.prezime + " (" + p.orgJedinica + ")").trim() == this.predmetForm.value.profesorId).map(value => value.id)[0];
 
     let izabraniProfesori = [];
     for (let prof of this.predmetForm.value.ostaliProfesori) {

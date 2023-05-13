@@ -1,5 +1,6 @@
 package com.wrapper.app.controller;
 
+import com.wrapper.app.repository.CollectionNameProvider;
 import com.wrapper.app.service.MongoDbService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -20,9 +21,17 @@ public class MongoDbController {
         service.listDatabases();
     }
 
+    @CrossOrigin(value = "*")
     @GetMapping("/switch/{databaseName}")
     @ResponseStatus(HttpStatus.OK)
     public void switchDatabase(@PathVariable String databaseName) {
-        service.switchDatabase(databaseName);
+        CollectionNameProvider.setCollectionName(databaseName);
+    }
+
+    @CrossOrigin(value = "*")
+    @GetMapping("/switch/")
+    @ResponseStatus(HttpStatus.OK)
+    public void switchDatabase() {
+        CollectionNameProvider.setCollectionName("");
     }
 }

@@ -5,7 +5,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
-@Document(collection = "StudijskiProgrami")
+//@Document(collection = "StudijskiProgrami")
+@Document(collection = "#{@collectionNameResolver.resolveCollectionName(T(com.wrapper.app.domain.StudijskiProgram))}")
 public class StudijskiProgram {
 
     @Id

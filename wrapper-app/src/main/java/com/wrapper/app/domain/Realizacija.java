@@ -1,7 +1,5 @@
 package com.wrapper.app.domain;
 
-import com.wrapper.app.dto.RealizacijaRequestDto;
-import com.wrapper.app.dto.RealizacijaPredavaciDto;
 import com.wrapper.app.exception.NotFoundException;
 import lombok.Data;
 import org.springframework.data.annotation.Id;

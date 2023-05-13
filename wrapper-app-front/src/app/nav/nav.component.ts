@@ -3,6 +3,7 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 
 
 @Component({
@@ -18,6 +19,24 @@ export class NavComponent {
       shareReplay()
     );
 
-  constructor(private breakpointObserver: BreakpointObserver, public router: Router) {}
+  constructor(private breakpointObserver: BreakpointObserver,
+    public router: Router,
+    private http: HttpClient) { }
+
+  database = '';
+
+  private databaseUrl = "http://localhost:8080/mongo/switch"
+
+  changeDatabase() {
+    return this.http.get<any>(`${this.databaseUrl}/` + this.database)
+      .subscribe({
+        next: () => {
+          let currentUrl = this.router.url;
+          this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+            this.router.navigate([currentUrl]);
+          });
+        }
+      });
+  }
 
 }

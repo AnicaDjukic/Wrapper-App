@@ -2,9 +2,9 @@
   <mat-sidenav #drawer class="sidenav" fixedInViewport [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
     [mode]="(isHandset$ | async) ? 'over' : 'side'" [opened]="(isHandset$ | async) === false">
     <mat-toolbar>
-      <mat-select value="Zimski 2022/23" class="font-bold">
-        <mat-option value="Zimski 2022/23">Zimski 2022/23</mat-option>
-        <mat-option value="Letnji 2022/23">Letnji 2022/23</mat-option>
+      <mat-select [(value)]="database" class="font-bold" (selectionChange)="changeDatabase()">
+        <mat-option value="">Zimski 2022/23</mat-option>
+        <mat-option value="2023">Letnji 2022/23</mat-option>
       </mat-select>
     </mat-toolbar>
     <mat-nav-list #navList>

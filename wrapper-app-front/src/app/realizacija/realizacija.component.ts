@@ -146,7 +146,7 @@ export class RealizacijaComponent {
     this.predavaciOptions = [];
     const predavaci = await lastValueFrom(this.getPredavaci(0, 200));
     for (let predavac of predavaci) {
-      let opt = predavac.titula + " " + predavac.ime + " " + predavac.prezime + " (" + predavac.orgJedinica + ")";
+      let opt = (predavac.titula ? predavac.titula : "") + " " + predavac.ime + " " + predavac.prezime + " (" + predavac.orgJedinica + ")";
       this.predavaciOptions.push(opt.trim());
     }
     this.predavaci = predavaci;

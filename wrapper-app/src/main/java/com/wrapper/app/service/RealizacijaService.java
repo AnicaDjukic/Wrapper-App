@@ -122,7 +122,7 @@ public class RealizacijaService {
     private void fillProfesorInfo(String profesorId, PredmetPredavacDto predmetPredavacDto) {
         if(profesorId != null && predavacService.existsById(profesorId)) {
             Predavac profesor = predavacService.getById(profesorId);
-            String profesorNaziv = profesor.getTitula() + " " + profesor.getIme() + " " + profesor.getPrezime();
+            String profesorNaziv = (profesor.getTitula() != null ? profesor.getTitula() : "") + " " + profesor.getIme() + " " + profesor.getPrezime();
             predmetPredavacDto.setProfesor(profesorNaziv.trim());
         } else {
             predmetPredavacDto.setBlock(true);
@@ -137,7 +137,7 @@ public class RealizacijaService {
                 continue;
             }
             Predavac ostaliProfesor = predavacService.getById(profId);
-            String profNaziv = ostaliProfesor.getTitula() + " " + ostaliProfesor.getIme() + " " + ostaliProfesor.getPrezime();
+            String profNaziv = (ostaliProfesor.getTitula() != null ? ostaliProfesor.getTitula() : "") + " " + ostaliProfesor.getIme() + " " + ostaliProfesor.getPrezime();
             predmetPredavacDto.getOstaliProfesori().add(profNaziv.trim());
         }
     }
@@ -150,7 +150,7 @@ public class RealizacijaService {
             }
             AsistentiZauzecaDto zauzeceDto = new AsistentiZauzecaDto();
             Predavac asistent = predavacService.getById(zauzece.getAsistentId());
-            String asistentNaziv = asistent.getTitula() + " " + asistent.getIme() + " " + asistent.getPrezime();
+            String asistentNaziv = (asistent.getTitula() != null ? asistent.getTitula() : "") + " " + asistent.getIme() + " " + asistent.getPrezime();
             zauzeceDto.setAsistent(asistentNaziv.trim());
             zauzeceDto.setBrojTermina(zauzece.getBrojTermina());
             predmetPredavacDto.getAsistentiZauzeca().add(zauzeceDto);
