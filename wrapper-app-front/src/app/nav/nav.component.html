@@ -3,8 +3,7 @@
     [mode]="(isHandset$ | async) ? 'over' : 'side'" [opened]="(isHandset$ | async) === false">
     <mat-toolbar>
       <mat-select [(value)]="database" class="font-bold" (selectionChange)="changeDatabase()">
-        <mat-option value="">Zimski 2022/23</mat-option>
-        <mat-option value="2023">Letnji 2022/23</mat-option>
+        <mat-option *ngFor="let option of options" [value]="option.godina + option.semestar.substring(0, 1)">{{option.semestar}} {{option.godina}}</mat-option>
       </mat-select>
     </mat-toolbar>
     <mat-nav-list #navList>
@@ -29,11 +28,11 @@
       <a mat-list-item routerLink="realizacija" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
         <span class="contact-names">Realizacija</span>
       </a>
+      <a mat-list-item routerLink="novi-semestar" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+        <span class="contact-names">Novi semestar</span>
+      </a>
       <!-- <a mat-list-item routerLink="realizacija" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
         <span class="contact-names">Generisanje rasporeda</span>
-      </a>
-      <a mat-list-item routerLink="realizacija" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
-        <span class="contact-names">Napravi novi semestar</span>
       </a> -->
     </mat-nav-list>
     <button class="logout-btn" mat-raised-button color="primary">

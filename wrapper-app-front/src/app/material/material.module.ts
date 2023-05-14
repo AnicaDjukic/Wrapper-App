@@ -15,6 +15,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSortModule } from '@angular/material/sort';
+import { MatGridListModule } from '@angular/material/grid-list';
 
 const MaterialComponents = [
   MatToolbarModule,
@@ -32,7 +33,8 @@ const MaterialComponents = [
   MatAutocompleteModule,
   MatCheckboxModule,
   MatProgressSpinnerModule,
-  MatSortModule
+  MatSortModule,
+  MatGridListModule
 ];
 
 @NgModule({

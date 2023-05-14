@@ -29,6 +29,7 @@ import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { RealizacijaDialogComponent } from './realizacija-dialog/realizacija-dialog.component';
 import { FormsModule } from '@angular/forms';
 import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
+import { NoviSemestarComponent } from './novi-semestar/novi-semestar.component';
 
 @NgModule({
   declarations: [
@@ -46,7 +47,8 @@ import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-
     StudentskaGrupaDialogComponent,
     ProstorijaDialogComponent,
     RealizacijaDialogComponent,
-    ConfirmationDialogComponent
+    ConfirmationDialogComponent,
+    NoviSemestarComponent
   ],
   imports: [
     BrowserModule,

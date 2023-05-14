@@ -1,6 +1,5 @@
 package com.wrapper.app.dto;
 
-import com.wrapper.app.domain.AsistentZauzece;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;

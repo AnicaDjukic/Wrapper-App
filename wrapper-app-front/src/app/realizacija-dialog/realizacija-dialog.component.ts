@@ -234,13 +234,13 @@ export class RealizacijaDialogComponent {
     
     let profesori = Array.from(this.predavaci);
     this.predmetForm.value.profesorId = profesori.filter(p =>
-      (p.titula? p.titula : "" + " " + p.ime + " " + p.prezime + " (" + p.orgJedinica + ")").trim() == this.predmetForm.value.profesorId).map(value => value.id)[0];
+      ((p.titula? p.titula : "") + " " + p.ime + " " + p.prezime + " (" + p.orgJedinica + ")").trim() == this.predmetForm.value.profesorId).map(value => value.id)[0];
 
     let izabraniProfesori = [];
     for (let prof of this.predmetForm.value.ostaliProfesori) {
       let ostaliProfesori = Array.from(this.predavaci);
       izabraniProfesori.push(ostaliProfesori.filter(p =>
-        (p.titula + " " + p.ime + " " + p.prezime + " (" + p.orgJedinica + ")").trim() == prof).map(value => value.id)[0]);
+        ((p.titula? p.titula : "") + " " + p.ime + " " + p.prezime + " (" + p.orgJedinica + ")").trim() == prof).map(value => value.id)[0]);
     }
     this.predmetForm.value.ostaliProfesori = izabraniProfesori;
 
@@ -248,7 +248,7 @@ export class RealizacijaDialogComponent {
     for (let zauzece of this.predmetForm.value.asistentZauzeca) {
       let asistenti = Array.from(this.predavaci);
       let asistentId = asistenti.filter(p =>
-        (p.titula + " " + p.ime + " " + p.prezime + " (" + p.orgJedinica + ")").trim() == zauzece.asistentId).map(value => value.id)[0];
+        ((p.titula? p.titula : "") + " " + p.ime + " " + p.prezime + " (" + p.orgJedinica + ")").trim() == zauzece.asistentId).map(value => value.id)[0];
       asistentZauzeca.push({ asistentId: asistentId, brojTermina: zauzece.brojTermina });
     }
     this.predmetForm.value.asistentZauzeca = asistentZauzeca;

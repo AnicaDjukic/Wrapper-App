@@ -1,7 +1,6 @@
 package com.wrapper.app.controller;
 
 import com.wrapper.app.domain.Predmet;
-import com.wrapper.app.domain.StudijskiProgram;
 import com.wrapper.app.dto.PredmetRequestDto;
 import com.wrapper.app.dto.PredmetResponseDto;
 import com.wrapper.app.dto.PredmetSearchDto;

@@ -87,7 +87,7 @@ public class PredmetService {
     private Predmet createPredmet(PredmetRequestDto dto) {
         StudijskiProgram studijskiProgram = studijskiProgramService.getById(dto.getStudijskiProgram());
         Predmet predmet = Predmet.builder().oznaka(dto.getOznaka())
-                .plan(dto.getPlan()).naziv(dto.getNaziv()).godina(dto.getGodina())
+                .plan(dto.getPlan()).naziv(dto.getNaziv()).godina(dto.getGodina()).sifraStruke(dto.getSifraStruke())
                 .brojCasovaPred(dto.getBrojCasovaPred()).brojCasovaAud(dto.getBrojCasovaAud())
                 .brojCasovaLab(dto.getBrojCasovaLab()).brojCasovaRac(dto.getBrojCasovaRac()).build();
         predmet.setStudijskiProgram(studijskiProgram);

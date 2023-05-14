@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Data
-@Document(collection = "Realizacija")
+@Document(collection = "#{@collectionNameResolver.resolveCollectionName(T(com.wrapper.app.domain.Realizacija))}")
 public class Realizacija {
 
     @Id

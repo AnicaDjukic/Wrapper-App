@@ -1,0 +1,50 @@
+<div>
+    <mat-card class="form">
+        <mat-grid-list cols="1" rowHeight="75px" class="form-content">
+            <mat-grid-tile>
+                <h1>Novi semestar</h1>
+            </mat-grid-tile>
+            <form style="width: 90%;" [formGroup]="semestarForm">
+                <mat-grid-tile>
+                    <mat-form-field style="width: 47.5%; margin-right: 5%;">
+                        <mat-label>Izaberite semestar</mat-label>
+                        <mat-select formControlName="semestar">
+                            <mat-option value="Zimski">Zimski</mat-option>
+                            <mat-option value="Letnji">Letnji</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field style="width: 47.5%;">
+                        <mat-label>Unesite školsku godinu</mat-label>
+                        <input formControlName="godina" matInput placeholder="npr. 2022/23" type="text">
+                    </mat-form-field>
+                </mat-grid-tile>
+                <mat-grid-tile style="font-size: larger">
+                    Izaberite semestar iz kog će biti preuzeti predmeti, studijski programi, studentske grupe i
+                    realizacija:
+                </mat-grid-tile>
+                <mat-grid-tile>
+                    <mat-form-field class="example-full-width">
+                        <mat-label>Izaberite semestar</mat-label>
+                        <mat-select formControlName="firstSemestar">
+                            <mat-option *ngFor="let option of options" [value]="option.godina + option.semestar.substring(0, 1)">{{option.semestar}} {{option.godina}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </mat-grid-tile>
+                <mat-grid-tile style="font-size: larger;">
+                    Izaberite semestar iz kog će biti preuzeti predavači i prostorije:
+                </mat-grid-tile>
+                <mat-grid-tile>
+                    <mat-form-field class="example-full-width">
+                        <mat-label>Izaberite semestar</mat-label>
+                        <mat-select formControlName="secondSemestar">
+                            <mat-option *ngFor="let option of options" [value]="option.godina + option.semestar.substring(0, 1)">{{option.semestar}} {{option.godina}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </mat-grid-tile>
+                <mat-grid-tile>
+                    <button mat-raised-button color="primary" [disabled]="!semestarForm.valid" (click)="submit()">Potvrdi</button>
+                </mat-grid-tile>
+            </form>
+        </mat-grid-list>
+    </mat-card>
+</div>

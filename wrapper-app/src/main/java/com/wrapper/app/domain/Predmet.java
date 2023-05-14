@@ -8,7 +8,6 @@ import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
 @Data
 @Builder
-//@Document(collection = "Predmeti")
 @Document(collection = "#{@collectionNameResolver.resolveCollectionName(T(com.wrapper.app.domain.Predmet))}")
 public class Predmet {
 
@@ -30,5 +29,5 @@ public class Predmet {
     private int brojCasovaAud;
     private int brojCasovaLab;
     private int brojCasovaRac;
-    private boolean uRealizaciji;
+    private Boolean uRealizaciji;
 }

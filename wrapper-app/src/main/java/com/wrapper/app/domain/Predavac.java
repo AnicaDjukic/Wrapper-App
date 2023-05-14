@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
 @Data
 @Builder
-@Document(collection = "Predavaci")
+@Document(collection = "#{@collectionNameResolver.resolveCollectionName(T(com.wrapper.app.domain.Predavac))}")
 public class Predavac {
 
     @Id

@@ -21,7 +21,7 @@ export class PredmetiComponent implements OnInit {
     'brojCasovaPred', 'brojCasovaAud', 'brojCasovaLab', 'brojCasovaRac', 'actions'];
 
   constructor(private api: ApiService,
-    private rrealizacijaApi: RealizacijaService, 
+    private realizacijaApi: RealizacijaService, 
     public dialog: MatDialog, 
     private toastr: ToastrService) { }
 
@@ -39,9 +39,17 @@ export class PredmetiComponent implements OnInit {
   pageIndex = 0;
 
   ngOnInit() {
+    this.initializeComponent();
+  }
+
+  initializeComponent() {
     this.dataSource.paginator = this.paginator;
     this.getAll(0, this.pageSize);
     this.getStudijskiProgramOptions();
+  }
+
+  refresh() {
+    this.initializeComponent();
   }
 
   getAll(page: number, size: number) {
@@ -114,7 +122,7 @@ export class PredmetiComponent implements OnInit {
   }
 
   delete(id: string) {
-    this.rrealizacijaApi.deletePredmet(id)
+    this.realizacijaApi.deletePredmet(id)
       .subscribe({
         next: () => {
           this.toastr.success('Predmet je uspešno obrisan!', 'Uspešno!');

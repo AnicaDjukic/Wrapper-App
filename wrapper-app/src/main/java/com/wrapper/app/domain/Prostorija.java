@@ -7,7 +7,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.List;
 
 @Data
-@Document(collection = "Prostorije")
+@Document(collection = "#{@collectionNameResolver.resolveCollectionName(T(com.wrapper.app.domain.Prostorija))}")
 public class Prostorija {
 
     @Id

@@ -110,8 +110,10 @@ export class PredmetDialogComponent implements OnInit {
     if (!this.predmetForm.valid) {
       return
     }
+    console.log(this.predmetForm.value);
     let studProg: string = this.predmetForm.value.studijskiProgram
     this.predmetForm.value.studijskiProgram = this.studijskiProgrami.filter(sp => sp.oznaka == studProg.split(' ')[0]).map(value => value.id)[0];
+    console.log(this.predmetForm.value);
     this.api.put(this.predmetForm.value, this.data.editData.id)
       .subscribe({
         next: () => {
