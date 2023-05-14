@@ -11,6 +11,8 @@ import lombok.Setter;
 @Setter
 public class DatabaseResponseDto {
 
+    private String id;
+
     private String semestar;
 
     private String godina;

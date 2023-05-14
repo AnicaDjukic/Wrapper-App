@@ -21,6 +21,10 @@ export class DatabaseService {
   post(dto: any) {
     return this.http.post<any>(`${this.databaseUrl}/`, dto);
   }
+
+  put(dto: any) {
+    return this.http.put<any>(`${this.databaseUrl}/`, dto);
+  }
   
 
 }

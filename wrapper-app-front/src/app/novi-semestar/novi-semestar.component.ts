@@ -3,6 +3,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DatabaseService } from '../services/database.service';
 import { DatabaseDto } from '../dtos/DatabaseDto';
 import { ToastrService } from 'ngx-toastr';
+import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-novi-semestar',
@@ -16,7 +18,8 @@ export class NoviSemestarComponent {
 
   constructor(private formBuilder: FormBuilder,
     private databaseApi: DatabaseService,
-    private toastr: ToastrService) { }
+    private toastr: ToastrService,
+    public dialog: MatDialog) { }
 
   ngOnInit() {
     this.getDatabases();
@@ -37,18 +40,8 @@ export class NoviSemestarComponent {
       });
   }
 
-  submit() {
-    let dto = {
-      semestar: this.semestarForm.value.semestar,
-      godina: this.semestarForm.value.godina,
-      predmeti: this.semestarForm.value.firstSemestar,
-      studijskiProgrami: this.semestarForm.value.firstSemestar,
-      studentskeGrupe: this.semestarForm.value.firstSemestar,
-      realizacija: this.semestarForm.value.firstSemestar,
-      predavaci: this.semestarForm.value.secondSemestar,
-      prostorije: this.semestarForm.value.secondSemestar
-    }
-
+  add() {
+    let dto = this.prepareData();
     this.databaseApi.post(dto)
       .subscribe({
         next: (res) => {
@@ -60,14 +53,58 @@ export class NoviSemestarComponent {
         },
         error: (message) => {
           if (message.error.message) {
-
-            console.log(message);
+            this.openConfirmationDialog();
           } else {
             this.toastr.error('Došlo je do greške prilikom dodavanja novog semestra!', 'Greška!');
           }
-
         }
       });
+  }
+
+  openConfirmationDialog() {
+    this.dialog.open(ConfirmationDialogComponent, {
+      width: '40%',
+      data: {
+        database: true,
+        semestar: this.semestarForm.value.semestar,
+        godina: this.semestarForm.value.godina
+      }
+    }).afterClosed().subscribe((val) => {
+      if (val) {
+        this.update();
+      }
+    });
+  }
+
+  update() {
+    let dto = this.prepareData();
+    this.databaseApi.put(dto)
+      .subscribe({
+        next: (res) => {
+          this.options.push(res);
+          this.toastr.success('Semestar je uspešno napravljen!', 'Uspešno!');
+          setTimeout(() => {
+            window.location.reload();
+          }, 2000);
+        },
+        error: () => {
+          this.toastr.error('Došlo je do greške prilikom dodavanja novog semestra!', 'Greška!');
+        }
+      });
+
+  }
+
+  prepareData(): any {
+    return {
+      semestar: this.semestarForm.value.semestar,
+      godina: this.semestarForm.value.godina,
+      predmeti: this.semestarForm.value.firstSemestar,
+      studijskiProgrami: this.semestarForm.value.firstSemestar,
+      studentskeGrupe: this.semestarForm.value.firstSemestar,
+      realizacija: this.semestarForm.value.firstSemestar,
+      predavaci: this.semestarForm.value.secondSemestar,
+      prostorije: this.semestarForm.value.secondSemestar
+    }
   }
 
 

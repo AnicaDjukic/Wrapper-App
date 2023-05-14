@@ -36,6 +36,9 @@ export class ConfirmationDialogComponent implements OnInit {
     } else if(this.data.brojStudenata) {
       this.title = 'Brisanje studentske grupe';
       this.message = this.data.oznaka + '. grupu na ' + this.data.godina + '. godini na studijskom programu \"' + this.data.studijskiProgram + '\"';
+    } else if(this.data.database) {
+      this.title = 'Semestar već postoji';
+      this.message = this.data.semestar + ' ' + this.data.godina;
     } else {
       this.title = 'Uklanjanje predmeta iz realizacije';
       this.message = '(' + this.data.predmetPlan + ') ' + this.data.predmetOznaka + ' ' + this.data.predmetNaziv;
