@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { StorageService } from './storage.service';
-import { AuthenticationService } from './authentication.service';
 import { HttpEvent, HttpHandler, HttpRequest } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
@@ -19,7 +18,7 @@ export class AuthInterceptorService {
     }
     if (token) {
       if (expDate < new Date()) {
-        this.router.navigateByUrl('/predmeti');
+        this.router.navigateByUrl('/');
       }
       else {
         req = req.clone({

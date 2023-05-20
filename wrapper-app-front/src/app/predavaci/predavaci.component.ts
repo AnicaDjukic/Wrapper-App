@@ -64,15 +64,15 @@ export class PredavaciComponent implements OnInit {
       }
     })
 
-    this.orgjedinicaApi.getAllDepartman()
-    .subscribe({
-      next: (res) => {
-        this.organizacioneJedinice.push(...res);
-        res.forEach((element: OrganizacionaJedinicaDto) => {
-          this.options.push(element.naziv)
-        });
-      }
-    })
+    // this.orgjedinicaApi.getAllDepartman()
+    // .subscribe({
+    //   next: (res) => {
+    //     this.organizacioneJedinice.push(...res);
+    //     res.forEach((element: OrganizacionaJedinicaDto) => {
+    //       this.options.push(element.naziv)
+    //     });
+    //   }
+    // })
   }
 
   openDialog(): void {

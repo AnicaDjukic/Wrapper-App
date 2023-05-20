@@ -1,9 +1,11 @@
 <mat-sidenav-container class="sidenav-container">
-  <mat-sidenav *ngIf="router.url != '/'" #drawer class="sidenav" fixedInViewport [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
-    [mode]="(isHandset$ | async) ? 'over' : 'side'" [opened]="(isHandset$ | async) === false">
+  <mat-sidenav *ngIf="router.url != '/'" #drawer class="sidenav" fixedInViewport
+    [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'" [mode]="(isHandset$ | async) ? 'over' : 'side'"
+    [opened]="(isHandset$ | async) === false">
     <mat-toolbar>
       <mat-select [(value)]="database" class="font-bold" (selectionChange)="changeDatabase()">
-        <mat-option *ngFor="let option of options" [value]="option.godina + option.semestar.substring(0, 1)">{{option.semestar}} {{option.godina}}</mat-option>
+        <mat-option *ngFor="let option of options"
+          [value]="option.godina + option.semestar.substring(0, 1)">{{option.semestar}} {{option.godina}}</mat-option>
       </mat-select>
     </mat-toolbar>
     <mat-nav-list #navList>
@@ -31,7 +33,8 @@
       <a mat-list-item routerLink="novi-semestar" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
         <span class="contact-names">Novi semestar</span>
       </a>
-      <a mat-list-item routerLink="generisanje-rasporeda" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+      <a mat-list-item routerLink="generisanje-rasporeda" routerLinkActive="active"
+        [routerLinkActiveOptions]="{exact: true}">
         <span class="contact-names">Generisanje rasporeda</span>
       </a>
     </mat-nav-list>

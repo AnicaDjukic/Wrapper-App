@@ -2,6 +2,7 @@ package com.wrapper.app.service;
 
 import com.wrapper.app.domain.OrganizacionaJedinica;
 import com.wrapper.app.domain.Prostorija;
+import com.wrapper.app.dto.ProstorijaRequestDto;
 import com.wrapper.app.dto.ProstorijaSearchDto;
 import com.wrapper.app.exception.AlreadyExistsException;
 import com.wrapper.app.exception.NotFoundException;
@@ -26,8 +27,7 @@ public class ProstorijaService {
     }
 
     public Page<Prostorija> getAll(Pageable pageable) {
-        Page<Prostorija> results = repository.findAll(pageable);
-        return mapOrgJedinice(results);
+        return repository.findAll(pageable);
     }
 
     public Page<Prostorija> search(ProstorijaSearchDto searchDto, Pageable pageable) {
@@ -37,12 +37,12 @@ public class ProstorijaService {
         } else {
             results = search(searchDto);
         }
-        Page<Prostorija> page = createPage(results, pageable);
-        return mapOrgJedinice(page);
+        return createPage(results, pageable);
     }
 
     private List<Prostorija> search(ProstorijaSearchDto searchDto) {
-        List<String> orgJedinicaIds = organizacionaJedinicaService.searchByNaziv(searchDto.getOrgJedinica()).stream().map(OrganizacionaJedinica::getId).toList();
+        List<String> orgJedinicaIds = organizacionaJedinicaService.searchByNaziv(searchDto.getOrgJedinica())
+                .stream().map(OrganizacionaJedinica::getId).toList();
         List<Prostorija> results = new ArrayList<>();
         orgJedinicaIds.forEach(orgJedId -> results.addAll(repository.search(searchDto.getOznaka(), searchDto.getTip(), searchDto.getKapacitet(), orgJedId)));
         return results;
@@ -56,62 +56,43 @@ public class ProstorijaService {
         return new PageImpl<>(pageContent, pageable, results.size());
     }
 
-    private Page<Prostorija> mapOrgJedinice(Page<Prostorija> results) {
-        results.forEach(result -> {
-            List<String> orgJedinice = new ArrayList<>();
-            if(result.getOrgJedinica() != null) {
-                for (String orgJedId : result.getOrgJedinica()) {
-                    if (organizacionaJedinicaService.existsById(orgJedId)) {
-                        orgJedinice.add(organizacionaJedinicaService.getById(orgJedId).getNaziv());
-                    } else {
-                        throw new NotFoundException(OrganizacionaJedinica.class.getSimpleName());
-                    }
-                }
-                result.setOrgJedinica(orgJedinice);
-            }
-        });
-        return results;
-    }
-
     public Prostorija getById(String id) {
         return repository.findById(id)
                 .orElseThrow(() -> new NotFoundException(Prostorija.class.getSimpleName()));
     }
 
-    public Prostorija create(Prostorija prostorija) {
-        validate(prostorija);
+    public Prostorija create(ProstorijaRequestDto dto) {
+        Optional<Prostorija> existing = repository.findByOznaka(dto.getOznaka());
+        if(existing.isPresent()) {
+            throw new AlreadyExistsException(Prostorija.class.getSimpleName());
+        }
+        Prostorija prostorija = createProstorija(dto);
         prostorija.setId(UUID.randomUUID().toString());
         return repository.save(prostorija);
     }
 
-    private void validate(Prostorija prostorija) {
-        prostorija.getOrgJedinica().forEach(orgJed -> {
-            if(!organizacionaJedinicaService.existsById(orgJed)) {
-                throw new NotFoundException(OrganizacionaJedinica.class.getSimpleName());
-            }
-        });
-        Optional<Prostorija> existing = repository.findByOznaka(prostorija.getOznaka());
-        if(existing.isPresent())
+    public Prostorija update(String id, ProstorijaRequestDto dto) {
+        if (!repository.existsById(id))
+            throw new NotFoundException(Prostorija.class.getSimpleName());
+        Optional<Prostorija> existing = repository.findByOznaka(dto.getOznaka());
+        if(existing.isPresent() && !existing.get().getId().equals(id))
             throw new AlreadyExistsException(Prostorija.class.getSimpleName());
-    }
-
-    public Prostorija update(String id, Prostorija prostorija) {
-        validate(id, prostorija);
+        Prostorija prostorija = createProstorija(dto);
         prostorija.setId(id);
         return repository.save(prostorija);
     }
 
-    private void validate(String id, Prostorija prostorija) {
-        if (!repository.existsById(id))
-            throw new NotFoundException(Prostorija.class.getSimpleName());
-        prostorija.getOrgJedinica().forEach(orgJed -> {
-            if(!organizacionaJedinicaService.existsById(orgJed)) {
-                throw new NotFoundException(OrganizacionaJedinica.class.getSimpleName());
-            }
-        });
-        Optional<Prostorija> existing = repository.findByOznaka(prostorija.getOznaka());
-        if(existing.isPresent() && !existing.get().getId().equals(id))
-            throw new AlreadyExistsException(Prostorija.class.getSimpleName());
+    private Prostorija createProstorija(ProstorijaRequestDto dto) {
+        Prostorija prostorija = Prostorija.builder().oznaka(dto.getOznaka())
+                .kapacitet(dto.getKapacitet()).tip(dto.getTip()).build();
+        prostorija.setOrgJedinica(new ArrayList<>());
+        if(dto.getOrgJedinica() != null) {
+            dto.getOrgJedinica().forEach( orgJed -> {
+                OrganizacionaJedinica organizacionaJedinica = organizacionaJedinicaService.getById(orgJed);
+                prostorija.getOrgJedinica().add(organizacionaJedinica);
+            });
+        }
+        return prostorija;
     }
 
     public Prostorija deleteById(String id) {

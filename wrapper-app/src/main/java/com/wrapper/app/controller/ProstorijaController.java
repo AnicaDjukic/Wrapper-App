@@ -10,8 +10,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.regex.Pattern;
-
 @RestController
 @RequestMapping("api/v1/prostorije")
 public class ProstorijaController {
@@ -20,9 +18,9 @@ public class ProstorijaController {
 
     private final ModelMapper modelMapper;
 
-    public ProstorijaController(ProstorijaService service) {
+    public ProstorijaController(ProstorijaService service, ModelMapper modelMapper) {
         this.service = service;
-        this.modelMapper = new ModelMapper();
+        this.modelMapper = modelMapper;
     }
 
     @CrossOrigin(origins = "*")
@@ -56,14 +54,14 @@ public class ProstorijaController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ProstorijaResponseDto create(@RequestBody @Valid ProstorijaRequestDto dto) {
-        Prostorija saved =  service.create(modelMapper.map(dto, Prostorija.class));
+        Prostorija saved =  service.create(dto);
         return modelMapper.map(saved, ProstorijaResponseDto.class);
     }
 
     @CrossOrigin(origins = "*")
     @PutMapping("{id}")
     public ProstorijaResponseDto update(@PathVariable String id, @RequestBody @Valid ProstorijaRequestDto dto) {
-        Prostorija updated = service.update(id, modelMapper.map(dto, Prostorija.class));
+        Prostorija updated = service.update(id, dto);
         return modelMapper.map(updated, ProstorijaResponseDto.class);
     }
 

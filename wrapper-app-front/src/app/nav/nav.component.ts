@@ -57,13 +57,10 @@ export class NavComponent implements OnInit {
       .subscribe({
         next: () => {
           let currentUrl = this.router.url;
-          if (currentUrl != '/') {
-            this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
-              this.router.navigate([currentUrl]);
-            });
-          } else {
-            window.location.reload();
-          }
+          this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+            this.router.navigate([currentUrl]);
+          });
+
         }
       });
   }

@@ -27,6 +27,7 @@ export class ProstorijeComponent {
   ngOnInit() {
     this.dataSource.paginator = this.paginator;
     this.getAll(0, this.pageSize);
+    this.getOrganizacioneJediniceOptions();
   }
 
   constructor(private api: ProstorijaService,
@@ -53,7 +54,6 @@ export class ProstorijeComponent {
           this.pageIndex = res.pageable.pageNumber;
         }
       })
-    this.getOrganizacioneJediniceOptions();
   }
 
   getOrganizacioneJediniceOptions() {
@@ -67,15 +67,15 @@ export class ProstorijeComponent {
         }
       })
 
-    this.orgjedinicaApi.getAllDepartman()
-      .subscribe({
-        next: (res) => {
-          this.organizacioneJedinice.push(...res);
-          res.forEach((element: OrganizacionaJedinicaDto) => {
-            this.options.push(element.naziv)
-          });
-        }
-      })
+    // this.orgjedinicaApi.getAllDepartman()
+    //   .subscribe({
+    //     next: (res) => {
+    //       this.organizacioneJedinice.push(...res);
+    //       res.forEach((element: OrganizacionaJedinicaDto) => {
+    //         this.options.push(element.naziv)
+    //       });
+    //     }
+    //   })
   }
 
   openDialog(): void {

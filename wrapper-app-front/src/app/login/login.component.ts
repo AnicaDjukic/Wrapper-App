@@ -35,7 +35,7 @@ export class LoginComponent {
       (res) => {
         const tokenDto: TokenDto = res as TokenDto;
         this.storageService.storeToken(tokenDto.token);
-        this.router.navigateByUrl('/predmeti');
+        window.location.href = '/predmeti';
       },
       () => {
         this.toastr.error('Pogrešno korisničko ime ili lozinka', 'Greška');

@@ -18,7 +18,6 @@ public class Predavac {
     private String prezime;
     private boolean organizacijaFakulteta;
     private boolean dekanat;
-
     @DocumentReference
     private OrganizacionaJedinica orgJedinica;
     private String titula;

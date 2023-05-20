@@ -37,11 +37,11 @@ public class PredavacController {
     @GetMapping("search")
     @ResponseStatus(HttpStatus.OK)
     public Page<PredavacResponseDto> search(@RequestParam(required = false, defaultValue = "0") int page,
-                                           @RequestParam(required = false, defaultValue = "10") int size,
-                                           @RequestParam String oznaka,
-                                           @RequestParam String ime,
-                                           @RequestParam String prezime,
-                                           @RequestParam String orgJed) {
+                                            @RequestParam(required = false, defaultValue = "10") int size,
+                                            @RequestParam String oznaka,
+                                            @RequestParam String ime,
+                                            @RequestParam String prezime,
+                                            @RequestParam String orgJed) {
         PredavacSearchDto searchDto = new PredavacSearchDto(Pattern.quote(oznaka.trim()), Pattern.quote(ime.trim()),
                 Pattern.quote(prezime.trim()), Pattern.quote(orgJed.trim()));
         return service.search(searchDto, PageRequest.of(page, size)).map(p -> modelMapper.map(p, PredavacResponseDto.class));
