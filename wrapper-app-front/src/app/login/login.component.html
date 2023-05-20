@@ -1,0 +1,32 @@
+<div>
+    <mat-card class="form">
+        <mat-grid-list cols="1" rowHeight="80px" class="form-content">
+            <mat-grid-tile rowspan="3">
+                <img src="https://seeklogo.com/images/F/Fakultet_tehnickih_nauka_-_Novi_Sad-logo-C11C616640-seeklogo.com.png" alt="" width="40%">
+            </mat-grid-tile>
+            <form [formGroup]="loginForm">
+                <mat-grid-tile>
+                    <mat-form-field class="example-full-width">
+                        <mat-label>Korisničko ime</mat-label>
+                        <input formControlName="username" matInput type="text" placeholder="Unesite korisničko ime...">
+                        <mat-error *ngIf="loginForm.get('username')?.hasError('required')">
+                            Morate uneti korisničko ime
+                        </mat-error>
+                    </mat-form-field>
+                </mat-grid-tile>
+                <mat-grid-tile>
+                    <mat-form-field class="example-full-width">
+                        <mat-label>Lozinka</mat-label>
+                        <input formControlName="password" matInput type="text" placeholder="Unesite lozinku...">
+                        <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
+                            Morate uneti lozinku
+                        </mat-error>
+                    </mat-form-field>
+                </mat-grid-tile>
+                <mat-grid-tile>
+                    <button mat-raised-button color="primary" (click)="login()">Prijavi se</button>
+                </mat-grid-tile>
+            </form>
+        </mat-grid-list>
+    </mat-card>
+</div>

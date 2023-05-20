@@ -1,5 +1,5 @@
 <mat-sidenav-container class="sidenav-container">
-  <mat-sidenav #drawer class="sidenav" fixedInViewport [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
+  <mat-sidenav *ngIf="router.url != '/'" #drawer class="sidenav" fixedInViewport [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
     [mode]="(isHandset$ | async) ? 'over' : 'side'" [opened]="(isHandset$ | async) === false">
     <mat-toolbar>
       <mat-select [(value)]="database" class="font-bold" (selectionChange)="changeDatabase()">
@@ -8,7 +8,7 @@
     </mat-toolbar>
     <mat-nav-list #navList>
       <a mat-list-item routerLink="predmeti" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"
-        [class.active]="router.url == '/predmeti' || router.url == '/'">
+        [class.active]="router.url == '/predmeti'">
         <span class="contact-names">Predmeti</span>
       </a>
       <a mat-list-item routerLink="predavaci" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
@@ -31,31 +31,15 @@
       <a mat-list-item routerLink="novi-semestar" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
         <span class="contact-names">Novi semestar</span>
       </a>
-      <!-- <a mat-list-item routerLink="realizacija" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+      <a mat-list-item routerLink="generisanje-rasporeda" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
         <span class="contact-names">Generisanje rasporeda</span>
-      </a> -->
+      </a>
     </mat-nav-list>
-    <button class="logout-btn" mat-raised-button color="primary">
-      <!-- <mat-icon>add</mat-icon> -->
+    <button class="logout-btn" mat-raised-button color="primary" (click)="logout()">
       Odjavi se
     </button>
   </mat-sidenav>
   <mat-sidenav-content>
-    <!--<mat-toolbar color="primary">
-      <button
-        type="button"
-        aria-label="Toggle sidenav"
-        mat-icon-button
-        (click)="drawer.toggle()"
-        *ngIf="isHandset$ | async">
-        <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
-      </button>
-      <span>
-        <b>FTN raspored</b>
-      </span>
-    </mat-toolbar>-->
-
     <router-outlet></router-outlet>
-    <!-- Add Content Here -->
   </mat-sidenav-content>
 </mat-sidenav-container>

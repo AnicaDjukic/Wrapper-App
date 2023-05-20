@@ -17,7 +17,7 @@ import { ProstorijeComponent } from './prostorije/prostorije.component';
 import { StudijskiProgramiComponent } from './studijski-programi/studijski-programi.component';
 import { StudentskeGrupeComponent } from './studentske-grupe/studentske-grupe.component';
 import { RealizacijaComponent } from './realizacija/realizacija.component';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { PredmetDialogComponent } from './predmet-dialog/predmet-dialog.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { PredavacDialogComponent } from './predavac-dialog/predavac-dialog.component';
@@ -30,6 +30,9 @@ import { RealizacijaDialogComponent } from './realizacija-dialog/realizacija-dia
 import { FormsModule } from '@angular/forms';
 import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
 import { NoviSemestarComponent } from './novi-semestar/novi-semestar.component';
+import { GenerisanjeRasporedaComponent } from './generisanje-rasporeda/generisanje-rasporeda.component';
+import { LoginComponent } from './login/login.component';
+import { AuthInterceptorService } from './services/auth-interceptor.service';
 
 @NgModule({
   declarations: [
@@ -48,8 +51,10 @@ import { NoviSemestarComponent } from './novi-semestar/novi-semestar.component';
     ProstorijaDialogComponent,
     RealizacijaDialogComponent,
     ConfirmationDialogComponent,
-    NoviSemestarComponent
-  ],
+    NoviSemestarComponent,
+    GenerisanjeRasporedaComponent,
+    LoginComponent
+],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -67,7 +72,11 @@ import { NoviSemestarComponent } from './novi-semestar/novi-semestar.component';
     ToastrModule.forRoot(),
     FormsModule
   ],
-  providers: [ToastrService],
+  providers: [ToastrService, {
+    provide: HTTP_INTERCEPTORS,
+    useClass: AuthInterceptorService,
+    multi: true
+}],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

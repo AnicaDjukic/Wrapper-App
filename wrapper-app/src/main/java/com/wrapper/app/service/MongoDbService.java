@@ -102,21 +102,6 @@ public class MongoDbService {
         }
     }
 
-//    private void dropCollections(String databaseName) {
-//        String collectionName = PREDMETI + databaseName;
-//        dropCollection(collectionName);
-//        collectionName = STUDIJSKI_PROGRAMI + databaseName;
-//        dropCollection(collectionName);
-//        collectionName = STUDENTSKE_GRUPE + databaseName;
-//        dropCollection(collectionName);
-//        collectionName = REALIZACIJA + databaseName;
-//        dropCollection(collectionName);
-//        collectionName = PREDAVACI + databaseName;
-//        dropCollection(collectionName);
-//        collectionName = PROSTORIJE + databaseName;
-//        dropCollection(collectionName);
-//    }
-
     private void dropCollection(String collectionName) {
         if (mongoTemplate.collectionExists(collectionName)) {
             mongoTemplate.dropCollection(collectionName);

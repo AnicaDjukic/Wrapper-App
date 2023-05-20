@@ -5,6 +5,7 @@ import { map, shareReplay } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { DatabaseDto } from '../dtos/DatabaseDto';
 import { DatabaseService } from '../services/database.service';
+import { StorageService } from '../services/storage.service';
 
 
 @Component({
@@ -20,15 +21,18 @@ export class NavComponent implements OnInit {
       shareReplay()
     );
 
-  database = '2022/23Z';
+  database = '';
   options: DatabaseDto[] = [];
 
   constructor(private breakpointObserver: BreakpointObserver,
     public router: Router,
-    private databaseApi: DatabaseService) { }
+    private databaseApi: DatabaseService,
+    private storageService: StorageService) { }
 
   ngOnInit(): void {
-    this.getDatabases();
+    if (this.storageService.getToken()) {
+      this.getDatabases();
+    }
   }
 
   getDatabases() {
@@ -62,6 +66,13 @@ export class NavComponent implements OnInit {
           }
         }
       });
+  }
+
+  logout() {
+    this.database = this.options[0].godina + this.options[0].semestar.substring(0, 1);
+    this.storageService.clearToken();
+    window.sessionStorage.removeItem('semestar');
+    this.router.navigate(['']);
   }
 
 }
