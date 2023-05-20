@@ -1,6 +1,7 @@
 package com.wrapper.app.service;
 
 import com.wrapper.app.domain.*;
+import com.wrapper.app.dto.StudentskaGrupaRequestDto;
 import com.wrapper.app.dto.StudentskaGrupaSearchDto;
 import com.wrapper.app.dto.StudentskeGrupeRequestDto;
 import com.wrapper.app.exception.AlreadyExistsException;
@@ -26,8 +27,7 @@ public class StudentskaGrupaService {
     }
 
     public Page<StudentskaGrupa> getAll(Pageable pageable) {
-        Page<StudentskaGrupa> results = repository.findAll(pageable);
-        return mapStudProgram(results);
+        return repository.findAll(pageable);
     }
 
     public Page<StudentskaGrupa> search(StudentskaGrupaSearchDto searchDto, Pageable pageable) {
@@ -36,8 +36,7 @@ public class StudentskaGrupaService {
                 .stream().map(StudijskiProgram::getId).toList();
         studijskiProgramIds.forEach(studProgId ->
                 results.addAll(repository.search(searchDto.getOznaka(), searchDto.getGodina(), searchDto.getBrojStudenata(),studProgId)));
-        Page<StudentskaGrupa> page = createPage(results, pageable);
-        return mapStudProgram(page);
+        return createPage(results, pageable);
     }
 
     private Page<StudentskaGrupa> createPage(List<StudentskaGrupa> results, Pageable pageable) {
@@ -46,14 +45,6 @@ public class StudentskaGrupaService {
         long endIndex = Math.min(offset + limit, results.size());
         List<StudentskaGrupa> pageContent = results.subList((int) offset, (int) endIndex);
         return new PageImpl<>(pageContent, pageable, results.size());
-    }
-
-    private Page<StudentskaGrupa> mapStudProgram(Page<StudentskaGrupa> list) {
-        list.forEach(result -> {
-            StudijskiProgram studijskiProgram = studijskiProgramService.getById(result.getStudijskiProgram());
-            result.setStudijskiProgram(studijskiProgram.getOznaka() + " " + studijskiProgram.getNaziv());
-        });
-        return list;
     }
 
     public StudentskaGrupa getById(String id) {
@@ -88,24 +79,38 @@ public class StudentskaGrupaService {
                     studentskeGrupe.getGodina(),
                     studentskeGrupe.getSemestar(),
                     studentskeGrupe.getBrojStudenata(),
-                    studentskeGrupe.getStudijskiProgram());
+                    studijskiProgramService.getById(studentskeGrupe.getStudijskiProgram()));
             StudentskaGrupa saved = repository.save(studentskaGrupa);
             results.add(saved);
         }
         return results;
     }
 
-    public StudentskaGrupa update(String id, StudentskaGrupa studentskaGrupa) {
-        if(!repository.existsById(id))
-            throw new NotFoundException(StudentskaGrupa.class.getSimpleName());
-        Optional<StudentskaGrupa> existing = repository.findByOznakaAndGodinaAndSemestarAndStudijskiProgram(studentskaGrupa.getOznaka(),
-                studentskaGrupa.getGodina(), studentskaGrupa.getSemestar(), studentskaGrupa.getStudijskiProgram());
-        if(existing.isPresent() && !existing.get().getId().equals(id))
-            throw new AlreadyExistsException(StudentskaGrupa.class.getSimpleName());
+    public StudentskaGrupa update(String id, StudentskaGrupaRequestDto requestDto) {
+        validateUpdate(id, requestDto);
+        StudentskaGrupa studentskaGrupa = createStudentskaGrupa(requestDto);
         studentskaGrupa.setId(id);
         return repository.save(studentskaGrupa);
     }
 
+    private void validateUpdate(String id, StudentskaGrupaRequestDto requestDto) {
+        if(!repository.existsById(id))
+            throw new NotFoundException(StudentskaGrupa.class.getSimpleName());
+        Optional<StudentskaGrupa> existing = repository.findByOznakaAndGodinaAndSemestarAndStudijskiProgram(requestDto.getOznaka(),
+                requestDto.getGodina(), requestDto.getSemestar(), requestDto.getStudijskiProgram());
+        if(existing.isPresent() && !existing.get().getId().equals(id))
+            throw new AlreadyExistsException(StudentskaGrupa.class.getSimpleName());
+    }
+
+    private StudentskaGrupa createStudentskaGrupa(StudentskaGrupaRequestDto dto) {
+        return StudentskaGrupa.builder()
+                .oznaka(dto.getOznaka())
+                .godina(dto.getGodina())
+                .semestar(dto.getSemestar())
+                .brojStudenata(dto.getBrojStudenata())
+                .studijskiProgram(studijskiProgramService.getById(dto.getStudijskiProgram())).build();
+    }
+    
     public StudentskaGrupa deleteById(String id) {
         StudentskaGrupa studentskaGrupa = getById(id);
         repository.delete(studentskaGrupa);

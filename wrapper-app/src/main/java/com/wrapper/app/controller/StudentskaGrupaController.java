@@ -24,9 +24,9 @@ public class StudentskaGrupaController {
 
     private final ModelMapper modelMapper;
 
-    public StudentskaGrupaController(StudentskaGrupaService service) {
+    public StudentskaGrupaController(StudentskaGrupaService service, ModelMapper modelMapper) {
         this.service = service;
-        this.modelMapper = new ModelMapper();
+        this.modelMapper = modelMapper;
     }
 
     @CrossOrigin(origins = "*")
@@ -67,7 +67,7 @@ public class StudentskaGrupaController {
     @CrossOrigin(origins = "*")
     @PutMapping("{id}")
     public StudentskaGrupaResponseDto update(@PathVariable String id, @RequestBody @Valid StudentskaGrupaRequestDto dto) {
-        StudentskaGrupa updated = service.update(id, modelMapper.map(dto, StudentskaGrupa.class));
+        StudentskaGrupa updated = service.update(id, dto);
         return modelMapper.map(updated, StudentskaGrupaResponseDto.class);
     }
 

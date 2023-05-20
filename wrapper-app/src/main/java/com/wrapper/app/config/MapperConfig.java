@@ -1,13 +1,12 @@
 package com.wrapper.app.config;
 
-import com.wrapper.app.domain.OrganizacionaJedinica;
-import com.wrapper.app.domain.Predavac;
-import com.wrapper.app.domain.Predmet;
-import com.wrapper.app.domain.Prostorija;
+import com.wrapper.app.domain.*;
 import com.wrapper.app.dto.PredavacResponseDto;
 import com.wrapper.app.dto.PredmetResponseDto;
 import com.wrapper.app.dto.ProstorijaResponseDto;
+import com.wrapper.app.dto.StudentskaGrupaResponseDto;
 import com.wrapper.app.mapper.PredmetMapper;
+import com.wrapper.app.mapper.StudentskaGrupaMapper;
 import org.modelmapper.AbstractConverter;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
@@ -24,8 +23,11 @@ public class MapperConfig {
 
     PredmetMapper predmetMapper = new PredmetMapper();
 
+    StudentskaGrupaMapper studentskaGrupaMapper = new StudentskaGrupaMapper();
+
     @Bean
     public ModelMapper modelMapper() {
+
         ModelMapper modelMapper = new ModelMapper();
 
         Converter<Predmet, PredmetResponseDto> predmetResponseDtoConverter = new AbstractConverter<>() {
@@ -34,7 +36,6 @@ public class MapperConfig {
                 return predmetMapper.map(predmet);
             }
         };
-
         modelMapper.addConverter(predmetResponseDtoConverter);
 
         TypeMap<Predavac, PredavacResponseDto> predavacMapper = modelMapper.createTypeMap(Predavac.class, PredavacResponseDto.class);
@@ -51,11 +52,17 @@ public class MapperConfig {
             }
             return null;
         };
-
         modelMapper.addConverter(orgJedinicaConverter);
-
         TypeMap<Prostorija, ProstorijaResponseDto> prostorijaMapper = modelMapper.createTypeMap(Prostorija.class, ProstorijaResponseDto.class);
         prostorijaMapper.addMappings(mapper -> mapper.using(orgJedinicaConverter).map(Prostorija::getOrgJedinica, ProstorijaResponseDto::setOrgJedinica));
+
+        Converter<StudentskaGrupa, StudentskaGrupaResponseDto> studentskaGrupaConverter = new AbstractConverter<>() {
+            @Override
+            protected StudentskaGrupaResponseDto convert(StudentskaGrupa studentskaGrupa) {
+                return studentskaGrupaMapper.map(studentskaGrupa);
+            }
+        };
+        modelMapper.addConverter(studentskaGrupaConverter);
 
         return modelMapper;
     }
