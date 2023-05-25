@@ -110,7 +110,7 @@ public class StudentskaGrupaService {
                 .brojStudenata(dto.getBrojStudenata())
                 .studijskiProgram(studijskiProgramService.getById(dto.getStudijskiProgram())).build();
     }
-    
+
     public StudentskaGrupa deleteById(String id) {
         StudentskaGrupa studentskaGrupa = getById(id);
         repository.delete(studentskaGrupa);

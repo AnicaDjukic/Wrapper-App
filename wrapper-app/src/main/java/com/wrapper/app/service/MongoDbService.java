@@ -35,7 +35,8 @@ public class MongoDbService {
         return repository.findAll();
     }
 
-    public void switchDatabase(String databaseName) {
+    public void switchDatabase(String userId, String databaseName) {
+        CollectionNameProvider.setUserCollection(userId, databaseName);
         CollectionNameProvider.setCollectionName(databaseName);
     }
 

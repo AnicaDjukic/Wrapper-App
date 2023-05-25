@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
 import { AuthenticationService } from '../services/authentication.service';
 import { StorageService } from '../services/storage.service';
-import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TokenDto } from '../dtos/TokenDto';
 import { ToastrService } from 'ngx-toastr';
+import { DatabaseService } from '../services/database.service';
 
 @Component({
   selector: 'app-login',
@@ -18,8 +18,8 @@ export class LoginComponent {
   constructor(private formBuilder: FormBuilder,
     private authService: AuthenticationService,
     private storageService: StorageService,
-    private router: Router,
-    private toastr: ToastrService) { }
+    private toastr: ToastrService,
+    private databaseApi: DatabaseService) { }
 
   ngOnInit() {
     this.loginForm = this.formBuilder.group({
@@ -28,13 +28,14 @@ export class LoginComponent {
     });
   }
 
-  login() {
+  async login() {
     if (this.loginForm.valid) { }
 
     this.authService.login(this.loginForm.value).subscribe(
-      (res) => {
+      async (res) => {
         const tokenDto: TokenDto = res as TokenDto;
         this.storageService.storeToken(tokenDto.token);
+        await this.setDatabase();
         window.location.href = '/predmeti';
       },
       () => {
@@ -43,6 +44,28 @@ export class LoginComponent {
     )
   }
 
+  async setDatabase(): Promise<any> {
+    return new Promise<void>((resolve, reject) => {
+      this.databaseApi.getAll().subscribe({
+        next: (res) => {
+          let options = res.reverse();
+          let database = options[0].godina + options[0].semestar.substring(0, 1);
+          window.sessionStorage.setItem('semestar', database);
+          this.databaseApi.switch(database.replace("/", "_")).subscribe({
+            complete: () => {
+              resolve();
+            },
+            error: (err) => {
+              reject(err);
+            }
+          });
+        },
+        error: (err) => {
+          reject(err);
+        }
+      });
+    });
+  }
 }
 
 

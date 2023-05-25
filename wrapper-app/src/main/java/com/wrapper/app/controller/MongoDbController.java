@@ -3,7 +3,9 @@ package com.wrapper.app.controller;
 import com.wrapper.app.domain.Database;
 import com.wrapper.app.dto.DatabaseRequestDto;
 import com.wrapper.app.dto.DatabaseResponseDto;
+import com.wrapper.app.security.util.TokenUtils;
 import com.wrapper.app.service.MongoDbService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -18,9 +20,12 @@ public class MongoDbController {
 
     private final ModelMapper modelMapper;
 
-    public MongoDbController(MongoDbService service, ModelMapper modelMapper) {
+    private final TokenUtils tokenUtils;
+
+    public MongoDbController(MongoDbService service, ModelMapper modelMapper, TokenUtils tokenUtils) {
         this.service = service;
         this.modelMapper = modelMapper;
+        this.tokenUtils = tokenUtils;
     }
 
     @CrossOrigin(value = "*")
@@ -49,7 +54,9 @@ public class MongoDbController {
     @CrossOrigin(value = "*")
     @GetMapping("/switch/{databaseName}")
     @ResponseStatus(HttpStatus.OK)
-    public void switchDatabase(@PathVariable String databaseName) {
-        service.switchDatabase(databaseName.replace("_", "/"));
+    public void switchDatabase(@PathVariable String databaseName, HttpServletRequest request) {
+        String token = tokenUtils.getToken(request);
+        String userId = tokenUtils.getUsernameFromToken(token);
+        service.switchDatabase(userId, databaseName.replace("_", "/"));
     }
 }

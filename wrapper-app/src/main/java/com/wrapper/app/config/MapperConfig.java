@@ -30,13 +30,13 @@ public class MapperConfig {
 
         ModelMapper modelMapper = new ModelMapper();
 
-        Converter<Predmet, PredmetResponseDto> predmetResponseDtoConverter = new AbstractConverter<>() {
+        Converter<Predmet, PredmetResponseDto> predmetConverter = new AbstractConverter<>() {
             @Override
             protected PredmetResponseDto convert(Predmet predmet) {
                 return predmetMapper.map(predmet);
             }
         };
-        modelMapper.addConverter(predmetResponseDtoConverter);
+        modelMapper.addConverter(predmetConverter);
 
         TypeMap<Predavac, PredavacResponseDto> predavacMapper = modelMapper.createTypeMap(Predavac.class, PredavacResponseDto.class);
         predavacMapper.addMappings(

@@ -17,12 +17,10 @@ public class AuthenticationService {
 
     private final TokenUtils tokenUtils;
 
-
     public AuthenticationService(AuthenticationManager authenticationManager, TokenUtils tokenUtils) {
         this.authenticationManager = authenticationManager;
         this.tokenUtils = tokenUtils;
     }
-
 
     public UserTokenState login(JwtAuthenticationRequest authenticationRequest) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(

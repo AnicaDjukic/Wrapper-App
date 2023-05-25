@@ -1,1 +1,36 @@
-<p>generisanje-rasporeda works!</p>
+<div>
+    <mat-card class="form">
+        <mat-grid-list cols="1" rowHeight="50px" class="form-content">
+            <mat-grid-tile>
+                <h1>Generisanje rasporeda</h1>
+            </mat-grid-tile>
+            <form>
+                <mat-grid-tile>
+                    <mat-checkbox style="margin-right: 2%;">Zaključavanje izmena</mat-checkbox>
+                </mat-grid-tile>
+                <mat-grid-tile>
+                    <mat-checkbox>Pokretanje generisanja</mat-checkbox>
+                </mat-grid-tile>
+                <mat-grid-tile rowspan="2" style="margin-top: 2%;">
+                    <mat-form-field>
+                        <mat-label>Izaberite semestar</mat-label>
+                        <mat-select>
+                            <mat-option value="Z1">Zimski 2023/24</mat-option>
+                            <mat-option value="L">Letnji 2022/23</mat-option>
+                            <mat-option value="Z2">Zimski 2022/23</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </mat-grid-tile>
+                <mat-grid-tile rowspan="3">
+                    <mat-form-field class="example-full-width">
+                        <mat-label>Poruka</mat-label>
+                        <textarea matInput></textarea>
+                    </mat-form-field>
+                </mat-grid-tile>
+                <mat-grid-tile>
+                    <button mat-raised-button color="primary">Pokreni</button>
+                </mat-grid-tile>
+            </form>
+        </mat-grid-list>
+    </mat-card>
+</div>

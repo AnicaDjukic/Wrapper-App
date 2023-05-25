@@ -17,7 +17,7 @@
                 <mat-grid-tile>
                     <mat-form-field class="example-full-width">
                         <mat-label>Lozinka</mat-label>
-                        <input formControlName="password" matInput type="text" placeholder="Unesite lozinku...">
+                        <input formControlName="password" matInput type="password" placeholder="Unesite lozinku...">
                         <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
                             Morate uneti lozinku
                         </mat-error>
