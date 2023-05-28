@@ -22,9 +22,9 @@ public class RealizacijaController {
 
     private final ModelMapper modelMapper;
 
-    public RealizacijaController(RealizacijaService service) {
+    public RealizacijaController(RealizacijaService service, ModelMapper modelMapper) {
         this.service = service;
-        this.modelMapper = new ModelMapper();
+        this.modelMapper = modelMapper;
     }
 
     @GetMapping
@@ -58,7 +58,7 @@ public class RealizacijaController {
     @GetMapping("studijski-programi/{studProgramId}")
     @ResponseStatus(HttpStatus.OK)
     public StudijskiProgramPredmetiDto getByStudijskiProgramId(@PathVariable String studProgramId) {
-        return service.getStudijskiProgramById(studProgramId);
+        return modelMapper.map(service.getStudijskiProgramById(studProgramId), StudijskiProgramPredmetiDto.class);
     }
 
     @CrossOrigin(origins = "*")

@@ -1,20 +1,18 @@
 package com.wrapper.app.config;
 
 import com.wrapper.app.domain.*;
-import com.wrapper.app.dto.PredavacResponseDto;
-import com.wrapper.app.dto.PredmetResponseDto;
-import com.wrapper.app.dto.ProstorijaResponseDto;
-import com.wrapper.app.dto.StudentskaGrupaResponseDto;
+import com.wrapper.app.dto.*;
 import com.wrapper.app.mapper.PredmetMapper;
 import com.wrapper.app.mapper.StudentskaGrupaMapper;
+import com.wrapper.app.mapper.StudijskiProgramPredmetiMapper;
 import org.modelmapper.AbstractConverter;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,6 +22,9 @@ public class MapperConfig {
     PredmetMapper predmetMapper = new PredmetMapper();
 
     StudentskaGrupaMapper studentskaGrupaMapper = new StudentskaGrupaMapper();
+
+    @Autowired
+    StudijskiProgramPredmetiMapper studijskiProgramPredmetiMapper;
 
     @Bean
     public ModelMapper modelMapper() {
@@ -63,6 +64,14 @@ public class MapperConfig {
             }
         };
         modelMapper.addConverter(studentskaGrupaConverter);
+
+        Converter<StudijskiProgramPredmeti, StudijskiProgramPredmetiDto> studijskiProgramPredmetiConverter = new AbstractConverter<>() {
+            @Override
+            protected StudijskiProgramPredmetiDto convert(StudijskiProgramPredmeti studijskiProgramPredmeti) {
+                return studijskiProgramPredmetiMapper.map(studijskiProgramPredmeti);
+            }
+        };
+        modelMapper.addConverter(studijskiProgramPredmetiConverter);
 
         return modelMapper;
     }
