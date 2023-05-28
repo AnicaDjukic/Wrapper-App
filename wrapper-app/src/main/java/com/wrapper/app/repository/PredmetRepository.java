@@ -9,7 +9,8 @@ import java.util.Optional;
 
 public interface PredmetRepository extends MongoRepository<Predmet, String> {
 
-    List<Predmet> findByStudijskiProgram(String studijskiProgram);
+    @Query("{$and:[{'studijskiProgram': ?0}, {'uRealizaciji': ?1}]}")
+    List<Predmet> findByStudijskiProgram(String studijskiProgram, boolean uRealizaciji);
 
     @Query("{$and:[{'oznaka': {$regex : ?0, $options: 'i'}}, {'naziv': {$regex : ?1, $options: 'i'}}, {'studijskiProgram': ?2}]}")
     List<Predmet> search(String oznaka, String naziv, String studijskiProgram);

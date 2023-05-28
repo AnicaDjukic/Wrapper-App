@@ -52,7 +52,8 @@ export class StudijskiProgramDialogComponent {
             },
             error: (message) => {
               if (message.error.message) {
-                this.toastr.error('Studijski program sa oznakom <b>' + this.studijskiProgramForm.value.oznaka + '</b> već postoji!',
+                this.toastr.error('Studijski program sa oznakom <b>' + this.studijskiProgramForm.value.oznaka + '</b> ' +
+                'na <b>' + this.studijskiProgramForm.value.nivo + '</b> već postoji!',
                   'Greška!', {
                   enableHtml: true,
                   closeButton: true,

@@ -87,8 +87,13 @@ export class RealizacijaComponent {
   }
 
   async openDialog() {
-    let studijskiProgramId = this.studijskiProgrami.filter(sp => sp.oznaka == this.selected.split(' ')[0]).map(value => value.id)[0];
+    let studijskiProgramId = this.studijskiProgrami.filter(sp => sp.oznaka == this.selected.split(' ')[0] && sp.stepenStudija == this.selected.substring(this.selected.indexOf("(") + 1, this.selected.lastIndexOf(")"))).map(value => value.id)[0];
+    this.predmetiOptions = [];
     await this.getPredmetOptions(studijskiProgramId);
+    if(this.predmetiOptions.length == 0) {
+      this.toastr.warning('Svi predmeti izabranog studijskog programa su već dodati u realizaciju!');
+      return;
+    }
     this.dialog.open(RealizacijaDialogComponent, {
       width: '60%',
       data: {
@@ -109,16 +114,22 @@ export class RealizacijaComponent {
   }
 
   async getPredmetOptions(studijskiProgramId: any) {
-    this.api.getByStudijskiProgram(studijskiProgramId)
-      .subscribe({
-        next: (res) => {
-          console.log(res);
-          for (let predmet of res) {
-            this.predmetiOptions.push("(" + predmet.plan + ") " + predmet.oznaka + " " + predmet.naziv);
+    return new Promise<void>((resolve, reject) => {
+      this.api.getByStudijskiProgram(studijskiProgramId)
+        .subscribe({
+          next: (res) => {
+            for (let predmet of res) {
+              console.log(studijskiProgramId);
+              this.predmetiOptions.push("(" + predmet.plan + ") " + predmet.oznaka + " " + predmet.naziv);
+            }
+            this.predmeti = res;
+            resolve(); // Resolve the promise once the asynchronous operation is complete
+          },
+          error: (err) => {
+            reject(err); // Reject the promise if an error occurs
           }
-          this.predmeti = res;
-        }
-      });
+        });
+    });
   }
 
   edit(element: any) {
@@ -201,7 +212,7 @@ export class RealizacijaComponent {
   get(studijskiProgram: string) {
     console.log(this.myControl);
     this.selected = studijskiProgram;
-    this.studijskiProgramId = this.studijskiProgrami.filter(sp => sp.oznaka == studijskiProgram.split(' ')[0]).map(value => value.id)[0];
+    this.studijskiProgramId = this.studijskiProgrami.filter(sp => sp.oznaka == this.selected.split(' ')[0] && sp.stepenStudija == this.selected.substring(this.selected.indexOf("(") + 1, this.selected.lastIndexOf(")"))).map(value => value.id)[0];
     this.realizacijaService.get(this.studijskiProgramId)
       .subscribe({
         next: (res) => {
@@ -211,3 +222,4 @@ export class RealizacijaComponent {
       });
   }
 }
+

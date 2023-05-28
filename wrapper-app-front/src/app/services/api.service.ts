@@ -26,7 +26,7 @@ export class ApiService {
   }
 
   getByStudijskiProgram(studijskiProgram: string) {
-    return this.http.get<any>(`${this.predmetiUrl}/studijski-program/` + studijskiProgram);
+    return this.http.get<any>(`${this.predmetiUrl}/studijski-program/` + studijskiProgram + `?uRealizaciji=false`);
   }
 
   post(data: any) {

@@ -61,10 +61,11 @@ public class RealizacijaService {
 
     private void validatePredmet(PredmetPredavac predmetPredavac) {
         Predmet predmet = predmetService.getById(predmetPredavac.getPredmetId());
+        boolean checkProfesor = predmetPredavac.getProfesorId() == null && predmet.getBrojCasovaPred() != 0;
         boolean checkAsistentZauzeca = predmetPredavac.getAsistentZauzeca().isEmpty() &&
                 (predmet.getBrojCasovaAud() != 0 || predmet.getBrojCasovaLab() != 0
                         || predmet.getBrojCasovaRac() != 0);
-        boolean block = predmetPredavac.getProfesorId() == null || checkAsistentZauzeca;
+        boolean block = checkProfesor || checkAsistentZauzeca;
         predmetPredavac.setBlock(block);
     }
 

@@ -94,8 +94,8 @@ public class PredmetService {
         return predmet;
     }
 
-    public List<Predmet> getByStudijskiProgram(String studijskiProgram) {
-        return repository.findByStudijskiProgram(studijskiProgram);
+    public List<Predmet> getByStudijskiProgram(String studijskiProgram, boolean uRealizaciji) {
+        return repository.findByStudijskiProgram(studijskiProgram, uRealizaciji);
     }
 
     public void deleteAllByStudijskiProgram(String studProgramId) {

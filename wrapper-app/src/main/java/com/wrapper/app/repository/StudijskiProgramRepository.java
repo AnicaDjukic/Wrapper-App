@@ -17,5 +17,5 @@ public interface StudijskiProgramRepository extends MongoRepository<StudijskiPro
             "{ $expr: { $regexMatch: { input: { $toString: '$nivo' }, regex: { $cond: [ { $eq: [ '?3', '' ] }, '.*', '^?3$' ] }, options: 'i' } } } ]}")
     List<StudijskiProgram> search(String oznaka, String naziv, String stepen, String nivo);
 
-    Optional<StudijskiProgram> findByOznaka(String oznaka);
+    Optional<StudijskiProgram> findByOznakaAndNivoAndStepen(String oznaka, int nivo, int stepen);
 }

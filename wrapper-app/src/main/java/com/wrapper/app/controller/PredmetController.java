@@ -60,8 +60,9 @@ public class PredmetController {
     @CrossOrigin(origins = "*")
     @GetMapping("/studijski-program/{studijskiProgram}")
     @ResponseStatus(HttpStatus.OK)
-    public List<PredmetResponseDto> getByStudijskiProgram(@PathVariable String studijskiProgram) {
-        return modelMapper.map(service.getByStudijskiProgram(studijskiProgram), new TypeToken<ArrayList<PredmetResponseDto>>() {}.getType());
+    public List<PredmetResponseDto> getByStudijskiProgram(@PathVariable String studijskiProgram,
+                                                          @RequestParam boolean uRealizaciji) {
+        return modelMapper.map(service.getByStudijskiProgram(studijskiProgram, uRealizaciji), new TypeToken<ArrayList<PredmetResponseDto>>() {}.getType());
     }
 
     @CrossOrigin(origins = "*")
