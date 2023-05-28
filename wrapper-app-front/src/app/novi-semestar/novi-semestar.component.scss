@@ -1,8 +1,9 @@
 .form {
-    width: 50%;
+    width: 45%;
     margin: 0 auto;
-    margin-top: 2%;
-    padding: 2%;
+    margin-top: 5%;
+    padding-top: 2%;
+    padding-bottom: 2%;
     // border-radius: 10px;
     box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;
 }
@@ -14,5 +15,14 @@
 }
 
 .example-full-width {
-    width: 100%;
+    width: 47.5%;
+}
+
+.semestar {
+    width: 47.5%;
+    margin-right: 5%;
+}
+
+.godina {
+    width: 47.5%;
 }

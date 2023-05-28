@@ -5,6 +5,7 @@ import { DatabaseDto } from '../dtos/DatabaseDto';
 import { ToastrService } from 'ngx-toastr';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
+import { skolskaGodinaValidator } from '../validators/skolska-godina-validator';
 
 @Component({
   selector: 'app-novi-semestar',
@@ -25,7 +26,7 @@ export class NoviSemestarComponent {
     this.getDatabases();
     this.semestarForm = this.formBuilder.group({
       semestar: ['', [Validators.required]],
-      godina: ['', [Validators.required]],
+      godina: ['', [Validators.required, skolskaGodinaValidator]],
       firstSemestar: ['', [Validators.required]],
       secondSemestar: ['', [Validators.required]]
     });

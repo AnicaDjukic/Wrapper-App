@@ -1,21 +1,24 @@
 <div>
     <mat-card class="form">
-        <mat-grid-list cols="1" rowHeight="75px" class="form-content">
+        <mat-grid-list cols="1" rowHeight="70px" class="form-content">
             <mat-grid-tile>
                 <h1>Novi semestar</h1>
             </mat-grid-tile>
             <form style="width: 90%;" [formGroup]="semestarForm">
                 <mat-grid-tile>
-                    <mat-form-field style="width: 47.5%; margin-right: 5%;">
+                    <mat-form-field class="semestar">
                         <mat-label>Izaberite semestar</mat-label>
                         <mat-select formControlName="semestar">
                             <mat-option value="Zimski">Zimski</mat-option>
                             <mat-option value="Letnji">Letnji</mat-option>
                         </mat-select>
                     </mat-form-field>
-                    <mat-form-field style="width: 47.5%;">
+                    <mat-form-field class="godina">
                         <mat-label>Unesite školsku godinu</mat-label>
                         <input formControlName="godina" matInput placeholder="npr. 2022/23" type="text">
+                        <mat-error *ngIf="semestarForm.get('godina')?.hasError('isSkolskaGodina')" style="margin-left: -2%">
+                            Morate uneti u formatu 20xx/xx
+                        </mat-error>
                     </mat-form-field>
                 </mat-grid-tile>
                 <mat-grid-tile style="font-size: larger">
