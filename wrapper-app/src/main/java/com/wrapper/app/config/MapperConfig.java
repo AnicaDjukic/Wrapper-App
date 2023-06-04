@@ -3,13 +3,13 @@ package com.wrapper.app.config;
 import com.wrapper.app.domain.*;
 import com.wrapper.app.dto.*;
 import com.wrapper.app.mapper.PredmetMapper;
+import com.wrapper.app.mapper.PredmetPredavacMapper;
 import com.wrapper.app.mapper.StudentskaGrupaMapper;
 import com.wrapper.app.mapper.StudijskiProgramPredmetiMapper;
 import org.modelmapper.AbstractConverter;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -23,8 +23,14 @@ public class MapperConfig {
 
     StudentskaGrupaMapper studentskaGrupaMapper = new StudentskaGrupaMapper();
 
-    @Autowired
-    StudijskiProgramPredmetiMapper studijskiProgramPredmetiMapper;
+    private final PredmetPredavacMapper predmetPredavacMapper;
+
+    private final StudijskiProgramPredmetiMapper studijskiProgramPredmetiMapper;
+
+    public MapperConfig(PredmetPredavacMapper predmetPredavacMapper, StudijskiProgramPredmetiMapper studijskiProgramPredmetiMapper) {
+        this.predmetPredavacMapper = predmetPredavacMapper;
+        this.studijskiProgramPredmetiMapper = studijskiProgramPredmetiMapper;
+    }
 
     @Bean
     public ModelMapper modelMapper() {
@@ -72,6 +78,23 @@ public class MapperConfig {
             }
         };
         modelMapper.addConverter(studijskiProgramPredmetiConverter);
+
+        Converter<PredmetPredavaciDto, PredmetPredavac> predmetPredavacConverter = new AbstractConverter<>() {
+            @Override
+            protected PredmetPredavac convert(PredmetPredavaciDto predmetPredavaciDto) {
+                return predmetPredavacMapper.map(predmetPredavaciDto);
+            }
+        };
+        modelMapper.addConverter(predmetPredavacConverter);
+
+
+        Converter<PredavaciDto, PredmetPredavac> predavaciConverter = new AbstractConverter<>() {
+            @Override
+            protected PredmetPredavac convert(PredavaciDto predavaciDto) {
+                return predmetPredavacMapper.map(predavaciDto);
+            }
+        };
+        modelMapper.addConverter(predavaciConverter);
 
         return modelMapper;
     }

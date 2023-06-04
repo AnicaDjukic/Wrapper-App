@@ -194,6 +194,7 @@ export class RealizacijaComponent {
         next: () => {
           this.toastr.success("Predmet je uspešno izbrisan iz realizacije!", "Uspešno!");
           this.get(this.selected);
+          this.getStudijskiProgrami();
         },
         error: () => {
           this.toastr.error("Došlo je do greške prilikom brisanja predmeta iz realizacije!", "Greška!");
@@ -212,7 +213,7 @@ export class RealizacijaComponent {
   get(studijskiProgram: string) {
     console.log(this.myControl);
     this.selected = studijskiProgram;
-    this.studijskiProgramId = this.studijskiProgrami.filter(sp => sp.oznaka == this.selected.split(' ')[0] && sp.stepenStudija == this.selected.substring(this.selected.indexOf("(") + 1, this.selected.lastIndexOf(")"))).map(value => value.id)[0];
+    this.studijskiProgramId = this.studijskiProgrami.filter(sp => sp.oznaka + ' ' + sp.naziv + ' (' + sp.stepenStudija + ")"  == this.selected).map(value => value.id)[0];
     this.realizacijaService.get(this.studijskiProgramId)
       .subscribe({
         next: (res) => {

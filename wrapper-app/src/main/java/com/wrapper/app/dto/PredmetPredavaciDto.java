@@ -13,15 +13,9 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-public class RealizacijaRequestDto {
+public class PredmetPredavaciDto extends PredavaciDto {
 
     @NotNull
     @NotBlank
     private String predmetId;
-
-    private String profesorId;
-
-    private List<String> ostaliProfesori;
-    
-    private List<AsistentZauzeceDto> asistentZauzeca;
 }

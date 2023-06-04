@@ -12,6 +12,7 @@ public class CollectionNameResolverImpl implements CollectionNameResolver {
     private final String REALIZACIJA = "Realizacija";
     private final String PREDAVACI = "Predavaci";
     private final String PROSTORIJE = "Prostorije";
+    private final String STUDIJSKI_PROGRAM_PREDMETI = "StudijskiProgramPredmeti";
 
     @Override
     public String resolveCollectionName(Class<?> entityClass) {
@@ -30,6 +31,8 @@ public class CollectionNameResolverImpl implements CollectionNameResolver {
             return PREDAVACI + collectionName;
         } else if (className.equals(Prostorija.class.getSimpleName())) {
             return PROSTORIJE + collectionName;
+        } else if (className.equals(StudijskiProgramPredmeti.class.getSimpleName())) {
+            return STUDIJSKI_PROGRAM_PREDMETI + collectionName;
         } else {
             return null;
         }

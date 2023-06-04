@@ -1,10 +1,14 @@
 package com.wrapper.app.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
 @Data
+@AllArgsConstructor
 public class AsistentZauzece {
 
-    private String asistentId;
+    @DocumentReference
+    private Predavac asistent;
     private int brojTermina;
 }

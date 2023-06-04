@@ -6,20 +6,20 @@ import { Injectable } from '@angular/core';
 })
 export class RealizacijaService {
 
-  private realizacijaUrl = "http://localhost:8080/api/v1/realizacije"
+  private realizacijaUrl = "http://localhost:8080/api/v1"
 
   constructor(private http: HttpClient) { }
 
   get(studijskiProgramId: string) {
-    return this.http.get<any>(`${this.realizacijaUrl}/studijski-programi/` + studijskiProgramId);
+    return this.http.get<any>(`${this.realizacijaUrl}/studijski-programi/` + studijskiProgramId + '/predmeti');
   }
 
   addPredmet(studijskiProgramId : string, realizacijaPredmetDto: any) {
     return this.http.post<any>(`${this.realizacijaUrl}/studijski-programi/` + studijskiProgramId + '/predmeti', realizacijaPredmetDto);
   }
 
-  updatePredmet(studijskiProgramId: string, predmetId: string, realizacijaPredmetDto: any) {
-    return this.http.put<any>(`${this.realizacijaUrl}/studijski-programi/` + studijskiProgramId + '/predmeti/' + predmetId, realizacijaPredmetDto);
+  updatePredmet(studijskiProgramId: string, predmetId: string, predavaciDto: any) {
+    return this.http.put<any>(`${this.realizacijaUrl}/studijski-programi/` + studijskiProgramId + '/predmeti/' + predmetId, predavaciDto);
   }
 
   delete(studijskiProgramId: string, predmetId: string) {

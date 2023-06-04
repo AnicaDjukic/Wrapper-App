@@ -28,11 +28,13 @@ public class StudijskiProgramPredmetiMapper {
 
     public StudijskiProgramPredmetiDto map(StudijskiProgramPredmeti studijskiProgramPredmeti) {
         StudijskiProgramPredmetiDto studijskiProgramPredmetiDto = new StudijskiProgramPredmetiDto();
-        fillStudijskiProgramInfo(studijskiProgramPredmeti.getStudijskiProgramId(), studijskiProgramPredmetiDto);
+        fillStudijskiProgramInfo(studijskiProgramPredmeti.getId(), studijskiProgramPredmetiDto);
         for(PredmetPredavac predmetPredavac : studijskiProgramPredmeti.getPredmetPredavaci()) {
             PredmetPredavacDto predmetPredavacDto = new PredmetPredavacDto();
-            fillPredmetInfo(predmetPredavac.getPredmetId(), predmetPredavacDto);
-            fillProfesorInfo(predmetPredavac.getProfesorId(), predmetPredavacDto);
+            fillPredmetInfo(predmetPredavac.getPredmet().getId(), predmetPredavacDto);
+            if(predmetPredavac.getProfesor() != null) {
+                fillProfesorInfo(predmetPredavac.getProfesor().getId(), predmetPredavacDto);
+            }
             fillOstaliProfesoriInfo(predmetPredavac.getOstaliProfesori(), predmetPredavacDto);
             fillAsistentiInfo(predmetPredavac.getAsistentZauzeca(), predmetPredavacDto);
             predmetPredavacDto.setBlock(predmetPredavac.isBlock());
@@ -63,13 +65,8 @@ public class StudijskiProgramPredmetiMapper {
         }
     }
 
-    private void fillOstaliProfesoriInfo(List<String> ostaliProfesori, PredmetPredavacDto predmetPredavacDto) {
-        for(String profId : ostaliProfesori) {
-            if(!predavacService.existsById(profId)) {
-                System.out.println("Ostali profesor: " + profId);
-                continue;
-            }
-            Predavac ostaliProfesor = predavacService.getById(profId);
+    private void fillOstaliProfesoriInfo(List<Predavac> ostaliProfesori, PredmetPredavacDto predmetPredavacDto) {
+        for(Predavac ostaliProfesor : ostaliProfesori) {
             String profNaziv = (ostaliProfesor.getTitula() != null ? ostaliProfesor.getTitula() : "") + " " + ostaliProfesor.getIme() + " " + ostaliProfesor.getPrezime();
             predmetPredavacDto.getOstaliProfesori().add(profNaziv.trim());
         }
@@ -77,16 +74,14 @@ public class StudijskiProgramPredmetiMapper {
 
     private void fillAsistentiInfo(List<AsistentZauzece> asistentiZauzeca, PredmetPredavacDto predmetPredavacDto) {
         for(AsistentZauzece zauzece : asistentiZauzeca) {
-            if(!predavacService.existsById(zauzece.getAsistentId())) {
-                System.out.println("Asistent: " + zauzece.getAsistentId());
-                continue;
-            }
             AsistentiZauzecaDto zauzeceDto = new AsistentiZauzecaDto();
-            Predavac asistent = predavacService.getById(zauzece.getAsistentId());
-            String asistentNaziv = (asistent.getTitula() != null ? asistent.getTitula() : "") + " " + asistent.getIme() + " " + asistent.getPrezime();
-            zauzeceDto.setAsistent(asistentNaziv.trim());
-            zauzeceDto.setBrojTermina(zauzece.getBrojTermina());
-            predmetPredavacDto.getAsistentiZauzeca().add(zauzeceDto);
+            Predavac asistent = zauzece.getAsistent();
+            if(asistent != null) {
+                String asistentNaziv = (asistent.getTitula() != null ? asistent.getTitula() : "") + " " + asistent.getIme() + " " + asistent.getPrezime();
+                zauzeceDto.setAsistent(asistentNaziv.trim());
+                zauzeceDto.setBrojTermina(zauzece.getBrojTermina());
+                predmetPredavacDto.getAsistentiZauzeca().add(zauzeceDto);
+            }
         }
     }
 }

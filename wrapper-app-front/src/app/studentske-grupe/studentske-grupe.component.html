@@ -6,6 +6,7 @@
         (keyup)="oznaka || godina != 'SVE' || brojStudenata || studijskiProgram ? applyFilter(0, pageSize) : getAll(0, pageSize)">
     </mat-form-field>
     <mat-form-field class="godina">
+      <mat-label>Godina</mat-label>
       <mat-select [(value)]="godina" value="SVE" class="font-bold"
         (selectionChange)="oznaka || godina != 'SVE' || brojStudenata || studijskiProgram ? applyFilter(0, pageSize) : getAll(0, pageSize)">
         <mat-option value="SVE">Sve godine</mat-option>
