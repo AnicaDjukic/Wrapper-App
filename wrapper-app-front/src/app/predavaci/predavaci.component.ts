@@ -26,7 +26,7 @@ export class PredavaciComponent implements OnInit {
 
   constructor(private api: PredavacService,
     private orgjedinicaApi: OrgJedinicaService,
-    private realizacijaApi: RealizacijaService, 
+    private predavacApi: PredavacService, 
     public dialog: MatDialog, 
     private toastr: ToastrService) { }
 
@@ -125,7 +125,7 @@ export class PredavaciComponent implements OnInit {
   }
 
   delete(id: string) {
-    this.realizacijaApi.deletePredavac(id)
+    this.predavacApi.delete(id)
       .subscribe({
         next: () => {
           this.toastr.success('Predavač je uspešno obrisan!', 'Uspešno!');

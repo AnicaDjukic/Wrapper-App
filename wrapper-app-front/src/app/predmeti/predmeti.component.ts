@@ -9,6 +9,7 @@ import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation
 import { ToastrService } from 'ngx-toastr';
 import { RealizacijaService } from '../services/realizacija.service';
 import { StudijskiProgramDto } from '../dtos/StudijskiProgramDto';
+import { ApplicationConfig } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-predmeti',
@@ -21,7 +22,7 @@ export class PredmetiComponent implements OnInit {
     'brojCasovaPred', 'brojCasovaAud', 'brojCasovaLab', 'brojCasovaRac', 'actions'];
 
   constructor(private api: ApiService,
-    private realizacijaApi: RealizacijaService, 
+    private predmetApi: ApiService, 
     public dialog: MatDialog, 
     private toastr: ToastrService) { }
 
@@ -122,7 +123,7 @@ export class PredmetiComponent implements OnInit {
   }
 
   delete(id: string) {
-    this.realizacijaApi.deletePredmet(id)
+    this.predmetApi.delete(id)
       .subscribe({
         next: () => {
           this.toastr.success('Predmet je uspešno obrisan!', 'Uspešno!');

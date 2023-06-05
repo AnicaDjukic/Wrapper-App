@@ -84,10 +84,8 @@ public class PredavacService {
         return predavac;
     }
 
-    public Predavac deleteById(String id) {
-        Predavac predavac = getById(id);
-        repository.delete(predavac);
-        return predavac;
+    public void deleteById(String id) {
+        repository.deleteById(id);
     }
 
     public boolean existsById(String id) {

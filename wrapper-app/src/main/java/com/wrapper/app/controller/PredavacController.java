@@ -71,8 +71,8 @@ public class PredavacController {
 
     @CrossOrigin(origins = "*")
     @DeleteMapping("{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public PredavacResponseDto delete(@PathVariable String id) {
-        return modelMapper.map(service.deleteById(id), PredavacResponseDto.class);
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable String id) {
+       service.deleteById(id);
     }
 }

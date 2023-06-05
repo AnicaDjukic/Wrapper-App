@@ -57,24 +57,9 @@ public class StudijskiProgramController {
     }
 
     @CrossOrigin(origins = "*")
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public StudijskiProgramResponseDto create(@RequestBody @Valid StudijskiProgramRequestDto dto) {
-        StudijskiProgram saved =  service.create(modelMapper.map(dto, StudijskiProgram.class));
-        return modelMapper.map(saved, StudijskiProgramResponseDto.class);
-    }
-
-    @CrossOrigin(origins = "*")
     @PutMapping("{id}")
     public StudijskiProgramResponseDto update(@PathVariable String id, @RequestBody @Valid StudijskiProgramRequestDto dto) {
         StudijskiProgram updated = service.update(id, modelMapper.map(dto, StudijskiProgram.class));
         return modelMapper.map(updated, StudijskiProgramResponseDto.class);
-    }
-
-    @CrossOrigin(origins = "*")
-    @DeleteMapping("{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public StudijskiProgramResponseDto delete(@PathVariable String id) {
-        return modelMapper.map(service.deleteById(id), StudijskiProgramResponseDto.class);
     }
 }

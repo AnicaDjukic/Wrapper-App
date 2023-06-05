@@ -3,6 +3,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { StudijskiProgramService } from '../services/studijski-program.service';
 import { ToastrService } from 'ngx-toastr';
+import { RealizacijaService } from '../services/realizacija.service';
 
 @Component({
   selector: 'app-studijski-program-dialog',
@@ -14,9 +15,11 @@ export class StudijskiProgramDialogComponent {
   actionBtn: string = "Sačuvaj"
   options: string[] = [];
   studijskiProgramForm!: FormGroup
+  submitted!: boolean
 
   constructor(private formBuilder: FormBuilder,
-    private api: StudijskiProgramService,
+    private studijskiProgramApi: StudijskiProgramService,
+    private realizacijaApi: RealizacijaService,
     @Inject(MAT_DIALOG_DATA) public editData: any,
     private dialogRef: MatDialogRef<StudijskiProgramDialogComponent>,
     private toastr: ToastrService) { }
@@ -40,14 +43,16 @@ export class StudijskiProgramDialogComponent {
   }
 
   add() {
+    this.submitted = true;
     if (!this.editData) {
       if (this.studijskiProgramForm.valid) {
         this.fillStepenAndNivo();
-        this.api.post(this.studijskiProgramForm.value)
+        this.realizacijaApi.addStudijskiProgram(this.studijskiProgramForm.value)
           .subscribe({
             next: () => {
               this.toastr.success('Novi studijski program je uspešno dodat!', 'Uspešno!');
               this.studijskiProgramForm.reset();
+              this.submitted = false;
               this.dialogRef.close('save');
             },
             error: (message) => {
@@ -77,11 +82,12 @@ export class StudijskiProgramDialogComponent {
 
     this.fillStepenAndNivo();
 
-    this.api.put(this.studijskiProgramForm.value, this.editData.id)
+    this.studijskiProgramApi.put(this.studijskiProgramForm.value, this.editData.id)
       .subscribe({
         next: () => {
           this.toastr.success('Studijski program je uspešno izmenjen!', 'Uspešno!');
           this.studijskiProgramForm.reset();
+          this.submitted = false;
           this.dialogRef.close('update');
         },
         error: (message) => {

@@ -21,15 +21,7 @@ export class StudijskiProgramService {
     + `&stepenStudija=` + searchParams.stepenStudija);
   }
 
-  post(data: any) {
-    return this.http.post<any>(`${this.studijskiProgramiUrl}`, data);
-  }
-
   put(data: any, id: string) {
     return this.http.put<any>(`${this.studijskiProgramiUrl}/` + id, data);
-  }
-
-  delete(id: string) {
-    return this.http.delete(`${this.studijskiProgramiUrl}/` + id);
   }
 }

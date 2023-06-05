@@ -30,17 +30,21 @@ public class StudijskiProgramPredmetiMapper {
         StudijskiProgramPredmetiDto studijskiProgramPredmetiDto = new StudijskiProgramPredmetiDto();
         fillStudijskiProgramInfo(studijskiProgramPredmeti.getId(), studijskiProgramPredmetiDto);
         for(PredmetPredavac predmetPredavac : studijskiProgramPredmeti.getPredmetPredavaci()) {
-            PredmetPredavacDto predmetPredavacDto = new PredmetPredavacDto();
-            fillPredmetInfo(predmetPredavac.getPredmet().getId(), predmetPredavacDto);
-            if(predmetPredavac.getProfesor() != null) {
-                fillProfesorInfo(predmetPredavac.getProfesor().getId(), predmetPredavacDto);
-            }
-            fillOstaliProfesoriInfo(predmetPredavac.getOstaliProfesori(), predmetPredavacDto);
-            fillAsistentiInfo(predmetPredavac.getAsistentZauzeca(), predmetPredavacDto);
-            predmetPredavacDto.setBlock(predmetPredavac.isBlock());
-            studijskiProgramPredmetiDto.getPredmetPredavaci().add(predmetPredavacDto);
+            createDto(studijskiProgramPredmetiDto, predmetPredavac);
         }
         return studijskiProgramPredmetiDto;
+    }
+
+    private void createDto(StudijskiProgramPredmetiDto studijskiProgramPredmetiDto, PredmetPredavac predmetPredavac) {
+        PredmetPredavacDto predmetPredavacDto = new PredmetPredavacDto();
+        fillPredmetInfo(predmetPredavac.getPredmet().getId(), predmetPredavacDto);
+        if(predmetPredavac.getProfesor() != null) {
+            fillProfesorInfo(predmetPredavac.getProfesor().getId(), predmetPredavacDto);
+        }
+        fillOstaliProfesoriInfo(predmetPredavac.getOstaliProfesori(), predmetPredavacDto);
+        fillAsistentiInfo(predmetPredavac.getAsistentZauzeca(), predmetPredavacDto);
+        predmetPredavacDto.setBlock(predmetPredavac.isBlock());
+        studijskiProgramPredmetiDto.getPredmetPredavaci().add(predmetPredavacDto);
     }
 
     private void fillStudijskiProgramInfo(String studijskiProgramId, StudijskiProgramPredmetiDto studijskiProgramPredmetiDto) {

@@ -5,7 +5,7 @@ import { HttpClient } from '@angular/common/http';
   providedIn: 'root'
 })
 export class PredavacService {
-
+  
   private predavaciUrl = "http://localhost:8080/api/v1/predavaci";
 
   constructor(private http: HttpClient) { }
