@@ -53,35 +53,22 @@ public class PredavacService {
                 .orElseThrow(() -> new NotFoundException(Predavac.class.getSimpleName()));
     }
 
-    public Predavac create(PredavacRequestDto dto) {
-        Optional<Predavac> existing = repository.findByOznaka(dto.getOznaka());
+    public Predavac create(Predavac predavac) {
+        Optional<Predavac> existing = repository.findByOznaka(predavac.getOznaka());
         if(existing.isPresent())
             throw new AlreadyExistsException(Predavac.class.getSimpleName());
-        Predavac predavac = createPredavac(dto);
         predavac.setId(UUID.randomUUID().toString());
         return repository.save(predavac);
     }
 
-    public Predavac update(String id, PredavacRequestDto dto) {
+    public Predavac update(String id, Predavac predavac) {
         if (!repository.existsById(id))
             throw new NotFoundException(Predavac.class.getSimpleName());
-        Optional<Predavac> existing = repository.findByOznaka(dto.getOznaka());
+        Optional<Predavac> existing = repository.findByOznaka(predavac.getOznaka());
         if(existing.isPresent() && !existing.get().getId().equals(id))
             throw new AlreadyExistsException(Predavac.class.getSimpleName());
-        Predavac predavac = createPredavac(dto);
         predavac.setId(id);
         return repository.save(predavac);
-    }
-
-    private Predavac createPredavac(PredavacRequestDto dto) {
-        OrganizacionaJedinica organizacionaJedinica = organizacionaJedinicaService.getById(dto.getOrgJedinica());
-        Predavac predavac = Predavac.builder().oznaka(dto.getOznaka())
-                .ime(dto.getIme()).prezime(dto.getPrezime())
-                .organizacijaFakulteta(dto.isOrganizacijaFakulteta())
-                .dekanat(dto.isDekanat())
-                .build();
-        predavac.setOrgJedinica(organizacionaJedinica);
-        return predavac;
     }
 
     public void deleteById(String id) {

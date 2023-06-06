@@ -15,13 +15,13 @@ public class PredmetPredavacDto {
     private String predmetOznaka;
     private String predmetNaziv;
     private int predmetGodina;
-    private String profesor;
-    private List<String> ostaliProfesori;
-    private List<AsistentiZauzecaDto> asistentiZauzeca;
+    private PredavacDto profesor;
+    private List<PredavacDto> ostaliProfesori;
+    private List<AsistentiZauzecaDto> asistentZauzeca;
     private boolean block;
 
     public PredmetPredavacDto() {
         this.ostaliProfesori = new ArrayList<>();
-        this.asistentiZauzeca = new ArrayList<>();
+        this.asistentZauzeca = new ArrayList<>();
     }
 }

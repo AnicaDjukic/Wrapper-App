@@ -7,9 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { PredmetDialogComponent } from '../predmet-dialog/predmet-dialog.component';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 import { ToastrService } from 'ngx-toastr';
-import { RealizacijaService } from '../services/realizacija.service';
 import { StudijskiProgramDto } from '../dtos/StudijskiProgramDto';
-import { ApplicationConfig } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-predmeti',
@@ -18,7 +16,7 @@ import { ApplicationConfig } from '@angular/platform-browser';
 })
 export class PredmetiComponent implements OnInit {
 
-  displayedColumns: string[] = ['oznaka', 'plan', 'naziv', 'godina', 'studijskiProgram',
+  displayedColumns: string[] = ['oznaka', 'plan', 'naziv', 'godina', 'studijskiProgram', 'stepenStudija',
     'brojCasovaPred', 'brojCasovaAud', 'brojCasovaLab', 'brojCasovaRac', 'actions'];
 
   constructor(private api: ApiService,
@@ -67,7 +65,7 @@ export class PredmetiComponent implements OnInit {
         next: (res) => {
           this.studijskiProgrami = res;
           res.forEach((element: StudijskiProgramDto) => {
-            this.options.push(element.oznaka + ' ' + element.naziv);
+            this.options.push(element.oznaka + ' ' + element.naziv + ' (' + element.stepenStudija + ')');
           });
         }
       })
@@ -75,7 +73,7 @@ export class PredmetiComponent implements OnInit {
 
   openDialog(): void {
     this.dialog.open(PredmetDialogComponent, {
-      width: '40%',
+      width: '50%',
       data: {
         options: this.options,
         studijskiProgrami: this.studijskiProgrami
@@ -93,7 +91,7 @@ export class PredmetiComponent implements OnInit {
 
   edit(element: any) {
     this.dialog.open(PredmetDialogComponent, {
-      width: '40%',
+      width: '50%',
       data: {
         editData: element,
         options: this.options,

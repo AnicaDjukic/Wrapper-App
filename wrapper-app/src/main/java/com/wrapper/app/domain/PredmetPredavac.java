@@ -1,5 +1,6 @@
 package com.wrapper.app.domain;
 
+import com.wrapper.app.repository.cascade.CascadeSave;
 import lombok.Data;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
@@ -10,6 +11,7 @@ import java.util.List;
 public class PredmetPredavac {
 
     @DocumentReference
+    @CascadeSave
     private Predmet predmet;
     @DocumentReference
     private Predavac profesor;

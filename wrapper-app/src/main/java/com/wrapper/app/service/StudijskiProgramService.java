@@ -87,18 +87,4 @@ public class StudijskiProgramService {
     public List<StudijskiProgram> searchByNaziv(String searchParam) {
         return repository.searchByNaziv(searchParam.trim());
     }
-
-    public String getStepenStudija(int stepen, int nivo) {
-        return switch (stepen) {
-            case 1 -> (nivo == 1) ? OAS : OSS;
-            case 2 -> (nivo == 1) ? MAS : MSS;
-            default -> "";
-        };
-    }
-
-    public void updateStatus(String id, boolean block) {
-        StudijskiProgram studijskiProgram = getById(id);
-        studijskiProgram.setBlock(block);
-        repository.save(studijskiProgram);
-    }
 }

@@ -31,7 +31,7 @@ public class StudijskiProgramPredmetiController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public StudijskiProgramPredmetiDto create(@RequestBody StudijskiProgramRequestDto dto) {
-        StudijskiProgramPredmeti saved =  service.create(modelMapper.map(dto, StudijskiProgram.class));
+        StudijskiProgramPredmeti saved =  service.add(modelMapper.map(dto, StudijskiProgram.class));
         return modelMapper.map(saved, StudijskiProgramPredmetiDto.class);
     }
 

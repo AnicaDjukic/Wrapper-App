@@ -1,24 +1,32 @@
 package com.wrapper.app.mapper;
 
 import com.wrapper.app.domain.Predmet;
-import com.wrapper.app.dto.PredmetResponseDto;
+import com.wrapper.app.dto.PredmetRequestDto;
+import com.wrapper.app.service.StudijskiProgramService;
+import org.springframework.stereotype.Component;
 
+@Component
 public class PredmetMapper {
 
-    public PredmetResponseDto map(Predmet predmet) {
-        PredmetResponseDto responseDto = new PredmetResponseDto();
-        responseDto.setId(predmet.getId());
-        responseDto.setOznaka(predmet.getOznaka());
-        responseDto.setPlan(predmet.getPlan());
-        responseDto.setNaziv(predmet.getNaziv());
-        responseDto.setGodina(predmet.getGodina());
-        responseDto.setBrojCasovaPred(predmet.getBrojCasovaPred());
-        responseDto.setStudijskiProgram(predmet.getStudijskiProgram().getOznaka()
-                + " " + predmet.getStudijskiProgram().getNaziv());
-        responseDto.setSifraStruke(predmet.getSifraStruke());
-        responseDto.setBrojCasovaAud(predmet.getBrojCasovaAud());
-        responseDto.setBrojCasovaLab(predmet.getBrojCasovaLab());
-        responseDto.setBrojCasovaRac(predmet.getBrojCasovaRac());
-        return responseDto;
+    private final StudijskiProgramService studijskiProgramService;
+
+    public PredmetMapper(StudijskiProgramService studijskiProgramService) {
+        this.studijskiProgramService = studijskiProgramService;
+    }
+
+    public Predmet map(PredmetRequestDto dto) {
+        Predmet predmet = new Predmet();
+        predmet.setOznaka(dto.getOznaka());
+        predmet.setPlan(dto.getPlan());
+        predmet.setNaziv(dto.getNaziv());
+        predmet.setGodina(dto.getGodina());
+        predmet.setBrojCasovaPred(dto.getBrojCasovaPred());
+        predmet.setStudijskiProgram(studijskiProgramService.getById(dto.getStudijskiProgram()));
+        predmet.setSifraStruke(dto.getSifraStruke());
+        predmet.setBrojCasovaAud(dto.getBrojCasovaAud());
+        predmet.setBrojCasovaRac(dto.getBrojCasovaRac());
+        predmet.setBrojCasovaLab(dto.getBrojCasovaLab());
+        predmet.setURealizaciji(false);
+        return predmet;
     }
 }

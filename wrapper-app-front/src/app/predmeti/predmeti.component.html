@@ -28,7 +28,7 @@
 
         <ng-container matColumnDef="plan">
           <th mat-header-cell *matHeaderCellDef> Plan </th>
-          <td mat-cell *matCellDef="let element"> {{element.plan}} </td>
+          <td mat-cell *matCellDef="let element" style="text-align: center;"> {{element.plan}} </td>
         </ng-container>
 
         <ng-container matColumnDef="naziv">
@@ -38,32 +38,37 @@
 
         <ng-container matColumnDef="godina">
           <th mat-header-cell *matHeaderCellDef> Godina </th>
-          <td mat-cell *matCellDef="let element"> {{element.godina}} </td>
+          <td mat-cell *matCellDef="let element" style="text-align: center;"> {{element.godina}} </td>
         </ng-container>
 
         <ng-container matColumnDef="studijskiProgram">
           <th mat-header-cell *matHeaderCellDef> Studijski program </th>
-          <td mat-cell *matCellDef="let element"> {{element.studijskiProgram}} </td>
+          <td mat-cell *matCellDef="let element"> {{element.studijskiProgram.oznaka}} {{element.studijskiProgram.naziv}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="stepenStudija">
+          <th mat-header-cell *matHeaderCellDef> Stepen studija </th>
+          <td mat-cell *matCellDef="let element"> {{element.studijskiProgram.stepenStudija.split('STUDIJE')[0].trim()}} </td>
         </ng-container>
 
         <ng-container matColumnDef="brojCasovaPred">
-          <th mat-header-cell *matHeaderCellDef> Br. časova predavanja </th>
-          <td mat-cell *matCellDef="let element"> {{element.brojCasovaPred}} </td>
+          <th mat-header-cell *matHeaderCellDef style="text-align: center;"> Br. časova predavanja </th>
+          <td mat-cell *matCellDef="let element" style="text-align: center;"> {{element.brojCasovaPred}} </td>
         </ng-container>
 
         <ng-container matColumnDef="brojCasovaAud">
-          <th mat-header-cell *matHeaderCellDef> Br. časova aud </th>
-          <td mat-cell *matCellDef="let element"> {{element.brojCasovaAud}} </td>
+          <th mat-header-cell *matHeaderCellDef style="text-align: center;"> Br. časova aud </th>
+          <td mat-cell *matCellDef="let element" style="text-align: center;"> {{element.brojCasovaAud}} </td>
         </ng-container>
 
         <ng-container matColumnDef="brojCasovaLab">
-          <th mat-header-cell *matHeaderCellDef> Br. časova lab </th>
-          <td mat-cell *matCellDef="let element"> {{element.brojCasovaLab}} </td>
+          <th mat-header-cell *matHeaderCellDef style="text-align: center;"> Br. časova lab </th>
+          <td mat-cell *matCellDef="let element" style="text-align: center;"> {{element.brojCasovaLab}} </td>
         </ng-container>
 
         <ng-container matColumnDef="brojCasovaRac">
-          <th mat-header-cell *matHeaderCellDef> Br. časova rač </th>
-          <td mat-cell *matCellDef="let element"> {{element.brojCasovaRac}} </td>
+          <th mat-header-cell *matHeaderCellDef style="text-align: center;"> Br. časova rač </th>
+          <td mat-cell *matCellDef="let element" style="text-align: center;"> {{element.brojCasovaRac}} </td>
         </ng-container>
 
         <ng-container matColumnDef="actions">

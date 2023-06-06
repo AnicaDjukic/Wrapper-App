@@ -21,19 +21,16 @@ public class StudijskiProgramController {
 
     private final ModelMapper modelMapper;
 
-    public StudijskiProgramController(StudijskiProgramService service) {
+    public StudijskiProgramController(StudijskiProgramService service, ModelMapper modelMapper) {
         this.service = service;
-        this.modelMapper = new ModelMapper();
+        this.modelMapper = modelMapper;
     }
 
     @CrossOrigin(origins = "*")
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<StudijskiProgramResponseDto> getAll() {
-        List<StudijskiProgramResponseDto> results = service.getAll().stream()
-                .map(sp -> modelMapper.map(sp, StudijskiProgramResponseDto.class)).toList();
-        results.forEach(sp -> sp.setStepenStudija(service.getStepenStudija(sp.getStepen(), sp.getNivo())));
-        return results;
+        return service.getAll().stream().map(sp -> modelMapper.map(sp, StudijskiProgramResponseDto.class)).toList();
     }
 
     @CrossOrigin(origins = "*")
@@ -44,10 +41,7 @@ public class StudijskiProgramController {
                                                     @RequestParam String stepenStudija) {
         StudijskiProgramSearchDto searchDto = new StudijskiProgramSearchDto(Pattern.quote(oznaka.trim()),
                 Pattern.quote(naziv.trim()), stepenStudija);
-        List<StudijskiProgramResponseDto> results = service.search(searchDto).stream()
-                .map(p -> modelMapper.map(p, StudijskiProgramResponseDto.class)).toList();
-        results.forEach(sp -> sp.setStepenStudija(service.getStepenStudija(sp.getStepen(), sp.getNivo())));
-        return results;
+        return service.search(searchDto).stream().map(p -> modelMapper.map(p, StudijskiProgramResponseDto.class)).toList();
     }
 
     @GetMapping("{id}")

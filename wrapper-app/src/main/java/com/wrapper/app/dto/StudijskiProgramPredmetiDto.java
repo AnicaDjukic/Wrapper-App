@@ -10,7 +10,7 @@ import java.util.List;
 @Setter
 public class StudijskiProgramPredmetiDto {
 
-    private String studijskiProgram;
+    private StudijskiProgramDto studijskiProgram;
     private List<PredmetPredavacDto> predmetPredavaci;
 
     public StudijskiProgramPredmetiDto() {

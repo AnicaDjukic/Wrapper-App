@@ -90,7 +90,7 @@ export class RealizacijaComponent {
     let studijskiProgramId = this.studijskiProgrami.filter(sp => sp.oznaka == this.selected.split(' ')[0] && sp.stepenStudija == this.selected.substring(this.selected.indexOf("(") + 1, this.selected.lastIndexOf(")"))).map(value => value.id)[0];
     this.predmetiOptions = [];
     await this.getPredmetOptions(studijskiProgramId);
-    if(this.predmetiOptions.length == 0) {
+    if (this.predmetiOptions.length == 0) {
       this.toastr.warning('Svi predmeti izabranog studijskog programa su već dodati u realizaciju!');
       return;
     }
@@ -213,14 +213,53 @@ export class RealizacijaComponent {
   get(studijskiProgram: string) {
     console.log(this.myControl);
     this.selected = studijskiProgram;
-    this.studijskiProgramId = this.studijskiProgrami.filter(sp => sp.oznaka + ' ' + sp.naziv + ' (' + sp.stepenStudija + ")"  == this.selected).map(value => value.id)[0];
+    this.studijskiProgramId = this.studijskiProgrami.filter(sp => sp.oznaka + ' ' + sp.naziv + ' (' + sp.stepenStudija + ")" == this.selected).map(value => value.id)[0];
     this.realizacijaService.get(this.studijskiProgramId)
       .subscribe({
         next: (res) => {
           console.log(res.predmetPredavaci);
-          this.dataSource = res.predmetPredavaci;
+          let response: PredmetPredavacDto[] = [];
+          for (let predmetPredavac of res.predmetPredavaci) {
+            this.fillGlavniProfesorInfo(predmetPredavac);
+            this.fillOstaliProfesoriInfo(predmetPredavac);
+            this.fillAsistentiInfo(predmetPredavac);
+            response.push(predmetPredavac);
+          }
+          this.dataSource = new MatTableDataSource(response);
         }
       });
   }
+
+  fillGlavniProfesorInfo(predmetPredavac: any) {
+    if (predmetPredavac.profesor) {
+      let profesor = predmetPredavac.profesor.titula + " " + predmetPredavac.profesor.ime + " " + predmetPredavac.profesor.prezime;
+      profesor.trim();
+      predmetPredavac.profesor = profesor;
+    }
+  }
+
+  fillOstaliProfesoriInfo(predmetPredavac: any) {
+    let ostaliProfesori = [];
+    for (let prof of predmetPredavac.ostaliProfesori) {
+      let profesor = prof.titula + " " + prof.ime + " " + prof.prezime;
+      profesor.trim();
+      ostaliProfesori.push(profesor);
+    }
+    predmetPredavac.ostaliProfesori = ostaliProfesori;
+  }
+
+  fillAsistentiInfo(predmetPredavac: any) {
+    let asistentZauzeca = [];
+    for (let zazuece of predmetPredavac.asistentZauzeca) {
+      if (zazuece.asistent) {
+        let asistent = zazuece.asistent.titula + " " + zazuece.asistent.ime + " " + zazuece.asistent.prezime;
+        asistent.trim();
+        zazuece.asistent = asistent;
+        asistentZauzeca.push(zazuece);
+      }
+    }
+    predmetPredavac.asistentZauzeca = asistentZauzeca;
+  }
+
 }
 

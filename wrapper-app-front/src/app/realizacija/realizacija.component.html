@@ -89,9 +89,9 @@
                 <td mat-cell *matCellDef="let element" [attr.colspan]="columnsToDisplayWithExpand.length" 
                 [class.block]="element.block">
                     <div [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
-                        <div *ngIf="element.asistentiZauzeca != 0" style="font-weight: 450;">Asistenti:</div>
-                        <div *ngIf="element.asistentiZauzeca == 0"><em>Nema asistenata</em></div>
-                        <div *ngFor="let zauzece of element.asistentiZauzeca">
+                        <div *ngIf="element.asistentZauzeca != 0" style="font-weight: 450;">Asistenti:</div>
+                        <div *ngIf="element.asistentZauzeca == 0"><em>Nema asistenata</em></div>
+                        <div *ngFor="let zauzece of element.asistentZauzeca">
                             <div style="margin-left: 65px;"> {{zauzece.asistent}} : <span style="font-weight: 450;">broj
                                     termina:</span>
                                 {{zauzece.brojTermina}} </div>

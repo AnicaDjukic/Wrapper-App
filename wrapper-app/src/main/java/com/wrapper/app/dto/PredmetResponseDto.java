@@ -17,7 +17,7 @@ public class PredmetResponseDto {
     private String naziv;
     private int godina;
     private int brojCasovaPred;
-    private String studijskiProgram;
+    private StudijskiProgramDto studijskiProgram;
     private String sifraStruke;
     private int brojCasovaAud;
     private int brojCasovaLab;

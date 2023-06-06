@@ -54,14 +54,14 @@ public class ProstorijaController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ProstorijaResponseDto create(@RequestBody @Valid ProstorijaRequestDto dto) {
-        Prostorija saved =  service.create(dto);
+        Prostorija saved =  service.add(modelMapper.map(dto, Prostorija.class));
         return modelMapper.map(saved, ProstorijaResponseDto.class);
     }
 
     @CrossOrigin(origins = "*")
     @PutMapping("{id}")
     public ProstorijaResponseDto update(@PathVariable String id, @RequestBody @Valid ProstorijaRequestDto dto) {
-        Prostorija updated = service.update(id, dto);
+        Prostorija updated = service.update(id, modelMapper.map(dto, Prostorija.class));
         return modelMapper.map(updated, ProstorijaResponseDto.class);
     }
 

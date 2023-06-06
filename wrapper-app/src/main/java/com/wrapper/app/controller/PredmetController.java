@@ -1,6 +1,7 @@
 package com.wrapper.app.controller;
 
 import com.wrapper.app.domain.Predmet;
+import com.wrapper.app.domain.PredmetPredavac;
 import com.wrapper.app.dto.PredmetRequestDto;
 import com.wrapper.app.dto.PredmetResponseDto;
 import com.wrapper.app.dto.PredmetSearchDto;
@@ -69,22 +70,21 @@ public class PredmetController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public PredmetResponseDto create(@RequestBody @Valid PredmetRequestDto dto) {
-        Predmet saved = service.create(dto);
+        Predmet saved = service.add(modelMapper.map(dto, Predmet.class));
         return modelMapper.map(saved, PredmetResponseDto.class);
     }
 
     @CrossOrigin(origins = "*")
     @PutMapping("{id}")
     public PredmetResponseDto update(@PathVariable String id, @RequestBody @Valid PredmetRequestDto dto) {
-        Predmet updated = service.update(id, dto);
+        Predmet updated = service.update(id, modelMapper.map(dto, Predmet.class));
         return modelMapper.map(updated, PredmetResponseDto.class);
     }
 
-    @CrossOrigin(origins = "*")
     @DeleteMapping("{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public PredmetResponseDto delete(@PathVariable String id) {
-        return modelMapper.map(service.deleteById(id), PredmetResponseDto.class);
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable String id) {
+        service.deleteById(id);
     }
 
 }

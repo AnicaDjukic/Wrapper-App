@@ -2,7 +2,6 @@ package com.wrapper.app.service;
 
 import com.wrapper.app.domain.Predmet;
 import com.wrapper.app.domain.StudijskiProgram;
-import com.wrapper.app.dto.PredmetRequestDto;
 import com.wrapper.app.dto.PredmetSearchDto;
 import com.wrapper.app.exception.AlreadyExistsException;
 import com.wrapper.app.exception.NotFoundException;
@@ -24,7 +23,8 @@ public class PredmetService {
 
     private final StudijskiProgramService studijskiProgramService;
 
-    public PredmetService(PredmetRepository repository, StudijskiProgramService studijskiProgramService) {
+    public PredmetService(PredmetRepository repository,
+                          StudijskiProgramService studijskiProgramService) {
         this.repository = repository;
         this.studijskiProgramService = studijskiProgramService;
     }
@@ -53,12 +53,11 @@ public class PredmetService {
         return new PageImpl<>(pageContent, pageable, results.size());
     }
 
-    public Predmet create(PredmetRequestDto dto) {
-        Optional<Predmet> existing = repository.findByOznakaAndPlanAndStudijskiProgram(dto.getOznaka(), dto.getPlan(), dto.getStudijskiProgram());
+    public Predmet add(Predmet predmet) {
+        Optional<Predmet> existing = repository.findByOznakaAndPlanAndStudijskiProgram(predmet.getOznaka(), predmet.getPlan(), predmet.getStudijskiProgram().getId());
         if(existing.isPresent()) {
             throw new AlreadyExistsException(Predmet.class.getSimpleName());
         }
-        Predmet predmet = createPredmet(dto);
         predmet.setId(UUID.randomUUID().toString());
         return repository.save(predmet);
     }
@@ -68,30 +67,21 @@ public class PredmetService {
                 .orElseThrow(() -> new NotFoundException(Predmet.class.getSimpleName()));
     }
 
-    public Predmet deleteById(String id) {
+    public void deleteById(String id) {
         Predmet predmet = getById(id);
-        repository.delete(predmet);
-        return predmet;
+        repository.deleteById(id);
     }
 
-    public Predmet update(String id, PredmetRequestDto dto) {
-        Optional<Predmet> existing = repository.findByOznakaAndPlanAndStudijskiProgram(dto.getOznaka(), dto.getPlan(), dto.getStudijskiProgram());
+    public Predmet update(String id, Predmet predmet) {
+        Optional<Predmet> existing = repository.findByOznakaAndPlanAndStudijskiProgram(predmet.getOznaka(),
+                predmet.getPlan(), predmet.getStudijskiProgram().getId());
         if(existing.isPresent() && !existing.get().getId().equals(id)) {
             throw new AlreadyExistsException(Predmet.class.getSimpleName());
         }
-        Predmet predmet = createPredmet(dto);
+        Predmet old = getById(id);
         predmet.setId(id);
+        predmet.setURealizaciji(old.getURealizaciji());
         return repository.save(predmet);
-    }
-
-    private Predmet createPredmet(PredmetRequestDto dto) {
-        StudijskiProgram studijskiProgram = studijskiProgramService.getById(dto.getStudijskiProgram());
-        Predmet predmet = Predmet.builder().oznaka(dto.getOznaka())
-                .plan(dto.getPlan()).naziv(dto.getNaziv()).godina(dto.getGodina()).sifraStruke(dto.getSifraStruke())
-                .brojCasovaPred(dto.getBrojCasovaPred()).brojCasovaAud(dto.getBrojCasovaAud())
-                .brojCasovaLab(dto.getBrojCasovaLab()).brojCasovaRac(dto.getBrojCasovaRac()).build();
-        predmet.setStudijskiProgram(studijskiProgram);
-        return predmet;
     }
 
     public List<Predmet> getByStudijskiProgram(String studijskiProgram, boolean uRealizaciji) {
@@ -100,13 +90,5 @@ public class PredmetService {
 
     public void deleteAllByStudijskiProgram(String studProgramId) {
         repository.deleteAllByStudijskiProgram(studProgramId);
-    }
-
-    public void updateStatus(String predmetId, boolean uRealizaciji) {
-        Optional<Predmet> predmet = repository.findById(predmetId);
-        if(predmet.isPresent()) {
-            predmet.get().setURealizaciji(uRealizaciji);
-            repository.save(predmet.get());
-        }
     }
 }

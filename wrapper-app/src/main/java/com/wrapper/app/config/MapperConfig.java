@@ -2,10 +2,7 @@ package com.wrapper.app.config;
 
 import com.wrapper.app.domain.*;
 import com.wrapper.app.dto.*;
-import com.wrapper.app.mapper.PredmetMapper;
-import com.wrapper.app.mapper.PredmetPredavacMapper;
-import com.wrapper.app.mapper.StudentskaGrupaMapper;
-import com.wrapper.app.mapper.StudijskiProgramPredmetiMapper;
+import com.wrapper.app.mapper.*;
 import org.modelmapper.AbstractConverter;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
@@ -19,17 +16,25 @@ import java.util.stream.Collectors;
 @Configuration
 public class MapperConfig {
 
-    PredmetMapper predmetMapper = new PredmetMapper();
+
+    private final PredmetMapper predmetMapper;
+
+    private final PredavacMapper predavacMapper;
 
     StudentskaGrupaMapper studentskaGrupaMapper = new StudentskaGrupaMapper();
 
     private final PredmetPredavacMapper predmetPredavacMapper;
 
-    private final StudijskiProgramPredmetiMapper studijskiProgramPredmetiMapper;
+    private final StudijskiProgramMapper studijskiProgramMapper;
 
-    public MapperConfig(PredmetPredavacMapper predmetPredavacMapper, StudijskiProgramPredmetiMapper studijskiProgramPredmetiMapper) {
+    private final ProstorijaMapper prostorijaMapper;
+
+    public MapperConfig(PredmetMapper predmetMapper, PredavacMapper predavacMapper, PredmetPredavacMapper predmetPredavacMapper, StudijskiProgramMapper studijskiProgramMapper, ProstorijaMapper prostorijaMapper) {
+        this.predmetMapper = predmetMapper;
+        this.predavacMapper = predavacMapper;
         this.predmetPredavacMapper = predmetPredavacMapper;
-        this.studijskiProgramPredmetiMapper = studijskiProgramPredmetiMapper;
+        this.studijskiProgramMapper = studijskiProgramMapper;
+        this.prostorijaMapper = prostorijaMapper;
     }
 
     @Bean
@@ -37,16 +42,26 @@ public class MapperConfig {
 
         ModelMapper modelMapper = new ModelMapper();
 
-        Converter<Predmet, PredmetResponseDto> predmetConverter = new AbstractConverter<>() {
+        Converter<PredmetRequestDto, Predmet> predmetConverter = new AbstractConverter<>() {
             @Override
-            protected PredmetResponseDto convert(Predmet predmet) {
-                return predmetMapper.map(predmet);
+            protected Predmet convert(PredmetRequestDto predmetRequestDto) {
+                return predmetMapper.map(predmetRequestDto);
             }
         };
         modelMapper.addConverter(predmetConverter);
 
-        TypeMap<Predavac, PredavacResponseDto> predavacMapper = modelMapper.createTypeMap(Predavac.class, PredavacResponseDto.class);
-        predavacMapper.addMappings(
+        Converter<PredavacRequestDto, Predavac> predavacRequstConverter =  new AbstractConverter<>() {
+
+            @Override
+            protected Predavac convert(PredavacRequestDto predavacRequestDto) {
+                return predavacMapper.map(predavacRequestDto);
+            }
+        };
+
+        modelMapper.addConverter(predavacRequstConverter);
+
+        TypeMap<Predavac, PredavacResponseDto> predavacConverter = modelMapper.createTypeMap(Predavac.class, PredavacResponseDto.class);
+        predavacConverter.addMappings(
                 mapper -> mapper.map(src -> src.getOrgJedinica().getNaziv(), PredavacResponseDto::setOrgJedinica)
         );
 
@@ -60,8 +75,17 @@ public class MapperConfig {
             return null;
         };
         modelMapper.addConverter(orgJedinicaConverter);
-        TypeMap<Prostorija, ProstorijaResponseDto> prostorijaMapper = modelMapper.createTypeMap(Prostorija.class, ProstorijaResponseDto.class);
-        prostorijaMapper.addMappings(mapper -> mapper.using(orgJedinicaConverter).map(Prostorija::getOrgJedinica, ProstorijaResponseDto::setOrgJedinica));
+
+        TypeMap<Prostorija, ProstorijaResponseDto> prostorijaResponseConverter = modelMapper.createTypeMap(Prostorija.class, ProstorijaResponseDto.class);
+        prostorijaResponseConverter.addMappings(mapper -> mapper.using(orgJedinicaConverter).map(Prostorija::getOrgJedinica, ProstorijaResponseDto::setOrgJedinica));
+
+        Converter<ProstorijaRequestDto, Prostorija> prostorijaRequestConverter = new AbstractConverter<>() {
+            @Override
+            protected Prostorija convert(ProstorijaRequestDto prostorijaRequestDto) {
+                return prostorijaMapper.map(prostorijaRequestDto);
+            }
+        };
+        modelMapper.addConverter(prostorijaRequestConverter);
 
         Converter<StudentskaGrupa, StudentskaGrupaResponseDto> studentskaGrupaConverter = new AbstractConverter<>() {
             @Override
@@ -71,13 +95,21 @@ public class MapperConfig {
         };
         modelMapper.addConverter(studentskaGrupaConverter);
 
-        Converter<StudijskiProgramPredmeti, StudijskiProgramPredmetiDto> studijskiProgramPredmetiConverter = new AbstractConverter<>() {
+        Converter<StudijskiProgram, StudijskiProgramResponseDto> studijskiProgramResponseConverter = new AbstractConverter<>() {
             @Override
-            protected StudijskiProgramPredmetiDto convert(StudijskiProgramPredmeti studijskiProgramPredmeti) {
-                return studijskiProgramPredmetiMapper.map(studijskiProgramPredmeti);
+            protected StudijskiProgramResponseDto convert(StudijskiProgram studijskiProgram) {
+                return studijskiProgramMapper.mapToResponseDto(studijskiProgram);
             }
         };
-        modelMapper.addConverter(studijskiProgramPredmetiConverter);
+        modelMapper.addConverter(studijskiProgramResponseConverter);
+
+        Converter<StudijskiProgram, StudijskiProgramDto> studijskiProgramConverter = new AbstractConverter<>() {
+            @Override
+            protected StudijskiProgramDto convert(StudijskiProgram studijskiProgram) {
+                return studijskiProgramMapper.mapToDto(studijskiProgram);
+            }
+        };
+        modelMapper.addConverter(studijskiProgramConverter);
 
         Converter<PredmetPredavaciDto, PredmetPredavac> predmetPredavacConverter = new AbstractConverter<>() {
             @Override

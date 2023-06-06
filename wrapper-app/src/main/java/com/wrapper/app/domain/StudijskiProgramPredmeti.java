@@ -1,6 +1,7 @@
 package com.wrapper.app.domain;
 
 import com.wrapper.app.exception.NotFoundException;
+import com.wrapper.app.repository.cascade.CascadeSave;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -16,11 +17,13 @@ public class StudijskiProgramPredmeti {
     @Id
     private String id;
     @DocumentReference
+    @CascadeSave
     private StudijskiProgram studijskiProgram;
     private List<PredmetPredavac> predmetPredavaci;
 
     public void addPredmet(PredmetPredavac predmetPredavac) {
         predmetPredavac.setBlock(predmetPredavac.isBlock());
+        predmetPredavac.getPredmet().setURealizaciji(true);
         getPredmetPredavaci().add(predmetPredavac);
         studijskiProgram.setBlock(checkPredmeti());
     }
@@ -38,9 +41,11 @@ public class StudijskiProgramPredmeti {
     }
 
     public void removePredmet(String predmetId) {
-        Optional<PredmetPredavac> predmet = getPredmetPredavaci()
-                .stream().filter(spp -> spp.getPredmet().getId().equals(predmetId)).findFirst();
-        predmet.ifPresent(predmetPredavac -> getPredmetPredavaci().remove(predmetPredavac));
+        PredmetPredavac predmetPredavac = getPredmetPredavaci()
+                .stream().filter(spp -> spp.getPredmet().getId().equals(predmetId)).findFirst()
+                .orElseThrow(() -> new NotFoundException(PredmetPredavac.class.getSimpleName()));
+        getPredmetPredavaci().remove(predmetPredavac);
+        predmetPredavac.getPredmet().setURealizaciji(false);
         studijskiProgram.setBlock(checkPredmeti());
     }
 
@@ -51,7 +56,6 @@ public class StudijskiProgramPredmeti {
         }
         return false;
     }
-
 
     public void removePredavac(String predavacId) {
         removeProfesor(predavacId);

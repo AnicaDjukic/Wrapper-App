@@ -39,18 +39,18 @@
 
         <ng-container matColumnDef="titula">
           <th mat-header-cell *matHeaderCellDef> Titula </th>
-          <td mat-cell *matCellDef="let element"> {{element.titula}} </td>
+          <td mat-cell *matCellDef="let element" style="text-align: center;"> {{element.titula}} </td>
         </ng-container>
 
         <ng-container matColumnDef="organizacijaFakulteta">
-          <th mat-header-cell *matHeaderCellDef> Organizacija fakulteta </th>
-          <td mat-cell *matCellDef="let element"><mat-checkbox [checked]="element.organizacijaFakulteta"
+          <th mat-header-cell *matHeaderCellDef style="text-align: center;"> Organizacija fakulteta </th>
+          <td mat-cell *matCellDef="let element" style="text-align: center;"><mat-checkbox [checked]="element.organizacijaFakulteta"
               disabled="true"></mat-checkbox></td>
         </ng-container>
 
         <ng-container matColumnDef="dekanat">
           <th mat-header-cell *matHeaderCellDef> Dekanat </th>
-          <td mat-cell *matCellDef="let element"><mat-checkbox [checked]="element.dekanat"
+          <td mat-cell *matCellDef="let element" style="text-align: center;"><mat-checkbox [checked]="element.dekanat"
               disabled="true"></mat-checkbox></td>
         </ng-container>
 

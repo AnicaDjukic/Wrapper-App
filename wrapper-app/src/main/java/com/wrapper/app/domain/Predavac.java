@@ -7,7 +7,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
 @Data
-@Builder
 @Document(collection = "#{@collectionNameResolver.resolveCollectionName(T(com.wrapper.app.domain.Predavac))}")
 public class Predavac {
 

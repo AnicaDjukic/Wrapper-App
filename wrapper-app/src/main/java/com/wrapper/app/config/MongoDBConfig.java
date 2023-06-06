@@ -4,6 +4,7 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.wrapper.app.repository.CollectionNameResolver;
 import com.wrapper.app.repository.CollectionNameResolverImpl;
+import com.wrapper.app.repository.cascade.CascadingMongoEventListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.config.AbstractMongoClientConfiguration;
@@ -36,5 +37,10 @@ public class MongoDBConfig extends AbstractMongoClientConfiguration {
                 return super.resolveCollectionName(entityClass);
             }
         };
+    }
+
+    @Bean
+    public CascadingMongoEventListener cascadingMongoEventListener() {
+        return new CascadingMongoEventListener();
     }
 }

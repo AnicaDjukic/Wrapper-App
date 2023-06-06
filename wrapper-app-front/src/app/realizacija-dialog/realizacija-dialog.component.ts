@@ -92,7 +92,7 @@ export class RealizacijaDialogComponent {
       .subscribe({
         next: (res) => {
           console.log(res);
-          this.predmetForm.controls['studijskiProgramId'].setValue(res.studijskiProgram);
+          this.predmetForm.controls['studijskiProgramId'].setValue(res.studijskiProgram.oznaka + " " + res.studijskiProgram.naziv + " (" + res.studijskiProgram.stepenStudija + ")");
         }
       });
   }
@@ -116,10 +116,10 @@ export class RealizacijaDialogComponent {
         this.ostaliProfesoriFieldsAsFormArray.push(this.formBuilder.control(profesor));
       }
     }
-    if (this.data.element.asistentiZauzeca) {
-      for (let asist of this.data.element.asistentiZauzeca) {
+    if (this.data.element.asistentZauzeca) {
+      for (let asist of this.data.element.asistentZauzeca) {
         let asistenti = Array.from(this.predavaciOptions);
-        let asistent = asistenti.filter(p => p.split("(")[0].trim() == asist.asistent).map(value => value)[0];
+        let asistent = asistenti.filter(p => p.split("(")[0].trim() == asist.asistent.trim()).map(value => value)[0];
         this.asistentZauzecaFieldsAsFormArray.push(this.asistentZauzece(asistent, asist.brojTermina));
       }
     }

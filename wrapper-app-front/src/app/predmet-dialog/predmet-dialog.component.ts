@@ -53,7 +53,7 @@ export class PredmetDialogComponent implements OnInit {
       this.predmetForm.controls['naziv'].setValue(this.data.editData.naziv);
       this.predmetForm.controls['godina'].setValue(this.data.editData.godina);
       this.predmetForm.controls['brojCasovaPred'].setValue(this.data.editData.brojCasovaPred);
-      this.predmetForm.controls['studijskiProgram'].setValue(this.data.editData.studijskiProgram);
+      this.predmetForm.controls['studijskiProgram'].setValue(this.data.editData.studijskiProgram.oznaka + ' ' + this.data.editData.studijskiProgram.naziv + ' (' + this.data.editData.studijskiProgram.stepenStudija + ')');
       this.predmetForm.controls['sifraStruke'].setValue(this.data.editData.sifraStruke);
       this.predmetForm.controls['brojCasovaAud'].setValue(this.data.editData.brojCasovaAud);
       this.predmetForm.controls['brojCasovaLab'].setValue(this.data.editData.brojCasovaLab);
@@ -75,7 +75,7 @@ export class PredmetDialogComponent implements OnInit {
     if (!this.data.editData) {
       if (this.predmetForm.valid) {
         let studProg: string = this.predmetForm.value.studijskiProgram
-        this.predmetForm.value.studijskiProgram = this.studijskiProgrami.filter(sp => sp.oznaka == studProg.split(' ')[0]).map(value => value.id)[0];
+        this.predmetForm.value.studijskiProgram = this.studijskiProgrami.filter(sp => (sp.oznaka + ' ' + sp.naziv + ' (' + sp.stepenStudija + ')') == studProg).map(value => value.id)[0];
         this.api.post(this.predmetForm.value)
           .subscribe({
             next: () => {
@@ -112,7 +112,7 @@ export class PredmetDialogComponent implements OnInit {
     }
     console.log(this.predmetForm.value);
     let studProg: string = this.predmetForm.value.studijskiProgram
-    this.predmetForm.value.studijskiProgram = this.studijskiProgrami.filter(sp => sp.oznaka == studProg.split(' ')[0]).map(value => value.id)[0];
+    this.predmetForm.value.studijskiProgram = this.studijskiProgrami.filter(sp => (sp.oznaka + ' ' + sp.naziv + ' (' + sp.stepenStudija + ')') == studProg).map(value => value.id)[0];
     console.log(this.predmetForm.value);
     this.api.put(this.predmetForm.value, this.data.editData.id)
       .subscribe({

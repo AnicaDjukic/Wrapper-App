@@ -36,22 +36,22 @@ public class WrapperAppApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) {
-		CollectionNameProvider.setCollectionName("2022/23Z");
-		Realizacija realizacija = realizacijaRepository.findAll().get(0);
-		for(StudijskiProgram studijskiProgram : studijskiProgramRepository.findAll()) {
-			Optional<StudijskiProgramPredmeti> exists = studijskiProgramPredmetiRepository.findById(studijskiProgram.getId());
-			if(exists.isEmpty()) {
-				List<PredmetPredavac> predmetPredavac = new ArrayList<>();
-				StudijskiProgramPredmeti studijskiProgramPredmeti = new StudijskiProgramPredmeti();
-				studijskiProgramPredmeti.setId(studijskiProgram.getId());
-				studijskiProgramPredmeti.setPredmetPredavaci(predmetPredavac);
-				studijskiProgramPredmetiRepository.save(studijskiProgramPredmeti);
-				realizacija.getStudijskiProgramPredmeti().add(studijskiProgramPredmeti);
-			}
-		}
-
-		realizacijaRepository.save(realizacija);
-
+//		CollectionNameProvider.setCollectionName("2022/23Z");
+//		Realizacija realizacija = realizacijaRepository.findAll().get(0);
+//		for(StudijskiProgram studijskiProgram : studijskiProgramRepository.findAll()) {
+//			Optional<StudijskiProgramPredmeti> exists = studijskiProgramPredmetiRepository.findById(studijskiProgram.getId());
+//			if(exists.isEmpty()) {
+//				List<PredmetPredavac> predmetPredavac = new ArrayList<>();
+//				StudijskiProgramPredmeti studijskiProgramPredmeti = new StudijskiProgramPredmeti();
+//				studijskiProgramPredmeti.setId(studijskiProgram.getId());
+//				studijskiProgramPredmeti.setPredmetPredavaci(predmetPredavac);
+//				studijskiProgramPredmetiRepository.save(studijskiProgramPredmeti);
+//				realizacija.getStudijskiProgramPredmeti().add(studijskiProgramPredmeti);
+//			}
+//		}
+//
+//		realizacijaRepository.save(realizacija);
+//
 //		for(Predmet predmet : predmetRepository.findAll()) {
 //			boolean uRealizaciji = false;
 //			StudijskiProgramPredmeti studijskiProgramPredmeti = studijskiProgramPredmetiService.getById(predmet.getStudijskiProgram().getId());
