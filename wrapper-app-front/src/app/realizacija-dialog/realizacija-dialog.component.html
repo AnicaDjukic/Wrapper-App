@@ -34,6 +34,9 @@
                         {{option}}
                     </mat-option>
                 </mat-autocomplete>
+                <mat-button mat-icon-button matSuffix (click)="this.predmetForm.controls['profesorId'].setValue('')" style="cursor: pointer;">
+                    <mat-icon>close</mat-icon>
+                </mat-button>
             </mat-form-field>
 
             <div *ngIf="ostaliProfesoriFieldsAsFormArray.length" class="heading2"> Ostali
@@ -54,6 +57,9 @@
                     <mat-error *ngIf="ostaliProfesoriFieldsAsFormArray.at(i).hasError('invalidOption')">
                         Morate izabrati profesora
                     </mat-error>
+                    <mat-button mat-icon-button matSuffix (click)="ostaliProfesoriFieldsAsFormArray.at(i).setValue('')" style="cursor: pointer;">
+                        <mat-icon>close</mat-icon>
+                    </mat-button>
                 </mat-form-field>
                 <button mat-raised-button type="button" (click)="remove(i)"
                     style="margin-left: 3%; margin-bottom: 3%;">Ukloni</button>
@@ -77,6 +83,9 @@
                         <mat-error *ngIf="asistentZauzecaFieldsAsFormArray.at(i).get('asistentId').hasError('invalidOption')">
                             Morate izabrati asistenta
                         </mat-error>
+                        <mat-button mat-icon-button matSuffix (click)="asistentZauzecaFieldsAsFormArray.at(i).get('asistentId').setValue('')" style="cursor: pointer;">
+                            <mat-icon>close</mat-icon>
+                        </mat-button>
                     </mat-form-field>
                     <mat-form-field style="padding-left: 3%; width: 35%;">
                         <mat-label>Broj termina</mat-label>

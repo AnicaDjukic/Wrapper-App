@@ -68,7 +68,6 @@ public class PredmetService {
     }
 
     public void deleteById(String id) {
-        Predmet predmet = getById(id);
         repository.deleteById(id);
     }
 
@@ -90,5 +89,11 @@ public class PredmetService {
 
     public void deleteAllByStudijskiProgram(String studProgramId) {
         repository.deleteAllByStudijskiProgram(studProgramId);
+    }
+
+    public void updateURealizacijiStatus(String predmetId, boolean uRealizaciji) {
+        Predmet predmet = getById(predmetId);
+        predmet.setURealizaciji(uRealizaciji);
+        repository.save(predmet);
     }
 }

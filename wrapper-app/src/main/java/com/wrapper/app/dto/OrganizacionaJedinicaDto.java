@@ -9,12 +9,9 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class StudentskaGrupaResponseDto {
+public class OrganizacionaJedinicaDto {
 
     private String id;
-    private int oznaka;
-    private int godina;
-    private String semestar;
-    private int brojStudenata;
-    private StudijskiProgramDto studijskiProgram;
+
+    private String naziv;
 }

@@ -16,7 +16,7 @@ import { StudijskiProgramDto } from '../dtos/StudijskiProgramDto';
   styleUrls: ['./studentske-grupe.component.scss']
 })
 export class StudentskeGrupeComponent {
-  displayedColumns: string[] = ['oznaka', 'godina', 'brojStudenata', 'studijskiProgram', 'actions'];
+  displayedColumns: string[] = ['oznaka', 'godina', 'brojStudenata', 'studijskiProgram', 'stepenStudija', 'actions'];
 
   dataSource = new MatTableDataSource<StudentskaGrupaDto>();
   studijskiProgrami: StudijskiProgramDto[] = [];
@@ -62,7 +62,7 @@ export class StudentskeGrupeComponent {
         next: (res) => {
           this.studijskiProgrami = res;
           res.forEach((element: StudijskiProgramDto) => {
-            this.options.push(element.oznaka + ' ' + element.naziv);
+            this.options.push(element.oznaka + ' ' + element.naziv + ' (' + element.stepenStudija + ')');
           });
         }
       });
@@ -70,7 +70,7 @@ export class StudentskeGrupeComponent {
 
   openDialog(): void {
     this.dialog.open(StudentskaGrupaDialogComponent, {
-      width: '30%',
+      width: '40%',
       data: {
         options: this.options,
         studijskiProgrami: this.studijskiProgrami
@@ -88,7 +88,7 @@ export class StudentskeGrupeComponent {
 
   edit(element: any) {
     this.dialog.open(StudentskaGrupaDialogComponent, {
-      width: '30%',
+      width: '45%',
       data: {
         editData: element,
         options: this.options,
@@ -107,7 +107,7 @@ export class StudentskeGrupeComponent {
 
   openConfirmationDialog(element: any) {
     this.dialog.open(ConfirmationDialogComponent, {
-      width: '40%',
+      width: '45%',
       data: element
     }).afterClosed().subscribe((val) => {
       console.log(val);

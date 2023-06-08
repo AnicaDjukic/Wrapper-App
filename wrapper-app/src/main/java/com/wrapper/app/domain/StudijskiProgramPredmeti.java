@@ -24,28 +24,27 @@ public class StudijskiProgramPredmeti {
     public void addPredmet(PredmetPredavac predmetPredavac) {
         predmetPredavac.setBlock(predmetPredavac.isBlock());
         predmetPredavac.getPredmet().setURealizaciji(true);
-        getPredmetPredavaci().add(predmetPredavac);
+        predmetPredavaci.add(predmetPredavac);
         studijskiProgram.setBlock(checkPredmeti());
     }
 
     public void updatePredmet(String predmetId, PredmetPredavac predmetPredavac) {
-        PredmetPredavac existing = getPredmetPredavaci().stream()
+        PredmetPredavac existing = predmetPredavaci.stream()
                 .filter(p -> p.getPredmet().getId().equals(predmetId))
                 .findFirst().orElseThrow(() -> new NotFoundException(PredmetPredavac.class.getSimpleName()));
         predmetPredavac.setPredmet(existing.getPredmet());
         predmetPredavac.setBlock(predmetPredavac.isBlock());
-        int index = getPredmetPredavaci().indexOf(existing);
-        getPredmetPredavaci().remove(index);
-        getPredmetPredavaci().add(index, predmetPredavac);
+        int index = predmetPredavaci.indexOf(existing);
+        predmetPredavaci.remove(index);
+        predmetPredavaci.add(index, predmetPredavac);
         studijskiProgram.setBlock(checkPredmeti());
     }
 
     public void removePredmet(String predmetId) {
-        PredmetPredavac predmetPredavac = getPredmetPredavaci()
-                .stream().filter(spp -> spp.getPredmet().getId().equals(predmetId)).findFirst()
+        PredmetPredavac predmetPredavac = predmetPredavaci.stream()
+                .filter(spp -> spp.getPredmet().getId().equals(predmetId)).findFirst()
                 .orElseThrow(() -> new NotFoundException(PredmetPredavac.class.getSimpleName()));
-        getPredmetPredavaci().remove(predmetPredavac);
-        predmetPredavac.getPredmet().setURealizaciji(false);
+        predmetPredavaci.remove(predmetPredavac);
         studijskiProgram.setBlock(checkPredmeti());
     }
 
@@ -64,16 +63,16 @@ public class StudijskiProgramPredmeti {
     }
 
     private void removeProfesor(String predavacId) {
-        Optional<PredmetPredavac> predmet = getPredmetPredavaci()
-                .stream().filter(spp -> spp.getProfesor().getId().equals(predavacId)).findFirst();
+        Optional<PredmetPredavac> predmet = predmetPredavaci.stream()
+                .filter(spp -> spp.getProfesor().getId().equals(predavacId)).findFirst();
         predmet.ifPresent(predmetPredavac -> predmetPredavac.setProfesor(null));
     }
 
     private void removeOstaliProfesor(String predavacId) {
-        getPredmetPredavaci().forEach(spp -> spp.getOstaliProfesori().removeIf(p -> p.getId().equals(predavacId)));
+        predmetPredavaci.forEach(spp -> spp.getOstaliProfesori().removeIf(p -> p.getId().equals(predavacId)));
     }
 
     private void removeAsistent(String predavacId) {
-        getPredmetPredavaci().forEach(spp -> spp.getAsistentZauzeca().removeIf(a -> a.getAsistent().getId().equals(predavacId)));
+        predmetPredavaci.forEach(spp -> spp.getAsistentZauzeca().removeIf(a -> a.getAsistent().getId().equals(predavacId)));
     }
 }

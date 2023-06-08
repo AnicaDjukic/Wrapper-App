@@ -10,18 +10,12 @@ import org.modelmapper.TypeMap;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Configuration
 public class MapperConfig {
-
 
     private final PredmetMapper predmetMapper;
 
     private final PredavacMapper predavacMapper;
-
-    StudentskaGrupaMapper studentskaGrupaMapper = new StudentskaGrupaMapper();
 
     private final PredmetPredavacMapper predmetPredavacMapper;
 
@@ -29,7 +23,11 @@ public class MapperConfig {
 
     private final ProstorijaMapper prostorijaMapper;
 
-    public MapperConfig(PredmetMapper predmetMapper, PredavacMapper predavacMapper, PredmetPredavacMapper predmetPredavacMapper, StudijskiProgramMapper studijskiProgramMapper, ProstorijaMapper prostorijaMapper) {
+    public MapperConfig(PredmetMapper predmetMapper,
+                        PredavacMapper predavacMapper,
+                        PredmetPredavacMapper predmetPredavacMapper,
+                        StudijskiProgramMapper studijskiProgramMapper,
+                        ProstorijaMapper prostorijaMapper) {
         this.predmetMapper = predmetMapper;
         this.predavacMapper = predavacMapper;
         this.predmetPredavacMapper = predmetPredavacMapper;
@@ -39,9 +37,16 @@ public class MapperConfig {
 
     @Bean
     public ModelMapper modelMapper() {
-
         ModelMapper modelMapper = new ModelMapper();
+        initilizePredmetConverters(modelMapper);
+        initilizePredavacConverters(modelMapper);
+        initilizeProstorijaConverters(modelMapper);
+        initilizeStudijskiProgramConverters(modelMapper);
+        InitilizePredmetPredavacConverters(modelMapper);
+        return modelMapper;
+    }
 
+    private void initilizePredmetConverters(ModelMapper modelMapper) {
         Converter<PredmetRequestDto, Predmet> predmetConverter = new AbstractConverter<>() {
             @Override
             protected Predmet convert(PredmetRequestDto predmetRequestDto) {
@@ -49,36 +54,24 @@ public class MapperConfig {
             }
         };
         modelMapper.addConverter(predmetConverter);
+    }
 
+    private void initilizePredavacConverters(ModelMapper modelMapper) {
         Converter<PredavacRequestDto, Predavac> predavacRequstConverter =  new AbstractConverter<>() {
-
             @Override
             protected Predavac convert(PredavacRequestDto predavacRequestDto) {
                 return predavacMapper.map(predavacRequestDto);
             }
         };
-
         modelMapper.addConverter(predavacRequstConverter);
 
         TypeMap<Predavac, PredavacResponseDto> predavacConverter = modelMapper.createTypeMap(Predavac.class, PredavacResponseDto.class);
         predavacConverter.addMappings(
                 mapper -> mapper.map(src -> src.getOrgJedinica().getNaziv(), PredavacResponseDto::setOrgJedinica)
         );
+    }
 
-        Converter<List<OrganizacionaJedinica>, List<String>> orgJedinicaConverter = ctx -> {
-            List<OrganizacionaJedinica> orgJedinicaList = ctx.getSource();
-            if (orgJedinicaList != null) {
-                return orgJedinicaList.stream()
-                        .map(OrganizacionaJedinica::getNaziv)
-                        .collect(Collectors.toList());
-            }
-            return null;
-        };
-        modelMapper.addConverter(orgJedinicaConverter);
-
-        TypeMap<Prostorija, ProstorijaResponseDto> prostorijaResponseConverter = modelMapper.createTypeMap(Prostorija.class, ProstorijaResponseDto.class);
-        prostorijaResponseConverter.addMappings(mapper -> mapper.using(orgJedinicaConverter).map(Prostorija::getOrgJedinica, ProstorijaResponseDto::setOrgJedinica));
-
+    private void initilizeProstorijaConverters(ModelMapper modelMapper) {
         Converter<ProstorijaRequestDto, Prostorija> prostorijaRequestConverter = new AbstractConverter<>() {
             @Override
             protected Prostorija convert(ProstorijaRequestDto prostorijaRequestDto) {
@@ -86,15 +79,9 @@ public class MapperConfig {
             }
         };
         modelMapper.addConverter(prostorijaRequestConverter);
+    }
 
-        Converter<StudentskaGrupa, StudentskaGrupaResponseDto> studentskaGrupaConverter = new AbstractConverter<>() {
-            @Override
-            protected StudentskaGrupaResponseDto convert(StudentskaGrupa studentskaGrupa) {
-                return studentskaGrupaMapper.map(studentskaGrupa);
-            }
-        };
-        modelMapper.addConverter(studentskaGrupaConverter);
-
+    private void initilizeStudijskiProgramConverters(ModelMapper modelMapper) {
         Converter<StudijskiProgram, StudijskiProgramResponseDto> studijskiProgramResponseConverter = new AbstractConverter<>() {
             @Override
             protected StudijskiProgramResponseDto convert(StudijskiProgram studijskiProgram) {
@@ -110,7 +97,9 @@ public class MapperConfig {
             }
         };
         modelMapper.addConverter(studijskiProgramConverter);
+    }
 
+    private void InitilizePredmetPredavacConverters(ModelMapper modelMapper) {
         Converter<PredmetPredavaciDto, PredmetPredavac> predmetPredavacConverter = new AbstractConverter<>() {
             @Override
             protected PredmetPredavac convert(PredmetPredavaciDto predmetPredavaciDto) {
@@ -119,7 +108,6 @@ public class MapperConfig {
         };
         modelMapper.addConverter(predmetPredavacConverter);
 
-
         Converter<PredavaciDto, PredmetPredavac> predavaciConverter = new AbstractConverter<>() {
             @Override
             protected PredmetPredavac convert(PredavaciDto predavaciDto) {
@@ -127,7 +115,6 @@ public class MapperConfig {
             }
         };
         modelMapper.addConverter(predavaciConverter);
-
-        return modelMapper;
     }
+
 }

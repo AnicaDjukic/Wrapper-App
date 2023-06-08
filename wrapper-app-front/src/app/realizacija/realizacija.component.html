@@ -10,6 +10,9 @@
                     {{option}}
                 </mat-option>
             </mat-autocomplete>
+            <mat-button mat-icon-button matSuffix (click)="clearField()" style="cursor: pointer;">
+                <mat-icon>close</mat-icon>
+            </mat-button>
         </mat-form-field>
     </div>
     <mat-spinner *ngIf="!dataSource && myControl.value" style="margin-top: 25vh; margin-left: 80vh;"></mat-spinner>
@@ -36,7 +39,7 @@
 
             <ng-container matColumnDef="predmetGodina">
                 <th mat-header-cell *matHeaderCellDef> Godina </th>
-                <td mat-cell *matCellDef="let element"> {{element.predmetGodina}} </td>
+                <td mat-cell *matCellDef="let element" style="text-align: center;"> {{element.predmetGodina}} </td>
             </ng-container>
 
             <ng-container matColumnDef="profesor">

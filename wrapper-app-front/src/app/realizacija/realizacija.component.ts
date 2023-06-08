@@ -64,9 +64,9 @@ export class RealizacijaComponent {
     this.api.getAllStudijskiProgram()
       .subscribe({
         next: (res) => {
-          this.studijskiProgrami = res
+          this.studijskiProgrami = res;
           res.forEach((element: StudijskiProgramDto) => {
-            this.options.push(element.oznaka + ' ' + element.naziv + ' (' + element.stepenStudija + ")")
+            this.options.push(element.oznaka + ' ' + element.naziv + ' (' + element.stepenStudija + ')');
           });
         }
       })
@@ -78,7 +78,7 @@ export class RealizacijaComponent {
   }
 
   getColorClass(value: string): string {
-    let studProgram = this.studijskiProgrami.filter(sp => sp.oznaka == value.split(' ')[0]).map(value => value)[0];
+    let studProgram = this.studijskiProgrami.filter(sp => (sp.oznaka + ' ' + sp.naziv + ' (' + sp.stepenStudija + ')') == value).map(value => value)[0];
 
     if (studProgram.block) {
       return 'block';
@@ -87,7 +87,7 @@ export class RealizacijaComponent {
   }
 
   async openDialog() {
-    let studijskiProgramId = this.studijskiProgrami.filter(sp => sp.oznaka == this.selected.split(' ')[0] && sp.stepenStudija == this.selected.substring(this.selected.indexOf("(") + 1, this.selected.lastIndexOf(")"))).map(value => value.id)[0];
+    let studijskiProgramId = this.studijskiProgrami.filter(sp => (sp.oznaka + ' ' + sp.naziv + ' (' + sp.stepenStudija + ')') == this.selected).map(value => value.id)[0];
     this.predmetiOptions = [];
     await this.getPredmetOptions(studijskiProgramId);
     if (this.predmetiOptions.length == 0) {
@@ -195,6 +195,7 @@ export class RealizacijaComponent {
           this.toastr.success("Predmet je uspešno izbrisan iz realizacije!", "Uspešno!");
           this.get(this.selected);
           this.getStudijskiProgrami();
+          this.getPredmetOptions(this.selected);
         },
         error: () => {
           this.toastr.error("Došlo je do greške prilikom brisanja predmeta iz realizacije!", "Greška!");
@@ -208,6 +209,10 @@ export class RealizacijaComponent {
     const filterValue = value.toLowerCase();
 
     return this.options.filter(option => option.toLowerCase().includes(filterValue));
+  }
+
+  clearField() {
+    this.myControl.setValue('');
   }
 
   get(studijskiProgram: string) {

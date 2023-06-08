@@ -31,11 +31,11 @@ export class ConfirmationDialogComponent implements OnInit {
       this.message = this.data.oznaka;
     } else if (this.data.stepenStudija) {
       this.title = 'Brisanje studijskog programa';
-      this.message = this.data.oznaka + ' ' + this.data.naziv;
+      this.message = this.data.oznaka + ' ' + this.data.naziv + ' (' + this.data.stepenStudija + ')';
       this.warn = 'Obrisan studijski program se briše i iz realizacije, a samim tim se brišu i svi njegovi predmeti!';
     } else if(this.data.brojStudenata) {
       this.title = 'Brisanje studentske grupe';
-      this.message = this.data.oznaka + '. grupu na ' + this.data.godina + '. godini na studijskom programu \"' + this.data.studijskiProgram + '\"';
+      this.message = this.data.oznaka + '. grupu na ' + this.data.godina + '. godini na studijskom programu ' + this.data.studijskiProgram.oznaka + ' ' + this.data.studijskiProgram.naziv + ' (' + this.data.studijskiProgram.stepenStudija + ')';
     } else if(this.data.database) {
       this.title = 'Semestar već postoji';
       this.message = this.data.semestar + ' ' + this.data.godina;

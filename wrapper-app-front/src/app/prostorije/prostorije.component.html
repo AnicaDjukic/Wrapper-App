@@ -52,7 +52,7 @@
                         <div *ngIf="!element.orgJedinica || element.orgJedinica.length == 0" style="margin-left: 15%;">-</div>
                         <ng-container *ngFor="let item of element.orgJedinica">
                             <div>
-                                <span>{{item}}</span>
+                                <span>{{item.naziv}}</span>
                             </div>
                         </ng-container>
                     </td>

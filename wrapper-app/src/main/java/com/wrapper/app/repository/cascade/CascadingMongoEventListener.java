@@ -16,7 +16,7 @@ public class CascadingMongoEventListener extends AbstractMongoEventListener<Obje
 
     @Autowired
     private MongoOperations mongoOperations;
-    private Set<Object> processedObjects = new HashSet<>();
+    private final Set<Object> processedObjects = new HashSet<>();
 
     @Override
     public void onBeforeConvert(BeforeConvertEvent<Object> event) {

@@ -1,5 +1,6 @@
 package com.wrapper.app.service;
 
+import com.wrapper.app.domain.Predmet;
 import com.wrapper.app.domain.PredmetPredavac;
 import com.wrapper.app.domain.StudijskiProgram;
 import com.wrapper.app.domain.StudijskiProgramPredmeti;
@@ -18,12 +19,16 @@ public class StudijskiProgramPredmetiService {
 
     private final RealizacijaService realizacijaService;
 
+    private final PredmetService predmetService;
+
     public StudijskiProgramPredmetiService(StudijskiProgramPredmetiRepository repository,
                                            StudijskiProgramService studijskiProgramService,
-                                           RealizacijaService realizacijaService) {
+                                           RealizacijaService realizacijaService,
+                                           PredmetService predmetService) {
         this.repository = repository;
         this.studijskiProgramService = studijskiProgramService;
         this.realizacijaService = realizacijaService;
+        this.predmetService = predmetService;
     }
 
     public StudijskiProgramPredmeti getById(String id) {
@@ -57,6 +62,7 @@ public class StudijskiProgramPredmetiService {
     public void removePredmet(String studijskiProgramId, String predmetId) {
         StudijskiProgramPredmeti studijskiProgramPredmeti = getById(studijskiProgramId);
         studijskiProgramPredmeti.removePredmet(predmetId);
+        predmetService.updateURealizacijiStatus(predmetId, false);
         repository.save(studijskiProgramPredmeti);
     }
 

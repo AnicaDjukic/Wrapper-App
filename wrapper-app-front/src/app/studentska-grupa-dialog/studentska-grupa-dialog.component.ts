@@ -47,7 +47,7 @@ export class StudentskaGrupaDialogComponent {
       this.studentskaGrupaForm.controls['godina'].setValue(this.data.editData.godina);
       //this.studentskaGrupaForm.controls['semestar'].setValue(this.editData.semestar);
       this.studentskaGrupaForm.controls['brojStudenata'].setValue(this.data.editData.brojStudenata);
-      this.studentskaGrupaForm.controls['studijskiProgram'].setValue(this.data.editData.studijskiProgram);
+      this.studentskaGrupaForm.controls['studijskiProgram'].setValue(this.data.editData.studijskiProgram.oznaka + ' ' + this.data.editData.studijskiProgram.naziv + ' (' + this.data.editData.studijskiProgram.stepenStudija + ')');
     } else {
       this.studentskaGrupaForm.addControl('brojStudentskihGrupa', new FormControl('', [Validators.required, Validators.min(1)]));
     }
@@ -67,7 +67,7 @@ export class StudentskaGrupaDialogComponent {
     if(!this.data.editData) {
       if(this.studentskaGrupaForm.valid) {
         let studProg : string = this.studentskaGrupaForm.value.studijskiProgram
-        this.studentskaGrupaForm.value.studijskiProgram = this.studijskiProgrami.filter(sp => sp.oznaka == studProg.split(' ')[0]).map(value => value.id)[0];
+        this.studentskaGrupaForm.value.studijskiProgram = this.studijskiProgrami.filter(sp => (sp.oznaka + ' ' + sp.naziv + ' (' + sp.stepenStudija + ')') == studProg).map(value => value.id)[0];
         this.studentskaGrupaForm.value.semestar = 'Z';
         this.api.post(this.studentskaGrupaForm.value)
         .subscribe({
@@ -90,7 +90,7 @@ export class StudentskaGrupaDialogComponent {
       return
     }
     let studProg : string = this.studentskaGrupaForm.value.studijskiProgram;
-    this.studentskaGrupaForm.value.studijskiProgram = this.studijskiProgrami.filter(sp => sp.oznaka == studProg.split(' ')[0]).map(value => value.id)[0];
+    this.studentskaGrupaForm.value.studijskiProgram = this.studijskiProgrami.filter(sp => (sp.oznaka + ' ' + sp.naziv + ' (' + sp.stepenStudija + ')') == studProg).map(value => value.id)[0];
     this.studentskaGrupaForm.value.semestar = 'Z';
     this.api.put(this.studentskaGrupaForm.value, this.data.editData.id)
     .subscribe({

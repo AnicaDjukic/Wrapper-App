@@ -18,5 +18,5 @@ public class ProstorijaResponseDto {
     private String oznaka;
     private TipProstorije tip;
     private int kapacitet;
-    private List<String> orgJedinica;
+    private List<OrganizacionaJedinicaDto> orgJedinica;
 }
