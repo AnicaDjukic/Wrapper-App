@@ -23,16 +23,20 @@ public class MapperConfig {
 
     private final ProstorijaMapper prostorijaMapper;
 
+    private final StudentskaGrupaMapper studentskaGrupaMapper;
+
     public MapperConfig(PredmetMapper predmetMapper,
                         PredavacMapper predavacMapper,
                         PredmetPredavacMapper predmetPredavacMapper,
                         StudijskiProgramMapper studijskiProgramMapper,
-                        ProstorijaMapper prostorijaMapper) {
+                        ProstorijaMapper prostorijaMapper,
+                        StudentskaGrupaMapper studentskaGrupaMapper) {
         this.predmetMapper = predmetMapper;
         this.predavacMapper = predavacMapper;
         this.predmetPredavacMapper = predmetPredavacMapper;
         this.studijskiProgramMapper = studijskiProgramMapper;
         this.prostorijaMapper = prostorijaMapper;
+        this.studentskaGrupaMapper = studentskaGrupaMapper;
     }
 
     @Bean
@@ -42,7 +46,8 @@ public class MapperConfig {
         initilizePredavacConverters(modelMapper);
         initilizeProstorijaConverters(modelMapper);
         initilizeStudijskiProgramConverters(modelMapper);
-        InitilizePredmetPredavacConverters(modelMapper);
+        initilizePredmetPredavacConverters(modelMapper);
+        initilizeStudentskaGrupaConverters(modelMapper);
         return modelMapper;
     }
 
@@ -99,7 +104,7 @@ public class MapperConfig {
         modelMapper.addConverter(studijskiProgramConverter);
     }
 
-    private void InitilizePredmetPredavacConverters(ModelMapper modelMapper) {
+    private void initilizePredmetPredavacConverters(ModelMapper modelMapper) {
         Converter<PredmetPredavaciDto, PredmetPredavac> predmetPredavacConverter = new AbstractConverter<>() {
             @Override
             protected PredmetPredavac convert(PredmetPredavaciDto predmetPredavaciDto) {
@@ -115,6 +120,16 @@ public class MapperConfig {
             }
         };
         modelMapper.addConverter(predavaciConverter);
+    }
+
+    private void initilizeStudentskaGrupaConverters(ModelMapper modelMapper) {
+        Converter<StudentskaGrupaRequestDto, StudentskaGrupa> studentskaGrupaConverter = new AbstractConverter<>() {
+            @Override
+            protected StudentskaGrupa convert(StudentskaGrupaRequestDto studentskaGrupaRequestDto) {
+                return studentskaGrupaMapper.map(studentskaGrupaRequestDto);
+            }
+        };
+        modelMapper.addConverter(studentskaGrupaConverter);
     }
 
 }

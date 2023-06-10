@@ -67,7 +67,7 @@ public class StudentskaGrupaController {
     @CrossOrigin(origins = "*")
     @PutMapping("{id}")
     public StudentskaGrupaResponseDto update(@PathVariable String id, @RequestBody @Valid StudentskaGrupaRequestDto dto) {
-        StudentskaGrupa updated = service.update(id, dto);
+        StudentskaGrupa updated = service.update(id, modelMapper.map(dto, StudentskaGrupa.class));
         return modelMapper.map(updated, StudentskaGrupaResponseDto.class);
     }
 

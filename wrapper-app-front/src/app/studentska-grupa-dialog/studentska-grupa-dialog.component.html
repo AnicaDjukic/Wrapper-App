@@ -44,7 +44,7 @@
             <mat-form-field class="example-full-width" appearance="fill">
                 <mat-label>Studijski program</mat-label>
                 <input type="text" placeholder="Izaberite studijski program..." matInput
-                    formControlName="studijskiProgram" [matAutocomplete]="auto">
+                    formControlName="studijskiProgramId" [matAutocomplete]="auto">
                 <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
                     <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
                         {{option}}

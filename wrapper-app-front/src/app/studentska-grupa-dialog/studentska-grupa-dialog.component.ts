@@ -33,10 +33,10 @@ export class StudentskaGrupaDialogComponent {
     this.studijskiProgrami = this.data.studijskiProgrami;
 
     this.studentskaGrupaForm = this.formBuilder.group({
-      godina : ['', [Validators.required, Validators.min(1), Validators.min(6)]],
+      godina : ['', [Validators.required, Validators.min(1), Validators.max(6)]],
       //semestar: ['', Validators.required],
       brojStudenata: ['', [Validators.required, Validators.min(1)]],
-      studijskiProgram: ['', [Validators.required, autocompleteValidator(this.options)]]
+      studijskiProgramId: ['', [Validators.required, autocompleteValidator(this.options)]]
     })
 
     if(this.data.editData) {
@@ -47,12 +47,12 @@ export class StudentskaGrupaDialogComponent {
       this.studentskaGrupaForm.controls['godina'].setValue(this.data.editData.godina);
       //this.studentskaGrupaForm.controls['semestar'].setValue(this.editData.semestar);
       this.studentskaGrupaForm.controls['brojStudenata'].setValue(this.data.editData.brojStudenata);
-      this.studentskaGrupaForm.controls['studijskiProgram'].setValue(this.data.editData.studijskiProgram.oznaka + ' ' + this.data.editData.studijskiProgram.naziv + ' (' + this.data.editData.studijskiProgram.stepenStudija + ')');
+      this.studentskaGrupaForm.controls['studijskiProgramId'].setValue(this.data.editData.studijskiProgram.oznaka + ' ' + this.data.editData.studijskiProgram.naziv + ' (' + this.data.editData.studijskiProgram.stepenStudija + ')');
     } else {
       this.studentskaGrupaForm.addControl('brojStudentskihGrupa', new FormControl('', [Validators.required, Validators.min(1)]));
     }
 
-    this.filteredOptions = this.studentskaGrupaForm.get('studijskiProgram')!.valueChanges.pipe(
+    this.filteredOptions = this.studentskaGrupaForm.get('studijskiProgramId')!.valueChanges.pipe(
       startWith(''),
       map(value => this._filter(value || '')),
     );
@@ -66,8 +66,8 @@ export class StudentskaGrupaDialogComponent {
   add() {
     if(!this.data.editData) {
       if(this.studentskaGrupaForm.valid) {
-        let studProg : string = this.studentskaGrupaForm.value.studijskiProgram
-        this.studentskaGrupaForm.value.studijskiProgram = this.studijskiProgrami.filter(sp => (sp.oznaka + ' ' + sp.naziv + ' (' + sp.stepenStudija + ')') == studProg).map(value => value.id)[0];
+        let studProg : string = this.studentskaGrupaForm.value.studijskiProgramId
+        this.studentskaGrupaForm.value.studijskiProgramId = this.studijskiProgrami.filter(sp => (sp.oznaka + ' ' + sp.naziv + ' (' + sp.stepenStudija + ')') == studProg).map(value => value.id)[0];
         this.studentskaGrupaForm.value.semestar = 'Z';
         this.api.post(this.studentskaGrupaForm.value)
         .subscribe({
@@ -89,8 +89,8 @@ export class StudentskaGrupaDialogComponent {
     if(!this.studentskaGrupaForm.valid) {
       return
     }
-    let studProg : string = this.studentskaGrupaForm.value.studijskiProgram;
-    this.studentskaGrupaForm.value.studijskiProgram = this.studijskiProgrami.filter(sp => (sp.oznaka + ' ' + sp.naziv + ' (' + sp.stepenStudija + ')') == studProg).map(value => value.id)[0];
+    let studProg : string = this.studentskaGrupaForm.value.studijskiProgramId;
+    this.studentskaGrupaForm.value.studijskiProgramId = this.studijskiProgrami.filter(sp => (sp.oznaka + ' ' + sp.naziv + ' (' + sp.stepenStudija + ')') == studProg).map(value => value.id)[0];
     this.studentskaGrupaForm.value.semestar = 'Z';
     this.api.put(this.studentskaGrupaForm.value, this.data.editData.id)
     .subscribe({
@@ -102,8 +102,8 @@ export class StudentskaGrupaDialogComponent {
       error: (message) => {
         if (message.error.message) {
           this.toastr.error('Studentska grupa sa oznakom <b>' + this.studentskaGrupaForm.value.oznaka + '</b>'
-          + ' na <b>' + this.studentskaGrupaForm.value.godina + '.</b> godini u <b>' 
-          + 'zimskom' +'</b> semestru' 
+          + ' na <b>' + this.studentskaGrupaForm.value.godina + '.</b> godini'
+          // + ' u <b>' + 'zimskom' +'</b> semestru' 
           +' na studijskom programu <b>' + studProg + '</b> već postoji!',
             'Greška!', {
             enableHtml: true,
