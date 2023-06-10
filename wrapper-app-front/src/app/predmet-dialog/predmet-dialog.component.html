@@ -24,8 +24,8 @@
                 <mat-label>Godina</mat-label>
                 <input formControlName="godina" matInput placeholder="Unesite godinu na kojoj se sluša..." type="number"
                     min="1">
-                <mat-error *ngIf="predmetForm.get('godina')?.hasError('min')">
-                    Godina mora biti veća od 0
+                <mat-error *ngIf="predmetForm.get('godina')?.hasError('min') || predmetForm.get('godina')?.hasError('max')">
+                    Godina mora biti broj od 1 do 6
                 </mat-error>
             </mat-form-field>
 

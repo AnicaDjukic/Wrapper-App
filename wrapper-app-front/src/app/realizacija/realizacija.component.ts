@@ -30,7 +30,6 @@ import { PredmetDto } from '../dtos/PredmetDto';
 })
 export class RealizacijaComponent {
 
-
   constructor(private api: ApiService,
     private realizacijaService: RealizacijaService,
     private predavacApi: PredavacService,

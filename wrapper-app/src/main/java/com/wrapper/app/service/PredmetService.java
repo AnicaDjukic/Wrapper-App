@@ -91,7 +91,7 @@ public class PredmetService {
         repository.deleteAllByStudijskiProgram(studProgramId);
     }
 
-    public void updateURealizacijiStatus(String predmetId, boolean uRealizaciji) {
+    public void updateRealizacijaStatus(String predmetId, boolean uRealizaciji) {
         Predmet predmet = getById(predmetId);
         predmet.setURealizaciji(uRealizaciji);
         repository.save(predmet);

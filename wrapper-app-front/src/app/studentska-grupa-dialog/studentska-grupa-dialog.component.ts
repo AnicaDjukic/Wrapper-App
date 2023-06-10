@@ -33,7 +33,7 @@ export class StudentskaGrupaDialogComponent {
     this.studijskiProgrami = this.data.studijskiProgrami;
 
     this.studentskaGrupaForm = this.formBuilder.group({
-      godina : ['', [Validators.required, Validators.min(1)]],
+      godina : ['', [Validators.required, Validators.min(1), Validators.min(6)]],
       //semestar: ['', Validators.required],
       brojStudenata: ['', [Validators.required, Validators.min(1)]],
       studijskiProgram: ['', [Validators.required, autocompleteValidator(this.options)]]

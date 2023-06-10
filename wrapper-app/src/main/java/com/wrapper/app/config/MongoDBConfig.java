@@ -41,6 +41,6 @@ public class MongoDBConfig extends AbstractMongoClientConfiguration {
 
     @Bean
     public CascadingMongoEventListener cascadingMongoEventListener() {
-        return new CascadingMongoEventListener();
+        return new CascadingMongoEventListener(mongoTemplate());
     }
 }

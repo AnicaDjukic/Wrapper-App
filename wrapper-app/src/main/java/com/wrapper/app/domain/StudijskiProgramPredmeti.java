@@ -19,11 +19,13 @@ public class StudijskiProgramPredmeti {
     @DocumentReference
     @CascadeSave
     private StudijskiProgram studijskiProgram;
+    @CascadeSave
     private List<PredmetPredavac> predmetPredavaci;
 
     public void addPredmet(PredmetPredavac predmetPredavac) {
         predmetPredavac.setBlock(predmetPredavac.isBlock());
         predmetPredavac.getPredmet().setURealizaciji(true);
+        predmetPredavac.getPredmet().setStudijskiProgram(studijskiProgram);
         predmetPredavaci.add(predmetPredavac);
         studijskiProgram.setBlock(checkPredmeti());
     }
@@ -34,6 +36,7 @@ public class StudijskiProgramPredmeti {
                 .findFirst().orElseThrow(() -> new NotFoundException(PredmetPredavac.class.getSimpleName()));
         predmetPredavac.setPredmet(existing.getPredmet());
         predmetPredavac.setBlock(predmetPredavac.isBlock());
+//        predmetPredavac.getPredmet().setStudijskiProgram(studijskiProgram);
         int index = predmetPredavaci.indexOf(existing);
         predmetPredavaci.remove(index);
         predmetPredavaci.add(index, predmetPredavac);
@@ -46,6 +49,7 @@ public class StudijskiProgramPredmeti {
                 .orElseThrow(() -> new NotFoundException(PredmetPredavac.class.getSimpleName()));
         predmetPredavaci.remove(predmetPredavac);
         studijskiProgram.setBlock(checkPredmeti());
+        predmetPredavac.getPredmet().setStudijskiProgram(studijskiProgram);
     }
 
     private boolean checkPredmeti() {

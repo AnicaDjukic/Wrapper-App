@@ -1,6 +1,5 @@
 package com.wrapper.app.domain;
 
-import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -18,10 +17,8 @@ public class Predmet {
     private int godina;
     private String semestar;            // TODO: rekla Eva suvisno
     private int brojCasovaPred;
-
     @DocumentReference
     private StudijskiProgram studijskiProgram;
-
     private int brojCasovaVezbe;
     private String sifraStruke;
     private String tipoviNastave;       // TODO: rekla Eva izbaciti

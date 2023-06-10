@@ -107,12 +107,14 @@ export class RealizacijaDialogComponent {
     this.show = true;
     this.predmetForm.controls['godina'].disable();
     let profesori = Array.from(this.predavaciOptions);
-    let profesor = profesori.filter(p => p.split("(")[0].trim() == this.data.element.profesor).map(value => value)[0];
-    this.predmetForm.controls['profesorId'].setValue(profesor);
+    if (this.data.element.profesor) {
+      let profesor = profesori.filter(p => p.split("(")[0].trim() == this.data.element.profesor.trim()).map(value => value)[0];
+      this.predmetForm.controls['profesorId'].setValue(profesor);
+    }
     if (this.data.element.ostaliProfesori) {
       for (let prof of this.data.element.ostaliProfesori) {
         let profesori = Array.from(this.predavaciOptions);
-        let profesor = profesori.filter(p => p.split("(")[0].trim() == prof)
+        let profesor = profesori.filter(p => p.split("(")[0].trim() == prof.trim())
         this.ostaliProfesoriFieldsAsFormArray.push(this.formBuilder.control(profesor));
       }
     }
@@ -142,7 +144,7 @@ export class RealizacijaDialogComponent {
 
   asistentZauzece(asistentId: string, brojTermina: number): any {
     return this.formBuilder.group({
-      asistentId: this.formBuilder.control(asistentId,[Validators.required, autocompleteValidator(Array.from(this.predavaciOptions))]),
+      asistentId: this.formBuilder.control(asistentId, [Validators.required, autocompleteValidator(Array.from(this.predavaciOptions))]),
       brojTermina: this.formBuilder.control(brojTermina, [Validators.required, Validators.min(1)])
     });
   }
@@ -227,20 +229,20 @@ export class RealizacijaDialogComponent {
     }
     console.log(this.predmetForm.value);
 
-    if(this.predmetForm.value.predmetId) {
+    if (this.predmetForm.value.predmetId) {
       let predmeti = Array.from(this.predmeti);
       this.predmetForm.value.predmetId = predmeti.filter(sp => sp.oznaka == this.predmetForm.value.predmetId.split(' ')[1]).map(value => value.id)[0];
     }
-    
+
     let profesori = Array.from(this.predavaci);
     this.predmetForm.value.profesorId = profesori.filter(p =>
-      ((p.titula? p.titula : "") + " " + p.ime + " " + p.prezime + " (" + p.orgJedinica + ")").trim() == this.predmetForm.value.profesorId).map(value => value.id)[0];
+      ((p.titula ? p.titula : "") + " " + p.ime + " " + p.prezime + " (" + p.orgJedinica + ")").trim() == this.predmetForm.value.profesorId).map(value => value.id)[0];
 
     let izabraniProfesori = [];
     for (let prof of this.predmetForm.value.ostaliProfesori) {
       let ostaliProfesori = Array.from(this.predavaci);
       izabraniProfesori.push(ostaliProfesori.filter(p =>
-        ((p.titula? p.titula : "") + " " + p.ime + " " + p.prezime + " (" + p.orgJedinica + ")").trim() == prof).map(value => value.id)[0]);
+        ((p.titula ? p.titula : "") + " " + p.ime + " " + p.prezime + " (" + p.orgJedinica + ")").trim() == prof).map(value => value.id)[0]);
     }
     this.predmetForm.value.ostaliProfesori = izabraniProfesori;
 
@@ -248,7 +250,7 @@ export class RealizacijaDialogComponent {
     for (let zauzece of this.predmetForm.value.asistentZauzeca) {
       let asistenti = Array.from(this.predavaci);
       let asistentId = asistenti.filter(p =>
-        ((p.titula? p.titula : "") + " " + p.ime + " " + p.prezime + " (" + p.orgJedinica + ")").trim() == zauzece.asistentId).map(value => value.id)[0];
+        ((p.titula ? p.titula : "") + " " + p.ime + " " + p.prezime + " (" + p.orgJedinica + ")").trim() == zauzece.asistentId).map(value => value.id)[0];
       asistentZauzeca.push({ asistentId: asistentId, brojTermina: zauzece.brojTermina });
     }
     this.predmetForm.value.asistentZauzeca = asistentZauzeca;
@@ -274,14 +276,14 @@ export class RealizacijaDialogComponent {
     this.prepareData();
 
     this.api.updatePredmet(this.data.element.studijskiProgramId, this.data.element.predmetId, this.predmetForm.value)
-    .subscribe({
-      next: () => {
-        this.toastr.success('Predmet u realizaciji je uspešno izmenjen!', 'Uspešno!');
-        this.dialogRef.close('update');
-      },
-      error: () => {
-        this.toastr.error('Došlo je do greške prilikom izmene predmeta u realizaciji!', 'Greška!');
-      }
-    });
+      .subscribe({
+        next: () => {
+          this.toastr.success('Predmet u realizaciji je uspešno izmenjen!', 'Uspešno!');
+          this.dialogRef.close('update');
+        },
+        error: () => {
+          this.toastr.error('Došlo je do greške prilikom izmene predmeta u realizaciji!', 'Greška!');
+        }
+      });
   }
 }

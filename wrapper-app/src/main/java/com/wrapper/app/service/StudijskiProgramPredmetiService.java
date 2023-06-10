@@ -1,12 +1,12 @@
 package com.wrapper.app.service;
 
-import com.wrapper.app.domain.Predmet;
 import com.wrapper.app.domain.PredmetPredavac;
 import com.wrapper.app.domain.StudijskiProgram;
 import com.wrapper.app.domain.StudijskiProgramPredmeti;
 import com.wrapper.app.exception.NotFoundException;
 import com.wrapper.app.repository.StudijskiProgramPredmetiRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 
@@ -62,7 +62,7 @@ public class StudijskiProgramPredmetiService {
     public void removePredmet(String studijskiProgramId, String predmetId) {
         StudijskiProgramPredmeti studijskiProgramPredmeti = getById(studijskiProgramId);
         studijskiProgramPredmeti.removePredmet(predmetId);
-        predmetService.updateURealizacijiStatus(predmetId, false);
+        predmetService.updateRealizacijaStatus(predmetId, false);
         repository.save(studijskiProgramPredmeti);
     }
 
