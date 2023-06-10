@@ -43,7 +43,8 @@ public class ProstorijaService {
         List<String> orgJedinicaIds = organizacionaJedinicaService.searchByNaziv(searchDto.getOrgJedinica())
                 .stream().map(OrganizacionaJedinica::getId).toList();
         List<Prostorija> results = new ArrayList<>();
-        orgJedinicaIds.forEach(orgJedId -> results.addAll(repository.search(searchDto.getOznaka(), searchDto.getTip(), searchDto.getKapacitet(), orgJedId)));
+        orgJedinicaIds.forEach(orgJedId -> results.addAll(repository.search(searchDto.getOznaka(),
+                searchDto.getTip(), searchDto.getKapacitet(), orgJedId)));
         return results;
     }
 

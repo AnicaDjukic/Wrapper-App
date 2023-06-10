@@ -36,7 +36,6 @@ public class StudijskiProgramPredmeti {
                 .findFirst().orElseThrow(() -> new NotFoundException(PredmetPredavac.class.getSimpleName()));
         predmetPredavac.setPredmet(existing.getPredmet());
         predmetPredavac.setBlock(predmetPredavac.isBlock());
-//        predmetPredavac.getPredmet().setStudijskiProgram(studijskiProgram);
         int index = predmetPredavaci.indexOf(existing);
         predmetPredavaci.remove(index);
         predmetPredavaci.add(index, predmetPredavac);

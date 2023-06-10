@@ -45,8 +45,16 @@ public class WrapperAppApplication implements CommandLineRunner {
 //				StudijskiProgramPredmeti studijskiProgramPredmeti = new StudijskiProgramPredmeti();
 //				studijskiProgramPredmeti.setId(studijskiProgram.getId());
 //				studijskiProgramPredmeti.setPredmetPredavaci(predmetPredavac);
+//				studijskiProgramPredmeti.setStudijskiProgram(studijskiProgram);
 //				studijskiProgramPredmetiRepository.save(studijskiProgramPredmeti);
 //				realizacija.getStudijskiProgramPredmeti().add(studijskiProgramPredmeti);
+//			}
+//		}
+//
+//		for(StudijskiProgramPredmeti studijskiProgramPredmeti: realizacija.getStudijskiProgramPredmeti()) {
+//			if(studijskiProgramPredmeti.getStudijskiProgram() == null) {
+//				studijskiProgramPredmeti.setStudijskiProgram(studijskiProgramRepository.findById(studijskiProgramPredmeti.getId()).get());
+//				studijskiProgramPredmetiRepository.save(studijskiProgramPredmeti);
 //			}
 //		}
 //

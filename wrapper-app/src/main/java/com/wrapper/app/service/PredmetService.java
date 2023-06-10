@@ -54,7 +54,8 @@ public class PredmetService {
     }
 
     public Predmet add(Predmet predmet) {
-        Optional<Predmet> existing = repository.findByOznakaAndPlanAndStudijskiProgram(predmet.getOznaka(), predmet.getPlan(), predmet.getStudijskiProgram().getId());
+        Optional<Predmet> existing = repository.findByOznakaAndPlanAndStudijskiProgram(predmet.getOznaka(),
+                predmet.getPlan(), predmet.getStudijskiProgram().getId());
         if(existing.isPresent()) {
             throw new AlreadyExistsException(Predmet.class.getSimpleName());
         }

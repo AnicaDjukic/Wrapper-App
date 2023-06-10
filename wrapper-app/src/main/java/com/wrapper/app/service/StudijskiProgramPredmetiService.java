@@ -6,7 +6,6 @@ import com.wrapper.app.domain.StudijskiProgramPredmeti;
 import com.wrapper.app.exception.NotFoundException;
 import com.wrapper.app.repository.StudijskiProgramPredmetiRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 
@@ -35,7 +34,6 @@ public class StudijskiProgramPredmetiService {
         return repository.findById(id).orElseThrow(() -> new NotFoundException(StudijskiProgramPredmeti.class.getSimpleName()));
     }
 
-    // TODO: move this logic to StudijskiProgramService
     public StudijskiProgramPredmeti add(StudijskiProgram studijskiProgram) {
         StudijskiProgram savedStudijskiProgram = studijskiProgramService.create(studijskiProgram);
         StudijskiProgramPredmeti studijskiProgramPredmeti = new StudijskiProgramPredmeti();

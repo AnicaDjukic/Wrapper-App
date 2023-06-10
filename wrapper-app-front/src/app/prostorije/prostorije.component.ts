@@ -57,7 +57,7 @@ export class ProstorijeComponent {
   }
 
   getOrganizacioneJediniceOptions() {
-    this.orgjedinicaApi.getAllKatedra()
+    this.orgjedinicaApi.getAll()
       .subscribe({
         next: (res) => {
           this.organizacioneJedinice = res;
@@ -65,17 +65,7 @@ export class ProstorijeComponent {
             this.options.push(element.naziv)
           });
         }
-      })
-
-    // this.orgjedinicaApi.getAllDepartman()
-    //   .subscribe({
-    //     next: (res) => {
-    //       this.organizacioneJedinice.push(...res);
-    //       res.forEach((element: OrganizacionaJedinicaDto) => {
-    //         this.options.push(element.naziv)
-    //       });
-    //     }
-    //   })
+      });
   }
 
   openDialog(): void {

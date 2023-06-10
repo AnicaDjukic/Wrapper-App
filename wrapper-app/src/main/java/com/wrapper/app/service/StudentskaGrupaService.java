@@ -35,7 +35,8 @@ public class StudentskaGrupaService {
         List<String> studijskiProgramIds = studijskiProgramService.searchByNaziv(searchDto.getStudijskiProgram())
                 .stream().map(StudijskiProgram::getId).toList();
         studijskiProgramIds.forEach(studProgId ->
-                results.addAll(repository.search(searchDto.getOznaka(), searchDto.getGodina(), searchDto.getBrojStudenata(),studProgId)));
+                results.addAll(repository.search(searchDto.getOznaka(), searchDto.getGodina(),
+                        searchDto.getBrojStudenata(), studProgId)));
         return createPage(results, pageable);
     }
 
@@ -48,7 +49,8 @@ public class StudentskaGrupaService {
     }
 
     public StudentskaGrupa getById(String id) {
-        return repository.findById(id).orElseThrow(() -> new NotFoundException(StudentskaGrupa.class.getSimpleName()));
+        return repository.findById(id)
+                .orElseThrow(() -> new NotFoundException(StudentskaGrupa.class.getSimpleName()));
     }
 
     public List<StudentskaGrupa> create(StudentskeGrupeRequestDto studentskeGrupe) {
@@ -59,10 +61,12 @@ public class StudentskaGrupaService {
     }
 
     private int getMaxOznaka(StudentskeGrupeRequestDto studentskeGrupe) {
-        List<StudentskaGrupa> existing = repository.findAllByGodinaAndSemestarAndStudijskiProgram(studentskeGrupe.getGodina(),
+        List<StudentskaGrupa> existing = repository.findAllByGodinaAndSemestarAndStudijskiProgram(
+                studentskeGrupe.getGodina(),
                 studentskeGrupe.getSemestar(),
                 studentskeGrupe.getStudijskiProgram());
-        Optional<StudentskaGrupa> grupaWithMaxOznaka = existing.stream().max(Comparator.comparing(StudentskaGrupa::getOznaka));
+        Optional<StudentskaGrupa> grupaWithMaxOznaka = existing.stream()
+                .max(Comparator.comparing(StudentskaGrupa::getOznaka));
         int maxOznaka = 1;
         if(grupaWithMaxOznaka.isPresent()) {
             maxOznaka = grupaWithMaxOznaka.get().getOznaka() + 1;

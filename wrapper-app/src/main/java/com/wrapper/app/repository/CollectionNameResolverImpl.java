@@ -18,7 +18,10 @@ public class CollectionNameResolverImpl implements CollectionNameResolver {
     public String resolveCollectionName(Class<?> entityClass) {
         String className = entityClass.getSimpleName();
         String collectionName = CollectionNameProvider.getCollectionName();
+        return getCollectionName(className, collectionName);
+    }
 
+    private String getCollectionName(String className, String collectionName) {
         if (className.equals(Predmet.class.getSimpleName())) {
             return PREDMETI + collectionName;
         } else if (className.equals(StudijskiProgram.class.getSimpleName()))  {

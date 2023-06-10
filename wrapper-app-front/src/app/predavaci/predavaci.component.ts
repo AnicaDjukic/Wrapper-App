@@ -54,7 +54,7 @@ export class PredavaciComponent implements OnInit {
   }
 
   getOrganizacioneJediniceOptions() {
-    this.orgjedinicaApi.getAllKatedra()
+    this.orgjedinicaApi.getAll()
     .subscribe({
       next: (res) => {
         this.organizacioneJedinice = res;
@@ -62,17 +62,7 @@ export class PredavaciComponent implements OnInit {
           this.options.push(element.naziv)
         });
       }
-    })
-
-    // this.orgjedinicaApi.getAllDepartman()
-    // .subscribe({
-    //   next: (res) => {
-    //     this.organizacioneJedinice.push(...res);
-    //     res.forEach((element: OrganizacionaJedinicaDto) => {
-    //       this.options.push(element.naziv)
-    //     });
-    //   }
-    // })
+    });
   }
 
   openDialog(): void {

@@ -1,6 +1,5 @@
 package com.wrapper.app.service;
 
-import com.wrapper.app.domain.Departman;
 import com.wrapper.app.domain.OrganizacionaJedinica;
 import com.wrapper.app.exception.NotFoundException;
 import com.wrapper.app.repository.OrganizacionaJedinicaRepository;
@@ -17,8 +16,8 @@ public class OrganizacionaJedinicaService {
         this.repository = repository;
     }
 
-    public boolean existsById(String id) {
-        return repository.existsById(id);
+    public List<OrganizacionaJedinica> getAll() {
+        return repository.findAll();
     }
 
     public OrganizacionaJedinica getById(String id) {

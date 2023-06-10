@@ -7,16 +7,11 @@ import { Injectable } from '@angular/core';
 export class OrgJedinicaService {
 
 
-  private katedreUrl = "http://localhost:8080/api/v1/katedre";
-  private departmaniUrl = "http://localhost:8080/api/v1/departmani";
+  private organizacioneJediniceUrl = "http://localhost:8080/api/v1/organizacione-jedinice";
   
   constructor(private http: HttpClient) { }
 
-  getAllKatedra() {
-    return this.http.get<any>(`${this.katedreUrl}`);
-  }
-
-  getAllDepartman() {
-    return this.http.get<any>(`${this.departmaniUrl}`);
+  getAll() {
+    return this.http.get<any>(`${this.organizacioneJediniceUrl}`);
   }
 }
