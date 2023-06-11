@@ -1,8 +1,10 @@
 package com.wrapper.app.domain;
 
+import com.wrapper.app.repository.cascade.CascadeDelete;
 import com.wrapper.app.repository.cascade.CascadeSave;
 import lombok.Data;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,8 +12,9 @@ import java.util.List;
 @Data
 public class PredmetPredavac {
 
-    @DocumentReference
+    @CascadeDelete
     @CascadeSave
+    @DocumentReference
     private Predmet predmet;
     @DocumentReference
     private Predavac profesor;

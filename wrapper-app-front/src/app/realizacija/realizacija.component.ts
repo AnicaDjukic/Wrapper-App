@@ -236,7 +236,7 @@ export class RealizacijaComponent {
 
   fillGlavniProfesorInfo(predmetPredavac: any) {
     if (predmetPredavac.profesor) {
-      let profesor = predmetPredavac.profesor.titula + " " + predmetPredavac.profesor.ime + " " + predmetPredavac.profesor.prezime;
+      let profesor = (predmetPredavac.profesor.titula ? predmetPredavac.profesor.titula : "") + " " + predmetPredavac.profesor.ime + " " + predmetPredavac.profesor.prezime;
       profesor.trim();
       predmetPredavac.profesor = profesor;
     }
@@ -245,7 +245,7 @@ export class RealizacijaComponent {
   fillOstaliProfesoriInfo(predmetPredavac: any) {
     let ostaliProfesori = [];
     for (let prof of predmetPredavac.ostaliProfesori) {
-      let profesor = prof.titula + " " + prof.ime + " " + prof.prezime;
+      let profesor = (prof.titula ? prof.titula : "") + " " + prof.ime + " " + prof.prezime;
       profesor.trim();
       ostaliProfesori.push(profesor);
     }
@@ -256,7 +256,7 @@ export class RealizacijaComponent {
     let asistentZauzeca = [];
     for (let zazuece of predmetPredavac.asistentZauzeca) {
       if (zazuece.asistent) {
-        let asistent = zazuece.asistent.titula + " " + zazuece.asistent.ime + " " + zazuece.asistent.prezime;
+        let asistent = (zazuece.asistent.titula ? zazuece.asistent.titula : "") + " " + zazuece.asistent.ime + " " + zazuece.asistent.prezime;
         asistent.trim();
         zazuece.asistent = asistent;
         asistentZauzeca.push(zazuece);

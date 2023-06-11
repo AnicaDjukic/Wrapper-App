@@ -57,7 +57,8 @@ public class StudijskiProgramPredmetiService {
     }
 
     public void deleteById(String id) {
-        studijskiProgramService.deleteById(id);
-        repository.deleteById(id);
+        //studijskiProgramService.deleteById(id);
+        StudijskiProgramPredmeti studijskiProgramPredmeti = getById(id);
+        repository.delete(studijskiProgramPredmeti);
     }
 }

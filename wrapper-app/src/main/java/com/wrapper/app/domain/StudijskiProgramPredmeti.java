@@ -1,11 +1,13 @@
 package com.wrapper.app.domain;
 
 import com.wrapper.app.exception.NotFoundException;
+import com.wrapper.app.repository.cascade.CascadeDelete;
 import com.wrapper.app.repository.cascade.CascadeSave;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,9 +18,11 @@ public class StudijskiProgramPredmeti {
 
     @Id
     private String id;
-    @DocumentReference
+    @CascadeDelete
     @CascadeSave
+    @DocumentReference
     private StudijskiProgram studijskiProgram;
+    @CascadeDelete
     @CascadeSave
     private List<PredmetPredavac> predmetPredavaci;
 

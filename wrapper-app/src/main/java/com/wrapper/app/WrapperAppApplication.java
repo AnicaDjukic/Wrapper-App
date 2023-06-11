@@ -27,9 +27,6 @@ public class WrapperAppApplication implements CommandLineRunner {
 	@Autowired
 	private PredmetRepository predmetRepository;
 
-	@Autowired
-	private RealizacijaRepository realizacijaRepository;
-
 	public static void main(String[] args) {
 		SpringApplication.run(WrapperAppApplication.class, args);
 	}

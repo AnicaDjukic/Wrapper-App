@@ -13,6 +13,7 @@ public class CascadingMongoEventListener implements ApplicationListener<BeforeSa
     public CascadingMongoEventListener(MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
     }
+
     @Override
     public void onApplicationEvent(BeforeSaveEvent<Object> event) {
         Object source = event.getSource();

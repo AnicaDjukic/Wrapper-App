@@ -74,7 +74,9 @@ public class PredmetService {
 
     public void deleteById(String id) {
         Predmet predmet = getById(id);
-        studijskiProgramPredmetiService.removePredmet(predmet.getStudijskiProgram().getId(), id);
+        if(predmet.getURealizaciji()) {
+            studijskiProgramPredmetiService.removePredmet(predmet.getStudijskiProgram().getId(), id);
+        }
         repository.deleteById(id);
     }
 
