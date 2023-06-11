@@ -56,9 +56,14 @@ public class StudijskiProgramPredmetiService {
         repository.save(studijskiProgramPredmeti);
     }
 
+    public void removePredavac(String predavacId) {
+        for (StudijskiProgramPredmeti studijskiProgramPredmeti : repository.findByPredavacId(predavacId)) {
+            studijskiProgramPredmeti.removePredavac(predavacId);
+            repository.save(studijskiProgramPredmeti);
+        }
+    }
+
     public void deleteById(String id) {
-        //studijskiProgramService.deleteById(id);
-        StudijskiProgramPredmeti studijskiProgramPredmeti = getById(id);
-        repository.delete(studijskiProgramPredmeti);
+        studijskiProgramService.deleteById(id);
     }
 }

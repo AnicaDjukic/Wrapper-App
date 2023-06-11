@@ -7,7 +7,6 @@ import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
-import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,10 +17,12 @@ public class StudijskiProgramPredmeti {
 
     @Id
     private String id;
+
     @CascadeDelete
     @CascadeSave
     @DocumentReference
     private StudijskiProgram studijskiProgram;
+
     @CascadeDelete
     @CascadeSave
     private List<PredmetPredavac> predmetPredavaci;
@@ -35,9 +36,7 @@ public class StudijskiProgramPredmeti {
     }
 
     public void updatePredmetPredavac(String predmetId, PredmetPredavac predmetPredavac) {
-        PredmetPredavac existing = predmetPredavaci.stream()
-                .filter(p -> p.getPredmet().getId().equals(predmetId))
-                .findFirst().orElseThrow(() -> new NotFoundException(PredmetPredavac.class.getSimpleName()));
+        PredmetPredavac existing = predmetPredavaci.stream().filter(p -> p.getPredmet().getId().equals(predmetId)).findFirst().orElseThrow(() -> new NotFoundException(PredmetPredavac.class.getSimpleName()));
         predmetPredavac.setPredmet(existing.getPredmet());
         predmetPredavac.setBlock(predmetPredavac.isBlock());
         int index = predmetPredavaci.indexOf(existing);
@@ -63,8 +62,7 @@ public class StudijskiProgramPredmeti {
 
     private boolean checkPredmeti() {
         for (PredmetPredavac predmetPredavac : predmetPredavaci) {
-            if (predmetPredavac.isBlock())
-                return true;
+            if (predmetPredavac.isBlock()) return true;
         }
         return false;
     }
@@ -73,19 +71,34 @@ public class StudijskiProgramPredmeti {
         removeProfesor(predavacId);
         removeOstaliProfesor(predavacId);
         removeAsistent(predavacId);
+        studijskiProgram.setBlock(checkPredmeti());
     }
 
     private void removeProfesor(String predavacId) {
-        Optional<PredmetPredavac> predmet = predmetPredavaci.stream()
-                .filter(spp -> spp.getProfesor().getId().equals(predavacId)).findFirst();
+        Optional<PredmetPredavac> predmet = predmetPredavaci.stream().filter(spp -> {
+            if (spp.getProfesor() != null) {
+                return spp.getProfesor().getId().equals(predavacId);
+            }
+            return true;
+        }).findFirst();
         predmet.ifPresent(predmetPredavac -> predmetPredavac.setProfesor(null));
     }
 
     private void removeOstaliProfesor(String predavacId) {
-        predmetPredavaci.forEach(spp -> spp.getOstaliProfesori().removeIf(p -> p.getId().equals(predavacId)));
+        predmetPredavaci.forEach(spp -> spp.getOstaliProfesori().removeIf(p -> {
+            if (p != null) {
+                return p.getId().equals(predavacId);
+            }
+            return true;
+        }));
     }
 
     private void removeAsistent(String predavacId) {
-        predmetPredavaci.forEach(spp -> spp.getAsistentZauzeca().removeIf(a -> a.getAsistent().getId().equals(predavacId)));
+        predmetPredavaci.forEach(spp -> spp.getAsistentZauzeca().removeIf(a -> {
+            if (a.getAsistent() != null) {
+                return a.getAsistent().getId().equals(predavacId);
+            }
+            return true;
+        }));
     }
 }

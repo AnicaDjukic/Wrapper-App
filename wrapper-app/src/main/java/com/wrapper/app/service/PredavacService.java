@@ -2,7 +2,6 @@ package com.wrapper.app.service;
 
 import com.wrapper.app.domain.OrganizacionaJedinica;
 import com.wrapper.app.domain.Predavac;
-import com.wrapper.app.dto.PredavacRequestDto;
 import com.wrapper.app.dto.PredavacSearchDto;
 import com.wrapper.app.exception.AlreadyExistsException;
 import com.wrapper.app.exception.NotFoundException;
@@ -24,9 +23,14 @@ public class PredavacService {
 
     private final OrganizacionaJedinicaService organizacionaJedinicaService;
 
-    public PredavacService(PredavacRepository repository, OrganizacionaJedinicaService organizacionaJedinicaService) {
+    private final StudijskiProgramPredmetiService studijskiProgramPredmetiService;
+
+    public PredavacService(PredavacRepository repository,
+                           OrganizacionaJedinicaService organizacionaJedinicaService,
+                           StudijskiProgramPredmetiService studijskiProgramPredmetiService) {
         this.repository = repository;
         this.organizacionaJedinicaService = organizacionaJedinicaService;
+        this.studijskiProgramPredmetiService = studijskiProgramPredmetiService;
     }
 
     public Page<Predavac> getAll(Pageable pageable) {
@@ -72,10 +76,7 @@ public class PredavacService {
     }
 
     public void deleteById(String id) {
+        studijskiProgramPredmetiService.removePredavac(id);
         repository.deleteById(id);
-    }
-
-    public boolean existsById(String id) {
-        return repository.existsById(id);
     }
 }
