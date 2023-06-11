@@ -23,10 +23,14 @@ public class PredmetService {
 
     private final StudijskiProgramService studijskiProgramService;
 
+    private final StudijskiProgramPredmetiService studijskiProgramPredmetiService;
+
     public PredmetService(PredmetRepository repository,
-                          StudijskiProgramService studijskiProgramService) {
+                          StudijskiProgramService studijskiProgramService,
+                          StudijskiProgramPredmetiService studijskiProgramPredmetiService) {
         this.repository = repository;
         this.studijskiProgramService = studijskiProgramService;
+        this.studijskiProgramPredmetiService = studijskiProgramPredmetiService;
     }
 
     public List<Predmet> findAll() {
@@ -69,6 +73,8 @@ public class PredmetService {
     }
 
     public void deleteById(String id) {
+        Predmet predmet = getById(id);
+        studijskiProgramPredmetiService.removePredmet(predmet.getStudijskiProgram().getId(), id);
         repository.deleteById(id);
     }
 

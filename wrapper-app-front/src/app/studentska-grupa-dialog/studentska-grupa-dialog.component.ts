@@ -66,7 +66,7 @@ export class StudentskaGrupaDialogComponent {
   add() {
     if(!this.data.editData) {
       if(this.studentskaGrupaForm.valid) {
-        let studProg : string = this.studentskaGrupaForm.value.studijskiProgramId
+        let studProg : string = this.studentskaGrupaForm.value.studijskiProgramId;
         this.studentskaGrupaForm.value.studijskiProgramId = this.studijskiProgrami.filter(sp => (sp.oznaka + ' ' + sp.naziv + ' (' + sp.stepenStudija + ')') == studProg).map(value => value.id)[0];
         this.studentskaGrupaForm.value.semestar = 'Z';
         this.api.post(this.studentskaGrupaForm.value)

@@ -22,7 +22,7 @@ public class StudijskiProgramPredmeti {
     @CascadeSave
     private List<PredmetPredavac> predmetPredavaci;
 
-    public void addPredmet(PredmetPredavac predmetPredavac) {
+    public void addPredmetPredavac(PredmetPredavac predmetPredavac) {
         predmetPredavac.setBlock(predmetPredavac.isBlock());
         predmetPredavac.getPredmet().setURealizaciji(true);
         predmetPredavac.getPredmet().setStudijskiProgram(studijskiProgram);
@@ -30,7 +30,7 @@ public class StudijskiProgramPredmeti {
         studijskiProgram.setBlock(checkPredmeti());
     }
 
-    public void updatePredmet(String predmetId, PredmetPredavac predmetPredavac) {
+    public void updatePredmetPredavac(String predmetId, PredmetPredavac predmetPredavac) {
         PredmetPredavac existing = predmetPredavaci.stream()
                 .filter(p -> p.getPredmet().getId().equals(predmetId))
                 .findFirst().orElseThrow(() -> new NotFoundException(PredmetPredavac.class.getSimpleName()));
@@ -43,12 +43,18 @@ public class StudijskiProgramPredmeti {
     }
 
     public void removePredmet(String predmetId) {
+        Predmet predmet = predmetPredavaci.stream()
+                .filter(spp -> spp.getPredmet().getId().equals(predmetId)).findFirst()
+                .orElseThrow(() -> new NotFoundException(PredmetPredavac.class.getSimpleName())).getPredmet();
+        predmet.setURealizaciji(false);
+    }
+
+    public void removePredmetPredavac(String predmetId) {
         PredmetPredavac predmetPredavac = predmetPredavaci.stream()
                 .filter(spp -> spp.getPredmet().getId().equals(predmetId)).findFirst()
                 .orElseThrow(() -> new NotFoundException(PredmetPredavac.class.getSimpleName()));
         predmetPredavaci.remove(predmetPredavac);
         studijskiProgram.setBlock(checkPredmeti());
-        predmetPredavac.getPredmet().setStudijskiProgram(studijskiProgram);
     }
 
     private boolean checkPredmeti() {

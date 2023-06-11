@@ -49,7 +49,7 @@ export class ProstorijaDialogComponent {
       this.prostorijaForm.controls['kapacitet'].setValue(this.data.editData.kapacitet);
       if(this.data.editData.orgJedinica) {
         for (let orgJed of this.data.editData.orgJedinica) {
-          this.orgJedinicaFieldAsFormArray.push(this.formBuilder.control(orgJed.naziv));
+          this.orgJedinicaFieldAsFormArray.push(this.formBuilder.control(orgJed.naziv, [Validators.required, autocompleteValidator(this.orgjediniceOptions)]));
         }
       }
     }

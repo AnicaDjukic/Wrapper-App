@@ -46,6 +46,9 @@
                 <mat-error *ngIf="predmetForm.get('studijskiProgram')?.hasError('invalidOption')">
                     Morate izabrati studijski program
                 </mat-error>
+                <mat-button mat-icon-button matSuffix (click)="predmetForm.controls['studijskiProgram'].setValue('')" style="cursor: pointer;">
+                    <mat-icon>close</mat-icon>
+                </mat-button>
             </mat-form-field>
 
             <mat-form-field class="example-full-width">

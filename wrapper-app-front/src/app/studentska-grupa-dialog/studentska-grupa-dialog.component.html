@@ -50,9 +50,12 @@
                         {{option}}
                     </mat-option>
                 </mat-autocomplete>
-                <mat-error *ngIf="studentskaGrupaForm.get('studijskiProgram')?.hasError('invalidOption')">
+                <mat-error *ngIf="studentskaGrupaForm.get('studijskiProgramId')?.hasError('invalidOption')">
                     Morate izabrati studijski program
                 </mat-error>
+                <mat-button mat-icon-button matSuffix (click)="studentskaGrupaForm.controls['studijskiProgramId'].setValue('')" style="cursor: pointer;">
+                    <mat-icon>close</mat-icon>
+                </mat-button>
             </mat-form-field>
         </form>
     </div>

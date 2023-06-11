@@ -33,5 +33,5 @@ public class StudentskeGrupeRequestDto {
     // TODO: ne sme biti null ili prazan string
     @NotNull
     @NotBlank
-    private String studijskiProgram;
+    private String studijskiProgramId;
 }

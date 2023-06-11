@@ -38,6 +38,9 @@
                 <mat-error *ngIf="predavacForm.get('orgJedinica')?.hasError('invalidOption')">
                     Morate izabrati organizacionu jedinicu
                 </mat-error>
+                <mat-button mat-icon-button matSuffix (click)="predavacForm.controls['orgJedinica'].setValue('')" style="cursor: pointer;">
+                    <mat-icon>close</mat-icon>
+                </mat-button>
             </mat-form-field>
         </form>
     </div>

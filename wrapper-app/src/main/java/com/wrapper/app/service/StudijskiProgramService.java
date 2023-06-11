@@ -57,7 +57,8 @@ public class StudijskiProgramService {
     }
 
     public StudijskiProgram create(StudijskiProgram studijskiProgram) {
-        Optional<StudijskiProgram> existing = repository.findByOznakaAndNivoAndStepen(studijskiProgram.getOznaka(), studijskiProgram.getNivo(), studijskiProgram.getStepen());
+        Optional<StudijskiProgram> existing = repository.findByOznakaAndNivoAndStepen(studijskiProgram.getOznaka(),
+                studijskiProgram.getNivo(), studijskiProgram.getStepen());
         if(existing.isPresent())
             throw new AlreadyExistsException(StudijskiProgram.class.getSimpleName());
         studijskiProgram.setId(UUID.randomUUID().toString());
@@ -67,7 +68,8 @@ public class StudijskiProgramService {
     public StudijskiProgram update(String id, StudijskiProgram studijskiProgram) {
         if(!repository.existsById(id))
             throw new NotFoundException(StudijskiProgram.class.getSimpleName());
-        Optional<StudijskiProgram> existing = repository.findByOznakaAndNivoAndStepen(studijskiProgram.getOznaka(), studijskiProgram.getNivo(), studijskiProgram.getStepen());
+        Optional<StudijskiProgram> existing = repository.findByOznakaAndNivoAndStepen(studijskiProgram.getOznaka(),
+                studijskiProgram.getNivo(), studijskiProgram.getStepen());
         if(existing.isPresent() && !existing.get().getId().equals(id))
             throw new AlreadyExistsException(StudijskiProgram.class.getSimpleName());
         studijskiProgram.setId(id);

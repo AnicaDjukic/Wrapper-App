@@ -52,7 +52,7 @@ public class StudentskaGrupaService {
     }
 
     public List<StudentskaGrupa> create(StudentskeGrupeRequestDto studentskeGrupe) {
-        if(!studijskiProgramService.existsById(studentskeGrupe.getStudijskiProgram()))
+        if(!studijskiProgramService.existsById(studentskeGrupe.getStudijskiProgramId()))
             throw new NotFoundException(StudijskiProgram.class.getSimpleName());
         int maxOznaka = getMaxOznaka(studentskeGrupe);
         return generateNewStudentskeGrupe(studentskeGrupe, maxOznaka);
@@ -62,7 +62,7 @@ public class StudentskaGrupaService {
         List<StudentskaGrupa> existing = repository.findAllByGodinaAndSemestarAndStudijskiProgram(
                 studentskeGrupe.getGodina(),
                 studentskeGrupe.getSemestar(),
-                studentskeGrupe.getStudijskiProgram());
+                studentskeGrupe.getStudijskiProgramId());
         Optional<StudentskaGrupa> grupaWithMaxOznaka = existing.stream()
                 .max(Comparator.comparing(StudentskaGrupa::getOznaka));
         return grupaWithMaxOznaka.map(studentskaGrupa -> studentskaGrupa.getOznaka() + 1).orElse(1);
@@ -77,7 +77,7 @@ public class StudentskaGrupaService {
                     studentskeGrupe.getGodina(),
                     studentskeGrupe.getSemestar(),
                     studentskeGrupe.getBrojStudenata(),
-                    studijskiProgramService.getById(studentskeGrupe.getStudijskiProgram()));
+                    studijskiProgramService.getById(studentskeGrupe.getStudijskiProgramId()));
             StudentskaGrupa saved = repository.save(studentskaGrupa);
             results.add(saved);
         }
@@ -85,8 +85,9 @@ public class StudentskaGrupaService {
     }
 
     public StudentskaGrupa update(String id, StudentskaGrupa studentskaGrupa) {
-        Optional<StudentskaGrupa> existing = repository.findByOznakaAndGodinaAndSemestarAndStudijskiProgram(studentskaGrupa.getOznaka(),
-                studentskaGrupa.getGodina(), studentskaGrupa.getSemestar(), studentskaGrupa.getStudijskiProgram().getId());
+        Optional<StudentskaGrupa> existing = repository.findByOznakaAndGodinaAndSemestarAndStudijskiProgram(
+                studentskaGrupa.getOznaka(), studentskaGrupa.getGodina(),
+                studentskaGrupa.getSemestar(), studentskaGrupa.getStudijskiProgram().getId());
         if(existing.isPresent() && !existing.get().getId().equals(id))
             throw new AlreadyExistsException(StudentskaGrupa.class.getSimpleName());
         studentskaGrupa.setId(id);
