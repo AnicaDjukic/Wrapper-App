@@ -89,20 +89,12 @@ public class PredmetService {
         Predmet old = getById(id);
         predmet.setId(id);
         predmet.setURealizaciji(old.getURealizaciji());
-        return repository.save(predmet);
+        Predmet saved = repository.save(predmet);
+        studijskiProgramPredmetiService.updateBlockStatus(predmet.getStudijskiProgram().getId());
+        return saved;
     }
 
     public List<Predmet> getByStudijskiProgram(String studijskiProgram, boolean uRealizaciji) {
         return repository.findByStudijskiProgram(studijskiProgram, uRealizaciji);
-    }
-
-    public void deleteAllByStudijskiProgram(String studProgramId) {
-        repository.deleteAllByStudijskiProgram(studProgramId);
-    }
-
-    public void updateRealizacijaStatus(String predmetId, boolean uRealizaciji) {
-        Predmet predmet = getById(predmetId);
-        predmet.setURealizaciji(uRealizaciji);
-        repository.save(predmet);
     }
 }

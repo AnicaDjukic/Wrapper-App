@@ -56,7 +56,7 @@ public class StudijskiProgramService {
                 .orElseThrow(() -> new NotFoundException(StudijskiProgram.class.getSimpleName()));
     }
 
-    public StudijskiProgram create(StudijskiProgram studijskiProgram) {
+    public StudijskiProgram add(StudijskiProgram studijskiProgram) {
         Optional<StudijskiProgram> existing = repository.findByOznakaAndNivoAndStepen(studijskiProgram.getOznaka(),
                 studijskiProgram.getNivo(), studijskiProgram.getStepen());
         if(existing.isPresent())
@@ -74,12 +74,6 @@ public class StudijskiProgramService {
             throw new AlreadyExistsException(StudijskiProgram.class.getSimpleName());
         studijskiProgram.setId(id);
         return repository.save(studijskiProgram);
-    }
-
-    public StudijskiProgram deleteById(String id) {
-        StudijskiProgram studijskiProgram = getById(id);
-        repository.delete(studijskiProgram);
-        return studijskiProgram;
     }
 
     public boolean existsById(String id) {

@@ -28,7 +28,7 @@ public class StudijskiProgramPredmetiService {
     }
 
     public StudijskiProgramPredmeti add(StudijskiProgram studijskiProgram) {
-        StudijskiProgram savedStudijskiProgram = studijskiProgramService.create(studijskiProgram);
+        StudijskiProgram savedStudijskiProgram = studijskiProgramService.add(studijskiProgram);
         StudijskiProgramPredmeti studijskiProgramPredmeti = new StudijskiProgramPredmeti();
         studijskiProgramPredmeti.setId(savedStudijskiProgram.getId());
         studijskiProgramPredmeti.setStudijskiProgram(savedStudijskiProgram);
@@ -48,8 +48,8 @@ public class StudijskiProgramPredmetiService {
         return repository.save(studijskiProgramPredmeti);
     }
 
-    public void removePredmet(String studijskiProgramId, String predmetId) {
-        StudijskiProgramPredmeti studijskiProgramPredmeti = getById(studijskiProgramId);
+    public void removePredmet(String studProgramId, String predmetId) {
+        StudijskiProgramPredmeti studijskiProgramPredmeti = getById(studProgramId);
         studijskiProgramPredmeti.removePredmet(predmetId);
         repository.save(studijskiProgramPredmeti);
         studijskiProgramPredmeti.removePredmetPredavac(predmetId);
@@ -64,6 +64,12 @@ public class StudijskiProgramPredmetiService {
     }
 
     public void deleteById(String id) {
-        studijskiProgramService.deleteById(id);
+        repository.deleteById(id);
+    }
+
+    public void updateBlockStatus(String studProgramId) {
+        StudijskiProgramPredmeti studijskiProgramPredmeti = getById(studProgramId);
+        studijskiProgramPredmeti.updateBlockStatus();
+        repository.save(studijskiProgramPredmeti);
     }
 }

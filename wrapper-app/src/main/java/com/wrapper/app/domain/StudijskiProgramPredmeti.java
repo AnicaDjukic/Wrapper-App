@@ -32,7 +32,7 @@ public class StudijskiProgramPredmeti {
         predmetPredavac.getPredmet().setURealizaciji(true);
         predmetPredavac.getPredmet().setStudijskiProgram(studijskiProgram);
         predmetPredavaci.add(predmetPredavac);
-        studijskiProgram.setBlock(checkPredmeti());
+        updateBlockStatus();
     }
 
     public void updatePredmetPredavac(String predmetId, PredmetPredavac predmetPredavac) {
@@ -42,7 +42,7 @@ public class StudijskiProgramPredmeti {
         int index = predmetPredavaci.indexOf(existing);
         predmetPredavaci.remove(index);
         predmetPredavaci.add(index, predmetPredavac);
-        studijskiProgram.setBlock(checkPredmeti());
+        updateBlockStatus();
     }
 
     public void removePredmet(String predmetId) {
@@ -57,21 +57,25 @@ public class StudijskiProgramPredmeti {
                 .filter(spp -> spp.getPredmet().getId().equals(predmetId)).findFirst()
                 .orElseThrow(() -> new NotFoundException(PredmetPredavac.class.getSimpleName()));
         predmetPredavaci.remove(predmetPredavac);
-        studijskiProgram.setBlock(checkPredmeti());
+        updateBlockStatus();
     }
 
-    private boolean checkPredmeti() {
+    public void updateBlockStatus() {
         for (PredmetPredavac predmetPredavac : predmetPredavaci) {
-            if (predmetPredavac.isBlock()) return true;
+            if (predmetPredavac.isBlock()) {
+                studijskiProgram.setBlock(true);
+                return;
+            }
+
         }
-        return false;
+        studijskiProgram.setBlock(false);
     }
 
     public void removePredavac(String predavacId) {
         removeProfesor(predavacId);
         removeOstaliProfesor(predavacId);
         removeAsistent(predavacId);
-        studijskiProgram.setBlock(checkPredmeti());
+        updateBlockStatus();
     }
 
     private void removeProfesor(String predavacId) {
