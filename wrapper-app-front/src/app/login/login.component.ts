@@ -34,7 +34,7 @@ export class LoginComponent {
     this.authService.login(this.loginForm.value).subscribe(
       async (res) => {
         const tokenDto: TokenDto = res as TokenDto;
-        this.storageService.storeToken(tokenDto.token);
+        this.storageService.storeTokenData(tokenDto.token, tokenDto.refreshToken);
         await this.setDatabase();
         window.location.href = '/predmeti';
       },

@@ -24,6 +24,9 @@ public class TokenUtils {
     @Value("1800000")
     private int EXPIRES_IN;
 
+    @Value("3600000")
+    private int REFRESH_EXPIRES_IN;
+
 
     @Value("Authorization")
     private String AUTH_HEADER;
@@ -33,14 +36,14 @@ public class TokenUtils {
 
     private final SignatureAlgorithm SIGNATURE_ALGORITHM = SignatureAlgorithm.HS512;
 
-    public String generateToken(String username) {
+    public String generateToken(String username, boolean isRefreshToken) {
         return Jwts.builder()
                 .setIssuer(APP_NAME)
                 .setSubject(username)
 //                .claim("role", role)
                 .setAudience(generateAudience())
                 .setIssuedAt(new Date())
-                .setExpiration(generateExpirationDate())
+                .setExpiration(generateExpirationDate(isRefreshToken))
                 .signWith(SIGNATURE_ALGORITHM, SECRET).compact();
 
     }
@@ -49,7 +52,9 @@ public class TokenUtils {
         return AUDIENCE_WEB;
     }
 
-    private Date generateExpirationDate() {
+    private Date generateExpirationDate(boolean isRefreshToken) {
+        if(isRefreshToken)
+            return new Date(new Date().getTime() + REFRESH_EXPIRES_IN);
         return new Date(new Date().getTime() + EXPIRES_IN);
     }
 
@@ -129,5 +134,4 @@ public class TokenUtils {
     public String getAuthHeaderFromHeader(HttpServletRequest request) {
         return request.getHeader(AUTH_HEADER);
     }
-
 }

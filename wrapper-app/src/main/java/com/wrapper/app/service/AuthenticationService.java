@@ -17,9 +17,13 @@ public class AuthenticationService {
 
     private final TokenUtils tokenUtils;
 
-    public AuthenticationService(AuthenticationManager authenticationManager, TokenUtils tokenUtils) {
+    private final UserService userService;
+
+    public AuthenticationService(AuthenticationManager authenticationManager, TokenUtils tokenUtils,
+                                 UserService userService) {
         this.authenticationManager = authenticationManager;
         this.tokenUtils = tokenUtils;
+        this.userService = userService;
     }
 
     public UserTokenState login(JwtAuthenticationRequest authenticationRequest) {
@@ -30,11 +34,21 @@ public class AuthenticationService {
         return getAuthentication(user);
     }
 
+    public UserTokenState refreshToken(String token) {
+        String username = tokenUtils.getUsernameFromToken(token.split(" ")[1]);
+        User user = (User) userService.loadUserByUsername(username);
+        return getAuthentication(user);
+    }
+
     public UserTokenState getAuthentication(User user) {
-        return new UserTokenState(getToken(user));
+        return new UserTokenState(getToken(user), getRefreshToken(user));
     }
 
     public String getToken(User user) {
-        return tokenUtils.generateToken(user.getUsername());
+        return tokenUtils.generateToken(user.getUsername(), false);
+    }
+
+    private String getRefreshToken(User user) {
+        return tokenUtils.generateToken(user.getUsername(), true);
     }
 }

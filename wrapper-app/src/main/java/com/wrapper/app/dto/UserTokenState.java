@@ -12,4 +12,6 @@ import lombok.Setter;
 public class UserTokenState {
 
     private String token;
+
+    private String refreshToken;
 }

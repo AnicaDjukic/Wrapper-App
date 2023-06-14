@@ -97,9 +97,9 @@ public class MongoDbService {
         String newDatabaseName = database.getGodina() + database.getSemestar().substring(0, 1).toUpperCase();
         createStudijskiProgramiCollection(database.getStudijskiProgrami(), newDatabaseName);
         createPredmetiCollection(database.getPredmeti(), newDatabaseName);
+        createPredavaciCollection(database.getPredavaci(), newDatabaseName);
         createRealizacijaCollection(database.getRealizacija(), newDatabaseName);
         createStudentskeGrupeCollection(database.getStudentskeGrupe(), newDatabaseName);
-        createPredavaciCollection(database.getPredavaci(), newDatabaseName);
         createProstorijeCollection(database.getProstorije(), newDatabaseName);
     }
 
