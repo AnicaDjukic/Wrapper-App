@@ -15,16 +15,16 @@ import java.util.UUID;
 @Service
 public class MongoDbService {
 
-    private final String PREDMETI = "Predmeti";
-    private final String STUDIJSKI_PROGRAMI = "StudijskiProgrami";
-    private final String STUDENTSKE_GRUPE = "StudentskeGrupe";
-    private final String REALIZACIJA = "Realizacija";
-    private final String PREDAVACI = "Predavaci";
-    private final String PROSTORIJE = "Prostorije";
-
     private final MongoTemplate mongoTemplate;
 
     private final DatabaseRepository repository;
+
+    private final String PREDMETI = "Predmeti";
+    private final String STUDIJSKI_PROGRAMI = "StudijskiProgrami";
+    private final String STUDIJSKI_PROGRAM_PREDMETI = "StudijskiProgramPredmeti";
+    private final String STUDENTSKE_GRUPE = "StudentskeGrupe";
+    private final String PREDAVACI = "Predavaci";
+    private final String PROSTORIJE = "Prostorije";
 
     public MongoDbService(MongoTemplate mongoTemplate, DatabaseRepository repository) {
         this.mongoTemplate = mongoTemplate;
@@ -43,11 +43,10 @@ public class MongoDbService {
     public Database create(Database database) {
         Optional<Database> existing = repository.findBySemestarAndGodina(database.getSemestar(),
                 database.getGodina());
-        if(existing.isPresent()) {
+        if (existing.isPresent()) {
             throw new AlreadyExistsException(Database.class.getSimpleName());
         }
-        String newDatabaseName = database.getGodina()
-                + database.getSemestar().substring(0, 1).toUpperCase();
+        String newDatabaseName = database.getGodina() + database.getSemestar().substring(0, 1).toUpperCase();
         CollectionNameProvider.setCollectionName(newDatabaseName);
         createCollections(database);
         database.setId(UUID.randomUUID().toString());
@@ -55,49 +54,32 @@ public class MongoDbService {
     }
 
     public Database update(Database database) {
-        Optional<Database> existing = repository.findBySemestarAndGodina(database.getSemestar(),
-                database.getGodina());
-        if(existing.isEmpty()) {
+        Optional<Database> existing = repository.findBySemestarAndGodina(database.getSemestar(), database.getGodina());
+        if (existing.isEmpty()) {
             throw new NotFoundException(Database.class.getSimpleName());
         }
-        String databaseName = database.getGodina()
-                + database.getSemestar().substring(0, 1).toUpperCase();
+        String databaseName = database.getGodina() + database.getSemestar().substring(0, 1).toUpperCase();
         CollectionNameProvider.setCollectionName(databaseName);
-        updateCollections(database, databaseName);
+        updateCollections(database);
         database.setId(existing.get().getId());
         return repository.save(database);
     }
 
-    private void updateCollections(Database database, String databaseName) {
-        if(!database.getStudijskiProgrami().equals(databaseName)) {
-            updateCollection(database, STUDIJSKI_PROGRAMI);
-        }
-        if(!database.getPredmeti().equals(databaseName)) {
-            updateCollection(database, PREDMETI);
-        }
-        if(!database.getStudentskeGrupe().equals(databaseName)) {
-            updateCollection(database, STUDIJSKI_PROGRAMI);
-        }
-        if(!database.getRealizacija().equals(databaseName)) {
-            updateCollection(database, REALIZACIJA);
-        }
-        if(!database.getPredavaci().equals(databaseName)) {
-            updateCollection(database, PREDAVACI);
-        }
-        if(!database.getProstorije().equals(databaseName)) {
-            updateCollection(database, PROSTORIJE);
-        }
+    private void updateCollections(Database database) {
+        updateCollection(database, STUDIJSKI_PROGRAMI);
+        updateCollection(database, PREDMETI);
+        updateCollection(database, STUDENTSKE_GRUPE);
+        updateCollection(database, PREDAVACI);
+        updateCollection(database, PROSTORIJE);
     }
 
     private void updateCollection(Database database, String collection) {
-        String databaseName = database.getGodina()
-                + database.getSemestar().substring(0, 1).toUpperCase();
+        String databaseName = database.getGodina() + database.getSemestar().substring(0, 1).toUpperCase();
         dropCollection(collection + databaseName);
-        switch(collection) {
+        switch (collection) {
             case STUDIJSKI_PROGRAMI -> createStudijskiProgramiCollection(database.getStudijskiProgrami(), databaseName);
             case PREDMETI -> createPredmetiCollection(database.getPredmeti(), databaseName);
             case STUDENTSKE_GRUPE -> createStudentskeGrupeCollection(database.getStudentskeGrupe(), databaseName);
-            case REALIZACIJA -> createRealizacijaCollection(database);
             case PREDAVACI -> createPredavaciCollection(database.getPredavaci(), databaseName);
             default -> createProstorijeCollection(database.getProstorije(), databaseName);
         }
@@ -112,12 +94,11 @@ public class MongoDbService {
     }
 
     private void createCollections(Database database) {
-        String newDatabaseName = database.getGodina()
-                + database.getSemestar().substring(0, 1).toUpperCase();
+        String newDatabaseName = database.getGodina() + database.getSemestar().substring(0, 1).toUpperCase();
         createStudijskiProgramiCollection(database.getStudijskiProgrami(), newDatabaseName);
         createPredmetiCollection(database.getPredmeti(), newDatabaseName);
+        createRealizacijaCollection(database.getRealizacija(), newDatabaseName);
         createStudentskeGrupeCollection(database.getStudentskeGrupe(), newDatabaseName);
-        createRealizacijaCollection(database);
         createPredavaciCollection(database.getPredavaci(), newDatabaseName);
         createProstorijeCollection(database.getProstorije(), newDatabaseName);
     }
@@ -137,23 +118,21 @@ public class MongoDbService {
         mongoTemplate.insert(studijskiProgrami, collectionName);
     }
 
+    private void createRealizacijaCollection(String fromDatabase, String newDatabase) {
+        List<StudijskiProgramPredmeti> studijskiProgramPredmeti = mongoTemplate.findAll(StudijskiProgramPredmeti.class,
+                STUDIJSKI_PROGRAM_PREDMETI + fromDatabase);
+        String collectionName = STUDIJSKI_PROGRAM_PREDMETI + newDatabase;
+        mongoTemplate.createCollection(collectionName);
+        mongoTemplate.insert(studijskiProgramPredmeti, collectionName);
+
+    }
+
     private void createStudentskeGrupeCollection(String fromDatabase, String newDatabase) {
         List<StudentskaGrupa> studentskeGrupe = mongoTemplate.findAll(StudentskaGrupa.class,
                 STUDENTSKE_GRUPE + fromDatabase);
         String collectionName = STUDENTSKE_GRUPE + newDatabase;
         mongoTemplate.createCollection(collectionName);
         mongoTemplate.insert(studentskeGrupe, collectionName);
-    }
-
-    private void createRealizacijaCollection(Database database) {
-        Realizacija realizacija = mongoTemplate.findAll(Realizacija.class,
-                REALIZACIJA + database.getRealizacija()).get(0);
-        realizacija.setSemestar(database.getSemestar());
-        realizacija.setGodina(database.getGodina());
-        String collectionName = REALIZACIJA + database.getGodina()
-                + database.getSemestar().substring(0,1).toUpperCase();
-        mongoTemplate.createCollection(collectionName);
-        mongoTemplate.insert(realizacija, collectionName);
     }
 
     private void createPredavaciCollection(String fromDatabase, String newDatabase) {

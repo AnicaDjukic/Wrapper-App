@@ -14,12 +14,12 @@ import java.util.UUID;
 @Service
 public class StudijskiProgramService {
 
+    private final StudijskiProgramRepository repository;
+
     private final String OAS = "OSNOVNE AKADEMSKE STUDIJE";
     private final String OSS = "OSNOVNE STRUKOVNE STUDIJE";
     private final String MAS = "MASTER AKADEMSKE STUDIJE";
     private final String MSS = "MASTER STRUKOVNE STUDIJE";
-
-    private final StudijskiProgramRepository repository;
 
     public StudijskiProgramService(StudijskiProgramRepository repository) {
         this.repository = repository;

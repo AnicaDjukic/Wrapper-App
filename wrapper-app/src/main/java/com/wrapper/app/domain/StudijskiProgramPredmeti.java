@@ -36,7 +36,8 @@ public class StudijskiProgramPredmeti {
     }
 
     public void updatePredmetPredavac(String predmetId, PredmetPredavac predmetPredavac) {
-        PredmetPredavac existing = predmetPredavaci.stream().filter(p -> p.getPredmet().getId().equals(predmetId)).findFirst().orElseThrow(() -> new NotFoundException(PredmetPredavac.class.getSimpleName()));
+        PredmetPredavac existing = predmetPredavaci.stream().filter(p -> p.getPredmet().getId().equals(predmetId))
+                .findFirst().orElseThrow(() -> new NotFoundException(PredmetPredavac.class.getSimpleName()));
         predmetPredavac.setPredmet(existing.getPredmet());
         predmetPredavac.setBlock(predmetPredavac.isBlock());
         int index = predmetPredavaci.indexOf(existing);
@@ -66,7 +67,6 @@ public class StudijskiProgramPredmeti {
                 studijskiProgram.setBlock(true);
                 return;
             }
-
         }
         studijskiProgram.setBlock(false);
     }
