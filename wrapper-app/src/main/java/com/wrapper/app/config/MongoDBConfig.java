@@ -5,7 +5,7 @@ import com.mongodb.client.MongoClients;
 import com.wrapper.app.repository.CollectionNameResolver;
 import com.wrapper.app.repository.CollectionNameResolverImpl;
 import com.wrapper.app.repository.cascade.CascadingMongoDeleteEventListener;
-import com.wrapper.app.repository.cascade.CascadingMongoEventListener;
+import com.wrapper.app.repository.cascade.CascadingMongoSaveEventListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.config.AbstractMongoClientConfiguration;
@@ -41,8 +41,8 @@ public class MongoDBConfig extends AbstractMongoClientConfiguration {
     }
 
     @Bean
-    public CascadingMongoEventListener cascadingMongoEventListener() {
-        return new CascadingMongoEventListener(mongoTemplate());
+    public CascadingMongoSaveEventListener cascadingMongoEventListener() {
+        return new CascadingMongoSaveEventListener(mongoTemplate());
     }
 
     @Bean

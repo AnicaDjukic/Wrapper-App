@@ -6,11 +6,11 @@ import org.springframework.data.mongodb.core.mapping.event.BeforeSaveEvent;
 import org.springframework.util.ReflectionUtils;
 import java.util.*;
 
-public class CascadingMongoEventListener implements ApplicationListener<BeforeSaveEvent<Object>> {
+public class CascadingMongoSaveEventListener implements ApplicationListener<BeforeSaveEvent<Object>> {
 
     private final MongoTemplate mongoTemplate;
 
-    public CascadingMongoEventListener(MongoTemplate mongoTemplate) {
+    public CascadingMongoSaveEventListener(MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
     }
 

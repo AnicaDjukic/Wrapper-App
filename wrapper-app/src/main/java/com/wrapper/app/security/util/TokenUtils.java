@@ -16,10 +16,8 @@ public class TokenUtils {
     @Value("wrapper-app")
     private String APP_NAME;
 
-
     @Value("somesecret")
     public String SECRET;
-
 
     @Value("1800000")
     private int EXPIRES_IN;
@@ -27,10 +25,8 @@ public class TokenUtils {
     @Value("3600000")
     private int REFRESH_EXPIRES_IN;
 
-
     @Value("Authorization")
     private String AUTH_HEADER;
-
 
     private static final String AUDIENCE_WEB = "web";
 
@@ -79,32 +75,6 @@ public class TokenUtils {
         return username;
     }
 
-    public String getRoleFromToken(String token) {
-        String role;
-        try {
-            final Claims claims = this.getAllClaimsFromToken(token);
-            role = claims.get("role", String.class);
-        } catch (ExpiredJwtException ex) {
-            throw ex;
-        } catch (Exception e) {
-            role = null;
-        }
-        return role;
-    }
-
-    public Date getIssuedAtDateFromToken(String token) {
-        Date issueAt;
-        try {
-            final Claims claims = this.getAllClaimsFromToken(token);
-            issueAt = claims.getIssuedAt();
-        } catch (ExpiredJwtException ex) {
-            throw ex;
-        } catch (Exception e) {
-            issueAt = null;
-        }
-        return issueAt;
-    }
-
     private Claims getAllClaimsFromToken(String token) {
         Claims claims;
         try {
@@ -122,9 +92,6 @@ public class TokenUtils {
 
 
     public Boolean validateToken(String token, UserDetails userDetails) {
-//        List<String> roles = userDetails.getAuthorities().stream()
-//                .map(GrantedAuthority::getAuthority).toList();
-
         final String username = getUsernameFromToken(token);
 
         return (username != null

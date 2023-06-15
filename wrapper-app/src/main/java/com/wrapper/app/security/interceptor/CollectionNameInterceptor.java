@@ -3,7 +3,7 @@ package com.wrapper.app.security.interceptor;
 import com.wrapper.app.domain.Database;
 import com.wrapper.app.repository.CollectionNameProvider;
 import com.wrapper.app.security.util.TokenUtils;
-import com.wrapper.app.service.MongoDbService;
+import com.wrapper.app.service.DatabaseService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
@@ -16,9 +16,9 @@ public class CollectionNameInterceptor implements HandlerInterceptor {
 
     private final TokenUtils tokenUtils;
 
-    private final MongoDbService mongoDbService;
+    private final DatabaseService mongoDbService;
 
-    public CollectionNameInterceptor(TokenUtils tokenUtils, MongoDbService mongoDbService) {
+    public CollectionNameInterceptor(TokenUtils tokenUtils, DatabaseService mongoDbService) {
         this.tokenUtils = tokenUtils;
         this.mongoDbService = mongoDbService;
     }

@@ -4,7 +4,7 @@ import com.wrapper.app.domain.Database;
 import com.wrapper.app.dto.DatabaseRequestDto;
 import com.wrapper.app.dto.DatabaseResponseDto;
 import com.wrapper.app.security.util.TokenUtils;
-import com.wrapper.app.service.MongoDbService;
+import com.wrapper.app.service.DatabaseService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
@@ -14,15 +14,15 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/mongo")
-public class MongoDbController {
+public class DatabaseController {
 
-    private final MongoDbService service;
+    private final DatabaseService service;
 
     private final ModelMapper modelMapper;
 
     private final TokenUtils tokenUtils;
 
-    public MongoDbController(MongoDbService service, ModelMapper modelMapper, TokenUtils tokenUtils) {
+    public DatabaseController(DatabaseService service, ModelMapper modelMapper, TokenUtils tokenUtils) {
         this.service = service;
         this.modelMapper = modelMapper;
         this.tokenUtils = tokenUtils;
