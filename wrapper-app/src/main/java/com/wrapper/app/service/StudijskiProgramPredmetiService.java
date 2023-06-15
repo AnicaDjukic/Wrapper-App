@@ -63,13 +63,14 @@ public class StudijskiProgramPredmetiService {
         }
     }
 
-    public void deleteById(String id) {
-        repository.deleteById(id);
-    }
-
     public void updateBlockStatus(String studProgramId) {
         StudijskiProgramPredmeti studijskiProgramPredmeti = getById(studProgramId);
         studijskiProgramPredmeti.updateBlockStatus();
         repository.save(studijskiProgramPredmeti);
+    }
+
+    public void deleteById(String id) {
+
+        repository.deleteById(id);
     }
 }

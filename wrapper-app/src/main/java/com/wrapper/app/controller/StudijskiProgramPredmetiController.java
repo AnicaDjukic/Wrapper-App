@@ -5,7 +5,9 @@ import com.wrapper.app.domain.StudijskiProgram;
 import com.wrapper.app.domain.StudijskiProgramPredmeti;
 import com.wrapper.app.dto.*;
 import com.wrapper.app.service.StudijskiProgramPredmetiService;
+import com.wrapper.app.service.event.StudijskiProgramDeletedEvent;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,9 +19,13 @@ public class StudijskiProgramPredmetiController {
 
     private final ModelMapper modelMapper;
 
-    public StudijskiProgramPredmetiController(StudijskiProgramPredmetiService service, ModelMapper modelMapper) {
+    private final ApplicationEventPublisher eventPublisher;
+
+    public StudijskiProgramPredmetiController(StudijskiProgramPredmetiService service,
+                                              ModelMapper modelMapper, ApplicationEventPublisher eventPublisher) {
         this.service = service;
         this.modelMapper = modelMapper;
+        this.eventPublisher = eventPublisher;
     }
 
     @GetMapping("{studProgramId}/predmeti")
@@ -58,6 +64,8 @@ public class StudijskiProgramPredmetiController {
     @DeleteMapping("{studProgramId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable String studProgramId) {
+        StudijskiProgramDeletedEvent event = new StudijskiProgramDeletedEvent(studProgramId);
+        eventPublisher.publishEvent(event);
         service.deleteById(studProgramId);
     }
 }
