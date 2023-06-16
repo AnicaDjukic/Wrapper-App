@@ -8,9 +8,7 @@ import com.wrapper.app.repository.DatabaseRepository;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class DatabaseService<T> {
@@ -36,6 +34,11 @@ public class DatabaseService<T> {
 
     public List<Database> getAll() {
         return repository.findAll();
+    }
+
+    public Database getById(String id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new NotFoundException(Database.class.getSimpleName()));
     }
 
     public void switchDatabase(String userId, String databaseName) {
@@ -95,7 +98,7 @@ public class DatabaseService<T> {
 
     private void updateCollection(String from, String collectionNamePrefix, String newSemester) {
         String collectionName = collectionNamePrefix + newSemester;
-        if(!newSemester.equals(from)) {
+        if (!newSemester.equals(from)) {
             dropCollection(collectionName);
             createCollection(from, collectionNamePrefix, newSemester);
         }

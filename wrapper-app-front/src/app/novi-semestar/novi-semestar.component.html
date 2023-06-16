@@ -1,4 +1,7 @@
 <div>
+    <div class="overlay" *ngIf="semestarForm.valid && submitted">
+        <mat-spinner class="spinner"></mat-spinner>
+    </div>
     <mat-card class="form">
         <mat-grid-list cols="1" rowHeight="70px" class="form-content">
             <mat-grid-tile>

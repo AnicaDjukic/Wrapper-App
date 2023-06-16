@@ -9,9 +9,11 @@ import java.util.Optional;
 
 public interface StudentskaGrupaRepository extends MongoRepository<StudentskaGrupa, String> {
 
-    @Query("{$and:[{ $expr: { $regexMatch: { input: { $toString: '$oznaka' }, regex: ?0, options: 'i' } } }, " +
-            "{ $expr: { $regexMatch: { input: { $toString: '$godina' }, regex: { $cond: [ { $eq: [ '?1', '' ] }, '.*', '^?1$' ] }, options: 'i' } } }," +
-            "{ $expr: { $regexMatch: { input: { $toString: '$brojStudenata' }, regex: { $cond: [ { $eq: [ '?2', '' ] }, '.*', '^?2$' ] }, options: 'i' } } }," +
+    @Query("{$and:[{ $expr: { $regexMatch: { input: { $toString: '$oznaka' }, regex: ?0, options: 'i' } } }," +
+            " { $expr: { $regexMatch: { input: { $toString: '$godina' }," +
+            " regex: { $cond: [ { $eq: [ '?1', '' ] }, '.*', '^?1$' ] }, options: 'i' } } }," +
+            " { $expr: { $regexMatch: { input: { $toString: '$brojStudenata' }," +
+            " regex: { $cond: [ { $eq: [ '?2', '' ] }, '.*', '^?2$' ] }, options: 'i' } } }," +
             " {'studijskiProgram': ?3}]}")
     List<StudentskaGrupa> search(String oznaka, String godina, String brojStudenata, String studProgId);
 

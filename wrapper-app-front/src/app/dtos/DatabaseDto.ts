@@ -1,4 +1,5 @@
 export interface DatabaseDto {
+    id: string;
     semestar: string;
     godina: string;
     predmeti: string;
@@ -7,4 +8,7 @@ export interface DatabaseDto {
     realizacija: string;
     predavaci: string;
     prostorije: string;
+    generationStarted: Date;
+    generationFinished: Date;
+    path: string;
 }

@@ -5,35 +5,59 @@
                 <h1>Generisanje rasporeda</h1>
             </mat-grid-tile>
             <form>
-                <!-- <mat-grid-tile>
-                    <mat-checkbox style="margin-right: 2%;">Zaključavanje izmena</mat-checkbox>
-                </mat-grid-tile>
-                <mat-grid-tile>
-                    <mat-checkbox>Pokretanje generisanja</mat-checkbox>
-                </mat-grid-tile> -->
                 <mat-grid-tile style="font-size: larger">
                     Izaberite semestar za koji želite da pokrenete generisanje rasporeda:
                 </mat-grid-tile>
                 <mat-grid-tile rowspan="2">
                     <mat-form-field style="margin-top: 5%;">
                         <mat-label>Izaberite semestar</mat-label>
-                        <mat-select>
-                            <mat-option value="Z1">Zimski 2023/24</mat-option>
-                            <mat-option value="L">Letnji 2022/23</mat-option>
-                            <mat-option value="Z2">Zimski 2022/23</mat-option>
+                        <mat-select [(ngModel)]="selectedSemester" name="selectedSemester">
+                            <mat-option *ngFor="let option of options" [value]="option.id">{{option.semestar}} {{option.godina}}</mat-option>
                         </mat-select>
                     </mat-form-field>
                 </mat-grid-tile>
-                <!-- <mat-grid-tile rowspan="3">
-                    <mat-form-field class="example-full-width">
-                        <mat-label>Poruka</mat-label>
-                        <textarea matInput></textarea>
-                    </mat-form-field>
-                </mat-grid-tile> -->
                 <mat-grid-tile>
-                    <button mat-raised-button color="primary">Pokreni</button>
+                    <button mat-raised-button color="primary" (click)="submit()" [disabled]="!selectedSemester">Pokreni</button>
                 </mat-grid-tile>
             </form>
         </mat-grid-list>
     </mat-card>
+    <div class="semesters">
+        <mat-card class="warning">
+            Predviđeno vreme trajanja generisanja je 3 dana...
+        </mat-card>
+        <div *ngFor="let semestar of semesters">
+            <mat-card *ngIf="semestar.generationStarted" class="semester-card">
+                <span class="semester"><b>{{ semestar.semestar }} {{ semestar.godina }}</b></span>
+                <span class="date-card">
+                    <div>Generisanje započeto:</div>
+                    <div *ngIf="semestar.generationStarted" class="date"><b>{{ semestar.generationStarted | date:
+                            'dd.MM.yyyy HH:mm' }}</b></div>
+                    <div *ngIf="!semestar.generationStarted" class="date"><b>-</b></div>
+                </span>
+                <span class="date-card">
+                    <div>Generisanje završeno:</div>
+                    <div *ngIf="semestar.generationFinished" class="date"><b>{{ semestar.generationFinished | date:
+                            'dd.MM.yyyy HH:mm' }}</b></div>
+                    <div *ngIf="!semestar.generationFinished" class="date"><b>-</b></div>
+                </span>
+                <button *ngIf="semestar.generationStarted && semestar.generationFinished" mat-icon-button
+                    class="action">
+                    <mat-icon>
+                        download
+                    </mat-icon>
+                </button>
+                <mat-icon *ngIf="semestar.generationStarted && !semestar.generationFinished"
+                    style="margin-left: 8%; margin-top: 2%;">
+                    update
+                </mat-icon>
+                <mat-icon *ngIf="!semestar.generationStarted && !semestar.generationFinished"
+                    style="margin-left: 8%; margin-top: 2%;">
+                    blank
+                </mat-icon>
+            </mat-card>
+        </div>
+    </div>
+
+
 </div>

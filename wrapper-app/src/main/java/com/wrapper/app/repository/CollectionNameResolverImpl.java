@@ -6,13 +6,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class CollectionNameResolverImpl implements CollectionNameResolver {
 
-    private final String PREDMETI = "Predmeti";
-    private final String STUDIJSKI_PROGRAMI = "StudijskiProgrami";
-    private final String STUDENTSKE_GRUPE = "StudentskeGrupe";
-    private final String REALIZACIJA = "Realizacija";
-    private final String PREDAVACI = "Predavaci";
-    private final String PROSTORIJE = "Prostorije";
-    private final String STUDIJSKI_PROGRAM_PREDMETI = "StudijskiProgramPredmeti";
+    private static final String PREDMETI = "Predmeti";
+    private static final String STUDIJSKI_PROGRAMI = "StudijskiProgrami";
+    private static final String STUDENTSKE_GRUPE = "StudentskeGrupe";
+    private static final String REALIZACIJA = "Realizacija";
+    private static final String PREDAVACI = "Predavaci";
+    private static final String PROSTORIJE = "Prostorije";
+    private static final String STUDIJSKI_PROGRAM_PREDMETI = "StudijskiProgramPredmeti";
 
     @Override
     public String resolveCollectionName(Class<?> entityClass) {

@@ -4,6 +4,9 @@ import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDateTime;
+import java.util.Date;
+
 @Data
 @Document(collection = "Databases")
 public class Database {
@@ -26,4 +29,10 @@ public class Database {
     private String predavaci;
 
     private String prostorije;
+
+    private Date generationStarted;
+
+    private Date generationFinished;
+
+    private String path;
 }

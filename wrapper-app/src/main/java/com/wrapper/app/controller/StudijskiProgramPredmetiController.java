@@ -50,7 +50,8 @@ public class StudijskiProgramPredmetiController {
 
     @PutMapping("{studProgramId}/predmeti/{predmetId}")
     @ResponseStatus(HttpStatus.OK)
-    public StudijskiProgramPredmetiDto updatePredmet(@PathVariable String studProgramId, @PathVariable String predmetId, @RequestBody PredavaciDto dto) {
+    public StudijskiProgramPredmetiDto updatePredmet(@PathVariable String studProgramId,
+                                                     @PathVariable String predmetId, @RequestBody PredavaciDto dto) {
         PredmetPredavac predmetPredavac = modelMapper.map(dto, PredmetPredavac.class);
         return modelMapper.map(service.updatePredmet(studProgramId, predmetId, predmetPredavac), StudijskiProgramPredmetiDto.class);
     }

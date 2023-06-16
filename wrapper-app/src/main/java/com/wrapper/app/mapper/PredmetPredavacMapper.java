@@ -35,8 +35,8 @@ public class PredmetPredavacMapper {
             predmetPredavac.setProfesor(predavacService.getById(dto.getProfesorId()));
         }
         dto.getOstaliProfesori().forEach(p -> predmetPredavac.getOstaliProfesori().add(predavacService.getById(p)));
-        dto.getAsistentZauzeca().forEach(z ->
-                predmetPredavac.getAsistentZauzeca().add(new AsistentZauzece(predavacService.getById(z.getAsistentId()), z.getBrojTermina()))
+        dto.getAsistentZauzeca().forEach(z -> predmetPredavac.getAsistentZauzeca()
+                        .add(new AsistentZauzece(predavacService.getById(z.getAsistentId()), z.getBrojTermina()))
         );
         return predmetPredavac;
     }

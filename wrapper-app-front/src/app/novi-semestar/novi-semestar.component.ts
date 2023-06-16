@@ -16,6 +16,7 @@ export class NoviSemestarComponent {
 
   semestarForm!: FormGroup;
   options: DatabaseDto[] = [];
+  submitted: boolean = false;
 
   constructor(private formBuilder: FormBuilder,
     private databaseApi: DatabaseService,
@@ -43,10 +44,12 @@ export class NoviSemestarComponent {
 
   add() {
     let dto = this.prepareData();
+    this.submitted = true;
     this.databaseApi.post(dto)
       .subscribe({
         next: (res) => {
           this.options.push(res);
+          this.submitted = false;
           this.toastr.success('Novi semestar je uspešno napravljen!', 'Uspešno!');
           setTimeout(() => {
             window.location.reload();
@@ -54,8 +57,10 @@ export class NoviSemestarComponent {
         },
         error: (message) => {
           if (message.error.message) {
+            this.submitted = false;
             this.openConfirmationDialog();
           } else {
+            this.submitted = false;
             this.toastr.error('Došlo je do greške prilikom dodavanja novog semestra!', 'Greška!');
           }
         }
@@ -79,10 +84,12 @@ export class NoviSemestarComponent {
 
   update() {
     let dto = this.prepareData();
+    this.submitted = true;
     this.databaseApi.put(dto)
       .subscribe({
         next: (res) => {
           this.options.push(res);
+          this.submitted = false;
           this.toastr.success('Semestar je uspešno napravljen!', 'Uspešno!');
           setTimeout(() => {
             window.location.reload();

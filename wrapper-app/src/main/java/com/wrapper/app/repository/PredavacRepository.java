@@ -9,7 +9,9 @@ import java.util.Optional;
 
 public interface PredavacRepository extends MongoRepository<Predavac, String> {
 
-    @Query("{ $and: [ { $expr: { $regexMatch: { input: { $toString: '$oznaka' }, regex: ?0, options: 'i' } } }, { 'ime': { $regex: ?1, $options: 'i' } }, { 'prezime': { $regex: ?2, $options: 'i' } }, { 'orgJedinica': ?3 } ] }")
+    @Query("{ $and: [ { $expr: { $regexMatch: { input: { $toString: '$oznaka' }, regex: ?0, options: 'i' } } }," +
+            " { 'ime': { $regex: ?1, $options: 'i' } }, { 'prezime': { $regex: ?2, $options: 'i' } }," +
+            " { 'orgJedinica': ?3 } ] }")
     List<Predavac> search(String oznaka, String ime, String prezime, String orgJedinica);
 
     Optional<Predavac> findByOznaka(int oznaka);

@@ -8,10 +8,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class StudijskiProgramMapper {
 
-    private final String OAS = "OSNOVNE AKADEMSKE STUDIJE";
-    private final String OSS = "OSNOVNE STRUKOVNE STUDIJE";
-    private final String MAS = "MASTER AKADEMSKE STUDIJE";
-    private final String MSS = "MASTER STRUKOVNE STUDIJE";
+    private static final String OAS = "OSNOVNE AKADEMSKE STUDIJE";
+    private static final String OSS = "OSNOVNE STRUKOVNE STUDIJE";
+    private static final String MAS = "MASTER AKADEMSKE STUDIJE";
+    private static final String MSS = "MASTER STRUKOVNE STUDIJE";
 
     public StudijskiProgramResponseDto mapToResponseDto(StudijskiProgram studijskiProgram) {
         StudijskiProgramResponseDto dto = new StudijskiProgramResponseDto();
@@ -40,6 +40,5 @@ public class StudijskiProgramMapper {
             default -> "";
         };
     }
-
 
 }

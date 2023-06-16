@@ -14,28 +14,26 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/mongo")
-public class DatabaseController {
+public class DatabaseController<T> {
 
-    private final DatabaseService service;
+    private final DatabaseService<T> service;
 
     private final ModelMapper modelMapper;
 
     private final TokenUtils tokenUtils;
 
-    public DatabaseController(DatabaseService service, ModelMapper modelMapper, TokenUtils tokenUtils) {
+    public DatabaseController(DatabaseService<T> service, ModelMapper modelMapper, TokenUtils tokenUtils) {
         this.service = service;
         this.modelMapper = modelMapper;
         this.tokenUtils = tokenUtils;
     }
 
-    @CrossOrigin(value = "*")
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<DatabaseResponseDto> getAll() {
         return service.getAll().stream().map(d -> modelMapper.map(d, DatabaseResponseDto.class)).toList();
     }
 
-    @CrossOrigin(value = "*")
     @PostMapping("/")
     @ResponseStatus(HttpStatus.OK)
     public DatabaseResponseDto create(@RequestBody DatabaseRequestDto requestDto) {
@@ -43,7 +41,6 @@ public class DatabaseController {
         return modelMapper.map(database, DatabaseResponseDto.class);
     }
 
-    @CrossOrigin(value = "*")
     @PutMapping("/")
     @ResponseStatus(HttpStatus.OK)
     public DatabaseResponseDto update(@RequestBody DatabaseResponseDto requestDto) {
@@ -51,7 +48,6 @@ public class DatabaseController {
         return modelMapper.map(database, DatabaseResponseDto.class);
     }
 
-    @CrossOrigin(value = "*")
     @GetMapping("/switch/{databaseName}")
     @ResponseStatus(HttpStatus.OK)
     public void switchDatabase(@PathVariable String databaseName, HttpServletRequest request) {
