@@ -58,16 +58,14 @@ public class DatabaseService<T> {
         return repository.save(database);
     }
 
-    public Database update(Database database) {
-        Optional<Database> existing = repository.
-                findBySemestarAndGodina(database.getSemestar(), database.getGodina());
-        if (existing.isEmpty()) {
-            throw new NotFoundException(Database.class.getSimpleName());
-        }
+    public Database updateCollections(Database database) {
+        Database existing = repository.
+                findBySemestarAndGodina(database.getSemestar(), database.getGodina())
+                .orElseThrow(() -> new NotFoundException(Database.class.getSimpleName()));
         String databaseName = database.getGodina() + database.getSemestar().substring(0, 1).toUpperCase();
         CollectionNameProvider.setCollectionName(databaseName);
         updateCollections(database, databaseName);
-        database.setId(existing.get().getId());
+        database.setId(existing.getId());
         return repository.save(database);
     }
 
@@ -129,5 +127,9 @@ public class DatabaseService<T> {
         } else {
             throw new NotFoundException(collectionName);
         }
+    }
+
+    public void update(Database database) {
+        repository.save(database);
     }
 }

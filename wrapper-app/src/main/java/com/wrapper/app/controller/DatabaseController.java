@@ -44,7 +44,7 @@ public class DatabaseController<T> {
     @PutMapping("/")
     @ResponseStatus(HttpStatus.OK)
     public DatabaseResponseDto update(@RequestBody DatabaseResponseDto requestDto) {
-        Database database = service.update(modelMapper.map(requestDto, Database.class));
+        Database database = service.updateCollections(modelMapper.map(requestDto, Database.class));
         return modelMapper.map(database, DatabaseResponseDto.class);
     }
 

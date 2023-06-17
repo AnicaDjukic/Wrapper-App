@@ -1,4 +1,7 @@
 <div>
+    <div class="overlay" *ngIf="this.selectedSemester && submitted">
+        <mat-spinner class="spinner"></mat-spinner>
+    </div>
     <mat-card class="form">
         <mat-grid-list cols="1" rowHeight="50px" class="form-content">
             <mat-grid-tile>
@@ -41,12 +44,12 @@
                             'dd.MM.yyyy HH:mm' }}</b></div>
                     <div *ngIf="!semestar.generationFinished" class="date"><b>-</b></div>
                 </span>
-                <button *ngIf="semestar.generationStarted && semestar.generationFinished" mat-icon-button
-                    class="action">
+                <a *ngIf="semestar.generationStarted && semestar.generationFinished" mat-icon-button
+                    class="action" (click)="download(semestar.path)">
                     <mat-icon>
                         download
                     </mat-icon>
-                </button>
+                </a>
                 <mat-icon *ngIf="semestar.generationStarted && !semestar.generationFinished"
                     style="margin-left: 8%; margin-top: 2%;">
                     update

@@ -4,17 +4,23 @@ import com.google.gson.Gson;
 import com.wrapper.app.domain.Database;
 import com.wrapper.app.domain.Realizacija;
 import com.wrapper.app.domain.StudijskiProgramPredmeti;
+import com.wrapper.app.util.FileHandler;
+import org.springframework.core.io.Resource;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class RasporedService {
@@ -23,24 +29,32 @@ public class RasporedService {
 
     private final MongoTemplate mongoTemplate;
 
-    private static final String STUDIJSKI_PROGRAM_PREDMETI = "StudijskiProgramPredmeti";
+    private final FileHandler fileHandler;
 
-    public RasporedService(DatabaseService databaseService, MongoTemplate mongoTemplate) {
+    private static final String STUDIJSKI_PROGRAM_PREDMETI = "StudijskiProgramPredmeti";
+    private static final String LOCAL_PATH = "src/main/resources/files/";
+
+    public RasporedService(DatabaseService databaseService, MongoTemplate mongoTemplate, FileHandler fileHandler) {
         this.databaseService = databaseService;
         this.mongoTemplate = mongoTemplate;
+        this.fileHandler = fileHandler;
     }
 
     public void startGenerating(String id) {
         Database database = databaseService.getById(id);
         Realizacija realizacija = createRealizacija(database);
         try {
-            realizacija.setId(UUID.randomUUID().toString());
+            realizacija.setId(database.getId());
+            // TODO: ovde umesto realizacije ce se dobiti lista Meeting objekata
             Realizacija updatedRealizacija = callPythonScript(realizacija);
+            // TODO: pozvati jos 2 endpointa
             System.out.println(updatedRealizacija);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        database.setGenerationStarted(new Date());
+        database.setGenerationStarted(getLocalDate());
+        database.setGenerationFinished(null);
+        database.setPath(null);
         databaseService.update(database);
     }
 
@@ -84,5 +98,26 @@ public class RasporedService {
     private static Realizacija fromJson(String json) {
         Gson gson = new Gson();
         return gson.fromJson(json, Realizacija.class);
+    }
+
+    private Date getLocalDate() {
+        LocalDate localDate = LocalDate.now();
+        LocalTime localTime = LocalTime.now();
+        LocalDateTime localDateTime = LocalDateTime.of(localDate, localTime);
+        // Convert LocalDateTime to Date
+        return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+    }
+
+    public void finish(String id, MultipartFile raspored) {
+        Database database = databaseService.getById(id);
+        String filename = database.getGodina().replace("/", "_") + "_" + database.getSemestar() + ".xlsx";
+        File rasporedFile = fileHandler.saveFile(raspored, LOCAL_PATH + filename);
+        database.setGenerationFinished(getLocalDate());
+        database.setPath(filename);
+        databaseService.update(database);
+    }
+
+    public Resource download(String filename) {
+        return fileHandler.download(filename);
     }
 }
