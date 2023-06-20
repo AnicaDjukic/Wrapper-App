@@ -104,7 +104,6 @@ public class RasporedService {
         LocalDate localDate = LocalDate.now();
         LocalTime localTime = LocalTime.now();
         LocalDateTime localDateTime = LocalDateTime.of(localDate, localTime);
-        // Convert LocalDateTime to Date
         return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
     }
 

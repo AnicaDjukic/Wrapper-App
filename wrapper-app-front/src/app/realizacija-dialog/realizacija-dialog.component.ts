@@ -33,6 +33,7 @@ export class RealizacijaDialogComponent {
   glavniProfesorValidOptions!: string[];
   options: string[][] = [[]];
   optionsAsistenti: string[][] = [[]];
+  predmet!: PredmetDto;
 
   constructor(private formBuilder: FormBuilder,
     private api: RealizacijaService,
@@ -211,13 +212,14 @@ export class RealizacijaDialogComponent {
     this.optionsAsistenti[index] = options;
   }
 
-  getGodina(predmet: string) {
+  getPredmet(predmet: string) {
     let predmeti = Array.from(this.predmeti);
     let predmetId = predmeti.filter(sp => sp.oznaka == predmet.split(' ')[1]).map(value => value.id)[0];
     this.predmetApi.get(predmetId)
       .subscribe({
         next: (res) => {
           this.show = true;
+          this.predmet = res;
           this.predmetForm.controls['godina'].setValue(res.godina);
         }
       });

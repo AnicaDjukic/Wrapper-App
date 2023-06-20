@@ -34,4 +34,8 @@ public class PredmetPredavac {
                 && asistentZauzeca.size() == 0;
         return profesorAlert || asistentiAlert;
     }
+
+    public void removeMissingAsistenti() {
+        asistentZauzeca.removeIf(asistentZauzece -> asistentZauzece.getAsistent() == null);
+    }
 }

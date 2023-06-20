@@ -76,6 +76,7 @@ public class DatabaseService<T> {
         createCollection(database.getRealizacija(), STUDIJSKI_PROGRAM_PREDMETI, newSemester);
         createCollection(database.getStudentskeGrupe(), STUDENTSKE_GRUPE, newSemester);
         createCollection(database.getProstorije(), PROSTORIJE, newSemester);
+        cleanData(newSemester);
     }
 
     private void createCollection(String from, String collectionNamePrefix, String newSemester) {
@@ -85,6 +86,16 @@ public class DatabaseService<T> {
         mongoTemplate.insert(data, collectionName);
     }
 
+    private void cleanData(String newSemester) {
+        CollectionNameProvider.setCollectionName(newSemester);
+        String collectionName = STUDIJSKI_PROGRAM_PREDMETI + newSemester;
+        List<StudijskiProgramPredmeti> studijskiProgramPredmetiList = mongoTemplate.findAll(StudijskiProgramPredmeti.class, collectionName);
+        for (StudijskiProgramPredmeti studijskiProgramPredmeti : studijskiProgramPredmetiList) {
+            studijskiProgramPredmeti.removeMissingPredavaci();
+            mongoTemplate.save(studijskiProgramPredmeti, collectionName);
+        }
+    }
+
     private void updateCollections(Database database, String newSemester) {
         updateCollection(database.getStudijskiProgrami(), STUDIJSKI_PROGRAMI, newSemester);
         updateCollection(database.getPredmeti(), PREDMETI, newSemester);
@@ -92,6 +103,7 @@ public class DatabaseService<T> {
         updateCollection(database.getRealizacija(), STUDIJSKI_PROGRAM_PREDMETI, newSemester);
         updateCollection(database.getStudentskeGrupe(), STUDENTSKE_GRUPE, newSemester);
         updateCollection(database.getProstorije(), PROSTORIJE, newSemester);
+        cleanData(newSemester);
     }
 
     private void updateCollection(String from, String collectionNamePrefix, String newSemester) {

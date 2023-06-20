@@ -13,7 +13,7 @@
                 <input type="text" placeholder="Izaberite predmet..." matInput formControlName="predmetId"
                     [matAutocomplete]="auto1">
                 <mat-autocomplete autoActiveFirstOption #auto1="matAutocomplete" matAutocompleteSingleOption
-                    (optionSelected)='getGodina($event.option.value)'>
+                    (optionSelected)='getPredmet($event.option.value)'>
                     <mat-option *ngFor="let option of filteredPredmetOptions | async" [value]="option">
                         {{option}}
                     </mat-option>
@@ -106,7 +106,7 @@
         <button mat-raised-button (click)="addControl()">
             <mat-icon>add</mat-icon> profesora
         </button>
-        <button mat-raised-button (click)="addAsistent()">
+        <button mat-raised-button (click)="addAsistent()" [disabled]="predmet && predmet.brojCasovaAud == 0 && predmet.brojCasovaLab == 0 && predmet.brojCasovaRac == 0">
             <mat-icon>add</mat-icon> asistenta
         </button>
         <button mat-raised-button color="warn" mat-dialog-close>Zatvori</button>

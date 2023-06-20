@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Data
@@ -69,6 +70,14 @@ public class StudijskiProgramPredmeti {
             }
         }
         studijskiProgram.setBlock(false);
+    }
+
+    public void removeMissingPredavaci() {
+        for(PredmetPredavac predmetPredavac : predmetPredavaci) {
+            predmetPredavac.getOstaliProfesori().removeIf(Objects::isNull);
+            predmetPredavac.removeMissingAsistenti();
+            updateBlockStatus();
+        }
     }
 
     public void removePredavac(String predavacId) {
