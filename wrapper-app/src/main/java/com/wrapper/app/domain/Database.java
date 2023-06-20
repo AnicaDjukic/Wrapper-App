@@ -1,6 +1,7 @@
 package com.wrapper.app.domain;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -8,6 +9,7 @@ import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
+@EqualsAndHashCode
 @Document(collection = "Databases")
 public class Database {
 

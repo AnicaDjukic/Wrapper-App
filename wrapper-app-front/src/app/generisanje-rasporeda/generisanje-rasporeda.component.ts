@@ -37,7 +37,7 @@ export class GenerisanjeRasporedaComponent {
   }
 
   getAllOptions() {
-    this.databaseApi.getAll().subscribe({
+    this.databaseApi.getAllUnblocked().subscribe({
       next: (res) => {
         for (let option of res.reverse()) {
           if (!option.generationStarted || option.generationFinished) {

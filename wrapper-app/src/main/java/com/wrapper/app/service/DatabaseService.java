@@ -36,6 +36,19 @@ public class DatabaseService<T> {
         return repository.findAll();
     }
 
+    public List<Database> getUnblocked() {
+        List<Database> unblockedDatabases = new ArrayList<>(repository.findAll());
+        for (Database database: repository.findAll()) {
+            String collectionName = STUDIJSKI_PROGRAMI + database.getGodina() + database.getSemestar().charAt(0);
+            List<StudijskiProgram> studijskiProgrami = mongoTemplate.findAll(StudijskiProgram.class, collectionName);
+            boolean isBlocked = studijskiProgrami.stream().anyMatch(StudijskiProgram::isBlock);
+            if(isBlocked) {
+                unblockedDatabases.remove(database);
+            }
+        }
+        return unblockedDatabases;
+    }
+
     public Database getById(String id) {
         return repository.findById(id)
                 .orElseThrow(() -> new NotFoundException(Database.class.getSimpleName()));

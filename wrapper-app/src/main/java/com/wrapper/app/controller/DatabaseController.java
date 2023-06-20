@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/mongo")
+@RequestMapping("/api/v1/databases")
 public class DatabaseController<T> {
 
     private final DatabaseService<T> service;
@@ -34,14 +34,20 @@ public class DatabaseController<T> {
         return service.getAll().stream().map(d -> modelMapper.map(d, DatabaseResponseDto.class)).toList();
     }
 
-    @PostMapping("/")
+    @GetMapping("/unblocked")
+    @ResponseStatus(HttpStatus.OK)
+    public  List<DatabaseResponseDto> getAllUnblocked() {
+        return service.getUnblocked().stream().map(d -> modelMapper.map(d, DatabaseResponseDto.class)).toList();
+    }
+
+    @PostMapping
     @ResponseStatus(HttpStatus.OK)
     public DatabaseResponseDto create(@RequestBody DatabaseRequestDto requestDto) {
         Database database = service.create(modelMapper.map(requestDto, Database.class));
         return modelMapper.map(database, DatabaseResponseDto.class);
     }
 
-    @PutMapping("/")
+    @PutMapping
     @ResponseStatus(HttpStatus.OK)
     public DatabaseResponseDto update(@RequestBody DatabaseResponseDto requestDto) {
         Database database = service.updateCollections(modelMapper.map(requestDto, Database.class));

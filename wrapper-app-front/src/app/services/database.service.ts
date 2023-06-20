@@ -6,7 +6,7 @@ import { Injectable } from '@angular/core';
 })
 export class DatabaseService {
 
-  private databaseUrl = "http://localhost:8080/mongo";
+  private databaseUrl = "http://localhost:8080/api/v1/databases";
 
   constructor(private http: HttpClient) { }
 
@@ -14,16 +14,20 @@ export class DatabaseService {
     return this.http.get<any>(`${this.databaseUrl}`);
   }
 
+  getAllUnblocked() {
+    return this.http.get<any>(`${this.databaseUrl}/unblocked`);
+  }
+
   switch(database: string) {
     return this.http.get<any>(`${this.databaseUrl}/switch/` + database);
   }
 
   post(dto: any) {
-    return this.http.post<any>(`${this.databaseUrl}/`, dto);
+    return this.http.post<any>(`${this.databaseUrl}`, dto);
   }
 
   put(dto: any) {
-    return this.http.put<any>(`${this.databaseUrl}/`, dto);
+    return this.http.put<any>(`${this.databaseUrl}`, dto);
   }
   
 
