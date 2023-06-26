@@ -11,6 +11,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @SpringBootApplication
 public class WrapperAppApplication implements CommandLineRunner {
@@ -34,7 +35,6 @@ public class WrapperAppApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) {
 //		CollectionNameProvider.setCollectionName("2022/23Z");
-//		Realizacija realizacija = realizacijaRepository.findAll().get(0);
 //		for(StudijskiProgram studijskiProgram : studijskiProgramRepository.findAll()) {
 //			Optional<StudijskiProgramPredmeti> exists = studijskiProgramPredmetiRepository.findById(studijskiProgram.getId());
 //			if(exists.isEmpty()) {
@@ -44,18 +44,25 @@ public class WrapperAppApplication implements CommandLineRunner {
 //				studijskiProgramPredmeti.setPredmetPredavaci(predmetPredavac);
 //				studijskiProgramPredmeti.setStudijskiProgram(studijskiProgram);
 //				studijskiProgramPredmetiRepository.save(studijskiProgramPredmeti);
-//				realizacija.getStudijskiProgramPredmeti().add(studijskiProgramPredmeti);
 //			}
 //		}
 //
-//		for(StudijskiProgramPredmeti studijskiProgramPredmeti: realizacija.getStudijskiProgramPredmeti()) {
-//			if(studijskiProgramPredmeti.getStudijskiProgram() == null) {
-//				studijskiProgramPredmeti.setStudijskiProgram(studijskiProgramRepository.findById(studijskiProgramPredmeti.getId()).get());
-//				studijskiProgramPredmetiRepository.save(studijskiProgramPredmeti);
+//		for(StudijskiProgramPredmeti studijskiProgramPredmeti : studijskiProgramPredmetiRepository.findAll()) {
+//			for (PredmetPredavac predmetPredavac : studijskiProgramPredmeti.getPredmetPredavaci()) {
+//				if (!predmetPredavac.getPredmet().getStudijskiProgram().getId().equals(studijskiProgramPredmeti.getStudijskiProgram().getId())) {
+//					Optional<Predmet> predmet = predmetRepository.findByOznakaAndPlanAndStudijskiProgram(predmetPredavac.getPredmet().getOznaka(), predmetPredavac.getPredmet().getPlan(), studijskiProgramPredmeti.getStudijskiProgram().getId());
+//					if (predmet.isEmpty()) {
+//						System.out.println(predmetPredavac.getPredmet().getOznaka());
+//						Predmet predmet1 = predmetPredavac.getPredmet();
+//						predmet1.setId(UUID.randomUUID().toString());
+//						predmet1.setStudijskiProgram(studijskiProgramPredmeti.getStudijskiProgram());
+//					}
+//					predmet.ifPresent(predmetPredavac::setPredmet);
+//				}
 //			}
+//			studijskiProgramPredmeti.updateBlockStatus();
+//			studijskiProgramPredmetiRepository.save(studijskiProgramPredmeti);
 //		}
-//
-//		realizacijaRepository.save(realizacija);
 //
 //		for(Predmet predmet : predmetRepository.findAll()) {
 //			boolean uRealizaciji = false;
