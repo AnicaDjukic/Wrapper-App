@@ -1,24 +1,24 @@
 package com.wrapper.app.service;
 
 import com.google.gson.Gson;
-import com.wrapper.app.domain.Database;
-import com.wrapper.app.domain.Realizacija;
-import com.wrapper.app.domain.StudijskiProgramPredmeti;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.wrapper.app.domain.*;
+import com.wrapper.app.dto.generator.*;
+import com.wrapper.app.repository.CollectionNameProvider;
 import com.wrapper.app.util.FileHandler;
+import org.modelmapper.ModelMapper;
 import org.springframework.core.io.Resource;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.file.Files;
+import java.io.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -31,24 +31,34 @@ public class RasporedService {
 
     private final FileHandler fileHandler;
 
+    private final ModelMapper modelMapper;
+
     private static final String STUDIJSKI_PROGRAM_PREDMETI = "StudijskiProgramPredmeti";
+    private static final String STUDIJSKI_PROGRAMI = "StudijskiProgrami";
+    private static final String STUDENTSKE_GRUPE = "StudentskeGrupe";
+    private static final String PREDMETI = "Predmeti";
+    private static final String PREDAVACI = "Predavaci";
     private static final String LOCAL_PATH = "src/main/resources/files/";
 
-    public RasporedService(DatabaseService databaseService, MongoTemplate mongoTemplate, FileHandler fileHandler) {
+    public RasporedService(DatabaseService databaseService, MongoTemplate mongoTemplate, FileHandler fileHandler, ModelMapper modelMapper) {
         this.databaseService = databaseService;
         this.mongoTemplate = mongoTemplate;
         this.fileHandler = fileHandler;
+        this.modelMapper = modelMapper;
     }
 
     public void startGenerating(String id) {
         Database database = databaseService.getById(id);
-        Realizacija realizacija = createRealizacija(database);
+        CollectionNameProvider.setCollectionName(database.getGodina() + database.getSemestar().charAt(0));
+        RealizacijaDto realizacija = createRealizacija(database);
+        List<StudijskiProgramDto> studijskiProgrami = getStudijskiProgrami(database);
+        List<StudentskaGrupaDto> studentskeGrupe = getStudentskeGrupe(database);
+        List<PredmetDto> predmeti = getPredmeti(database);
+        List<PredavacDto> predavaci = getPredavaci(database);
         try {
-            realizacija.setId(database.getId());
             // TODO: ovde umesto realizacije ce se dobiti lista Meeting objekata
-            Realizacija updatedRealizacija = callPythonScript(realizacija);
+            RealizacijaDto updatedRealizacija = callPythonScript(realizacija, studijskiProgrami, studentskeGrupe, predmeti, predavaci);
             // TODO: pozvati jos 2 endpointa
-            System.out.println(updatedRealizacija);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -58,46 +68,140 @@ public class RasporedService {
         databaseService.update(database);
     }
 
-    private Realizacija createRealizacija(Database database) {
-        Realizacija realizacija = new Realizacija();
+    private RealizacijaDto createRealizacija(Database database) {
+        RealizacijaDto realizacija = new RealizacijaDto();
         realizacija.setGodina(database.getGodina());
         realizacija.setSemestar(database.getSemestar().substring(0, 1));
         String collectionName = STUDIJSKI_PROGRAM_PREDMETI + database.getGodina() + database.getSemestar().charAt(0);
         List<StudijskiProgramPredmeti> studijskiProgramPredmeti = mongoTemplate.findAll(StudijskiProgramPredmeti.class, collectionName);
-        realizacija.setStudijskiProgramPredmeti(studijskiProgramPredmeti);
+        List<StudijskiProgramPredmetiDto> studijskiProgramPredmetiDtos = getStudijskiProgramPredmetiDtos(studijskiProgramPredmeti);
+        realizacija.setStudijskiProgramPredmeti(studijskiProgramPredmetiDtos);
         return realizacija;
     }
 
-    private Realizacija callPythonScript(Realizacija realizacija) throws IOException {
-        // Specify the path to the Python script
-        String pythonScriptPath = "src/main/resources/realizacija.py";
+    private List<StudijskiProgramPredmetiDto> getStudijskiProgramPredmetiDtos(List<StudijskiProgramPredmeti> studijskiProgramPredmeti) {
+        List<StudijskiProgramPredmetiDto> studijskiProgramPredmetiDtos = new ArrayList<>();
+        for (StudijskiProgramPredmeti studijskiProgramPredmet : studijskiProgramPredmeti) {
+            StudijskiProgramPredmetiDto studijskiProgramPredmetiDto = new StudijskiProgramPredmetiDto();
+            studijskiProgramPredmetiDto.setStudijskiProgramId(studijskiProgramPredmetiDto.getStudijskiProgramId());
+            List<PredmetPredavacDto> predmetPredavacDtos = getPredmetPredavacDtos(studijskiProgramPredmet.getPredmetPredavaci());
+            studijskiProgramPredmetiDto.setPredmetPredavaci(predmetPredavacDtos);
+            studijskiProgramPredmetiDtos.add(studijskiProgramPredmetiDto);
+        }
+        return studijskiProgramPredmetiDtos;
+    }
 
-        // Write JSON data to a temporary file
+    private List<PredmetPredavacDto> getPredmetPredavacDtos(List<PredmetPredavac> predmetPredavaci) {
+        List<PredmetPredavacDto> predmetPredavacDtos = new ArrayList<>();
+        for (PredmetPredavac predmetPredavac : predmetPredavaci) {
+            PredmetPredavacDto predmetPredavacDto = new PredmetPredavacDto();
+            predmetPredavacDto.setPredmetId(predmetPredavac.getPredmet().getId());
+            predmetPredavacDto.setPredmetPlan(predmetPredavac.getPredmet().getPlan());
+            predmetPredavacDto.setPredmetGodina(predmetPredavac.getPredmet().getGodina());
+            predmetPredavacDto.setPredmetOznaka(predmetPredavac.getPredmet().getOznaka());
+            if(predmetPredavac.getProfesor() != null) {
+                predmetPredavacDto.setProfesorId(predmetPredavac.getProfesor().getId());
+            }
+            predmetPredavac.getOstaliProfesori().forEach(p -> predmetPredavacDto.getOstaliProfesori().add(p.getId()));
+            predmetPredavac.getAsistentZauzeca().forEach(a -> {
+                AsistentZauzecaDto dto = new AsistentZauzecaDto();
+                dto.setAsistentId(a.getAsistent().getId());
+                dto.setBrojTermina(a.getBrojTermina());
+                predmetPredavacDto.getAsistentZauzeca().add(dto);
+            });
+            predmetPredavacDtos.add(predmetPredavacDto);
+        }
+        return predmetPredavacDtos;
+    }
+
+    private List<StudijskiProgramDto> getStudijskiProgrami(Database database) {
+        String collectionName = STUDIJSKI_PROGRAMI + database.getGodina() + database.getSemestar().charAt(0);
+        List<StudijskiProgram> studijskiProgrami = mongoTemplate.findAll(StudijskiProgram.class, collectionName);
+        return studijskiProgrami.stream().map(s -> modelMapper.map(s, StudijskiProgramDto.class)).toList();
+    }
+
+    private List<StudentskaGrupaDto> getStudentskeGrupe(Database database) {
+        String collectionName = STUDENTSKE_GRUPE + database.getGodina() + database.getSemestar().charAt(0);
+        List<StudentskaGrupa> studentskeGrupe = mongoTemplate.findAll(StudentskaGrupa.class, collectionName);
+        return studentskeGrupe.stream().map(s -> modelMapper.map(s, StudentskaGrupaDto.class)).toList();
+    }
+
+    private List<PredmetDto> getPredmeti(Database database) {
+        String collectionName = PREDMETI + database.getGodina() + database.getSemestar().charAt(0);
+        List<Predmet> predmeti = mongoTemplate.findAll(Predmet.class, collectionName);
+        return predmeti.stream().map(p -> modelMapper.map(p, PredmetDto.class)).toList();
+    }
+
+    private List<PredavacDto> getPredavaci(Database database) {
+        String collectionName = PREDAVACI + database.getGodina() + database.getSemestar().charAt(0);
+        List<Predavac> predavaci = mongoTemplate.findAll(Predavac.class, collectionName);
+        return predavaci.stream().map(p -> modelMapper.map(p, PredavacDto.class)).toList();
+    }
+
+    private RealizacijaDto callPythonScript(RealizacijaDto realizacija,
+                                            List<StudijskiProgramDto> studijskiProgramList,
+                                            List<StudentskaGrupaDto> studentskaGrupaList,
+                                            List<PredmetDto> predmetList,
+                                            List<PredavacDto> predavacList) throws IOException {
+        // Specify the path to the Python script
+        String pythonScriptPath = "src/main/resources/scripts/7_generate_termini.py";
+
+        // Create a JSON object that contains the `realizacija` and `studijskiProgramList`
+        Gson gson = new Gson();
+        JsonObject inputData = new JsonObject();
+        inputData.add("realizacija", JsonParser.parseString(gson.toJson(realizacija)));
+        inputData.add("studijskiProgramList", JsonParser.parseString(gson.toJson(studijskiProgramList)));
+        inputData.add("studentskaGrupaList", JsonParser.parseString(gson.toJson(studentskaGrupaList)));
+        // TODO: Prostorije
+
+        inputData.add("predmetList", JsonParser.parseString(gson.toJson(predmetList)));
+        inputData.add("predavacList", JsonParser.parseString(gson.toJson(predavacList)));
+
+
+
+        // Convert the JSON object to a string
+        String jsonInput = inputData.toString();
+
+        // Write the JSON data to a temporary file
         File tempFile = File.createTempFile("data", ".json");
-        String jsonInput = toJson(realizacija);
-        Files.write(tempFile.toPath(), jsonInput.getBytes());
+        try (FileWriter fileWriter = new FileWriter(tempFile)) {
+            fileWriter.write(jsonInput);
+        }
 
         // Specify the path to the Python script and the JSON file
         String jsonFilePath = tempFile.getAbsolutePath();
 
-        // Create a Process instance to execute the Python script
-        Process process = Runtime.getRuntime().exec("python " + pythonScriptPath + " " + jsonFilePath);
+        // Construct the command to execute the Python script
+        String[] command = {"python", pythonScriptPath, jsonFilePath};
 
-        // Read the output JSON from the Python script
+        // Create a ProcessBuilder instance with the command
+        ProcessBuilder processBuilder = new ProcessBuilder(command);
+
+        // Redirect the process's output to a pipe
+        processBuilder.redirectErrorStream(true);
+
+        // Start the process
+        Process process = processBuilder.start();
+
+        // Read the output from the Python script
         BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-        String jsonOutput = reader.readLine();
+        String line;
+        StringBuilder outputBuilder = new StringBuilder();
+        while ((line = reader.readLine()) != null) {
+            outputBuilder.append(line);
+        }
+        String jsonOutput = outputBuilder.toString();
 
-        return fromJson(jsonOutput);
-    }
+        // Close the BufferedReader
+        reader.close();
 
-    private static String toJson(Realizacija realizacija) {
-        Gson gson = new Gson();
-        return gson.toJson(realizacija);
-    }
+        // Print the output for verification
+        System.out.println("JSON Output: " + jsonOutput);
 
-    private static Realizacija fromJson(String json) {
-        Gson gson = new Gson();
-        return gson.fromJson(json, Realizacija.class);
+        // Deserialize the JSON output into a RealizacijaDto object
+
+        // Return the updated RealizacijaDto object
+        return realizacija;
     }
 
     private Date getLocalDate() {

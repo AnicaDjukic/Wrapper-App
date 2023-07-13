@@ -2,6 +2,7 @@ package com.wrapper.app.mapper;
 
 import com.wrapper.app.domain.Predavac;
 import com.wrapper.app.dto.PredavacRequestDto;
+import com.wrapper.app.dto.generator.PredavacDto;
 import com.wrapper.app.service.OrganizacionaJedinicaService;
 import org.springframework.stereotype.Component;
 
@@ -24,5 +25,18 @@ public class PredavacMapper {
         predavac.setOrganizacijaFakulteta(dto.isOrganizacijaFakulteta());
         predavac.setOrgJedinica(organizacionaJedinicaService.getById(dto.getOrgJedinica()));
         return predavac;
+    }
+
+    public PredavacDto map(Predavac predavac) {
+        return new PredavacDto(
+                predavac.getId(),
+                predavac.getOznaka(),
+                predavac.getIme(),
+                predavac.getPrezime(),
+                predavac.isOrganizacijaFakulteta(),
+                predavac.isDekanat(),
+                predavac.getOrgJedinica().getId(),
+                predavac.getTitula()
+        );
     }
 }

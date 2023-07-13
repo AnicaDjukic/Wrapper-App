@@ -2,6 +2,8 @@ package com.wrapper.app.config;
 
 import com.wrapper.app.domain.*;
 import com.wrapper.app.dto.*;
+import com.wrapper.app.dto.generator.PredmetDto;
+import com.wrapper.app.dto.generator.StudentskaGrupaDto;
 import com.wrapper.app.mapper.*;
 import org.modelmapper.AbstractConverter;
 import org.modelmapper.Converter;
@@ -59,21 +61,37 @@ public class MapperConfig {
             }
         };
         modelMapper.addConverter(predmetConverter);
+
+        Converter<Predmet, PredmetDto> predmetDtoConverter = new AbstractConverter<>() {
+            @Override
+            protected PredmetDto convert(Predmet predmet) {
+                return predmetMapper.map(predmet);
+            }
+        };
+        modelMapper.addConverter(predmetDtoConverter);
     }
 
     private void initilizePredavacConverters(ModelMapper modelMapper) {
-        Converter<PredavacRequestDto, Predavac> predavacRequstConverter =  new AbstractConverter<>() {
+        Converter<PredavacRequestDto, Predavac> predavacRequestConverter =  new AbstractConverter<>() {
             @Override
             protected Predavac convert(PredavacRequestDto predavacRequestDto) {
                 return predavacMapper.map(predavacRequestDto);
             }
         };
-        modelMapper.addConverter(predavacRequstConverter);
+        modelMapper.addConverter(predavacRequestConverter);
 
         TypeMap<Predavac, PredavacResponseDto> predavacConverter = modelMapper.createTypeMap(Predavac.class, PredavacResponseDto.class);
         predavacConverter.addMappings(
                 mapper -> mapper.map(src -> src.getOrgJedinica().getNaziv(), PredavacResponseDto::setOrgJedinica)
         );
+
+        Converter<Predavac, com.wrapper.app.dto.generator.PredavacDto> predavacDtoConverter =  new AbstractConverter<>() {
+            @Override
+            protected com.wrapper.app.dto.generator.PredavacDto convert(Predavac predavac) {
+                return predavacMapper.map(predavac);
+            }
+        };
+        modelMapper.addConverter(predavacDtoConverter);
     }
 
     private void initilizeProstorijaConverters(ModelMapper modelMapper) {
@@ -130,6 +148,14 @@ public class MapperConfig {
             }
         };
         modelMapper.addConverter(studentskaGrupaConverter);
+
+        Converter<StudentskaGrupa, StudentskaGrupaDto> studentskaGrupaDtoConverter = new AbstractConverter<>() {
+            @Override
+            protected StudentskaGrupaDto convert(StudentskaGrupa studentskaGrupa) {
+                return studentskaGrupaMapper.map(studentskaGrupa);
+            }
+        };
+        modelMapper.addConverter(studentskaGrupaDtoConverter);
     }
 
 }

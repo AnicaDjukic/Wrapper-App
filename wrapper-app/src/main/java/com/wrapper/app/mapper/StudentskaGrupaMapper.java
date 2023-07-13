@@ -2,6 +2,7 @@ package com.wrapper.app.mapper;
 
 import com.wrapper.app.domain.StudentskaGrupa;
 import com.wrapper.app.dto.StudentskaGrupaRequestDto;
+import com.wrapper.app.dto.generator.StudentskaGrupaDto;
 import com.wrapper.app.service.StudijskiProgramService;
 import org.springframework.stereotype.Component;
 
@@ -24,5 +25,15 @@ public class StudentskaGrupaMapper {
                 dto.getSemestar(),
                 dto.getBrojStudenata(),
                 studijskiProgramService.getById(dto.getStudijskiProgramId()));
+    }
+
+    public StudentskaGrupaDto map(StudentskaGrupa studentskaGrupa) {
+        return new StudentskaGrupaDto(
+                studentskaGrupa.getId(),
+                studentskaGrupa.getOznaka(),
+                studentskaGrupa.getGodina(),
+                studentskaGrupa.getSemestar(),
+                studentskaGrupa.getBrojStudenata(),
+                studentskaGrupa.getStudijskiProgram().getId());
     }
 }

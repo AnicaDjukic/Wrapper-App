@@ -70,7 +70,6 @@ public class StudijskiProgramPredmetiService {
     }
 
     public void deleteById(String id) {
-
         repository.deleteById(id);
     }
 }

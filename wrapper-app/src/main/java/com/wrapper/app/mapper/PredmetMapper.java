@@ -2,6 +2,7 @@ package com.wrapper.app.mapper;
 
 import com.wrapper.app.domain.Predmet;
 import com.wrapper.app.dto.PredmetRequestDto;
+import com.wrapper.app.dto.generator.PredmetDto;
 import com.wrapper.app.service.StudijskiProgramService;
 import org.springframework.stereotype.Component;
 
@@ -28,5 +29,24 @@ public class PredmetMapper {
         predmet.setBrojCasovaLab(dto.getBrojCasovaLab());
         predmet.setURealizaciji(false);
         return predmet;
+    }
+
+    public PredmetDto map(Predmet predmet) {
+        return new PredmetDto(
+            predmet.getId(),
+            predmet.getOznaka(),
+            predmet.getPlan(),
+            predmet.getNaziv(),
+            predmet.getGodina(),
+            predmet.getSemestar(),
+            predmet.getBrojCasovaPred(),
+            predmet.getStudijskiProgram().getId(),
+            predmet.getBrojCasovaVezbe(),
+            predmet.getSifraStruke(),
+            predmet.getTipoviNastave(),
+            predmet.getBrojCasovaAud(),
+            predmet.getBrojCasovaLab(),
+            predmet.getBrojCasovaRac()
+        );
     }
 }

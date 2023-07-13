@@ -9,7 +9,6 @@ public class CollectionNameResolverImpl implements CollectionNameResolver {
     private static final String PREDMETI = "Predmeti";
     private static final String STUDIJSKI_PROGRAMI = "StudijskiProgrami";
     private static final String STUDENTSKE_GRUPE = "StudentskeGrupe";
-    private static final String REALIZACIJA = "Realizacija";
     private static final String PREDAVACI = "Predavaci";
     private static final String PROSTORIJE = "Prostorije";
     private static final String STUDIJSKI_PROGRAM_PREDMETI = "StudijskiProgramPredmeti";
@@ -28,8 +27,6 @@ public class CollectionNameResolverImpl implements CollectionNameResolver {
             return STUDIJSKI_PROGRAMI + collectionName;
         } else if (className.equals(StudentskaGrupa.class.getSimpleName())) {
             return STUDENTSKE_GRUPE + collectionName;
-        } else if (className.equals(Realizacija.class.getSimpleName())) {
-            return REALIZACIJA + collectionName;
         } else if (className.equals(Predavac.class.getSimpleName())) {
             return PREDAVACI + collectionName;
         } else if (className.equals(Prostorija.class.getSimpleName())) {
