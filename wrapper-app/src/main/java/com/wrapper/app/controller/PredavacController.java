@@ -10,8 +10,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.regex.Pattern;
-
 @RestController
 @RequestMapping("api/v1/predavaci")
 public class PredavacController {
@@ -42,8 +40,7 @@ public class PredavacController {
                                             @RequestParam String ime,
                                             @RequestParam String prezime,
                                             @RequestParam String orgJed) {
-        PredavacSearchDto searchDto = new PredavacSearchDto(Pattern.quote(oznaka.trim()), Pattern.quote(ime.trim()),
-                Pattern.quote(prezime.trim()), Pattern.quote(orgJed.trim()));
+        PredavacSearchDto searchDto = new PredavacSearchDto(oznaka.trim(), ime.trim(), prezime.trim(), orgJed.trim());
         return service.search(searchDto, PageRequest.of(page, size)).map(p -> modelMapper.map(p, PredavacResponseDto.class));
     }
 

@@ -39,7 +39,7 @@ export class PredavacDialogComponent {
       titula: [''],
       organizacijaFakulteta: [false],
       dekanat: [false],
-      orgJedinica: ['', [Validators.required, autocompleteValidator(this.options)]],
+      orgJedinica: ['', [autocompleteValidator(this.options)]],
     })
 
     if (this.data.editData) {

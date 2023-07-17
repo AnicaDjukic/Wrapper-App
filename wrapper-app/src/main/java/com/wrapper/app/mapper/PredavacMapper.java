@@ -35,7 +35,7 @@ public class PredavacMapper {
                 predavac.getPrezime(),
                 predavac.isOrganizacijaFakulteta(),
                 predavac.isDekanat(),
-                predavac.getOrgJedinica().getId(),
+                predavac.getOrgJedinica() != null ? predavac.getOrgJedinica().getId() : "",
                 predavac.getTitula()
         );
     }

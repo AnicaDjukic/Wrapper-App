@@ -27,9 +27,6 @@ public class PredavacRequestDto {
     private boolean organizacijaFakulteta;
     private boolean dekanat;
 
-    //TODO: ne sme biti null ili prazan string
-    @NotNull
-    @NotBlank
     private String orgJedinica;
 
     // TODO: Opciono -> prazan string ako je nema

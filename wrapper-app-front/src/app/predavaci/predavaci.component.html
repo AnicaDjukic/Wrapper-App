@@ -56,7 +56,7 @@
 
         <ng-container matColumnDef="orgJedinica">
           <th mat-header-cell *matHeaderCellDef> Organizaciona jedinica </th>
-          <td mat-cell *matCellDef="let element"> {{element.orgJedinica}} </td>
+          <td mat-cell *matCellDef="let element"> {{element.orgJedinica ? element.orgJedinica : ""}} </td>
         </ng-container>
 
         <ng-container matColumnDef="edit">

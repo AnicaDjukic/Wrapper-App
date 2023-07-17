@@ -3,6 +3,7 @@ package com.wrapper.app.config;
 import com.wrapper.app.domain.*;
 import com.wrapper.app.dto.*;
 import com.wrapper.app.dto.generator.PredmetDto;
+import com.wrapper.app.dto.generator.ProstorijaDto;
 import com.wrapper.app.dto.generator.StudentskaGrupaDto;
 import com.wrapper.app.mapper.*;
 import org.modelmapper.AbstractConverter;
@@ -102,6 +103,14 @@ public class MapperConfig {
             }
         };
         modelMapper.addConverter(prostorijaRequestConverter);
+
+        Converter<Prostorija, ProstorijaDto> prostorijaDtoConverter = new AbstractConverter<Prostorija, ProstorijaDto>() {
+            @Override
+            protected ProstorijaDto convert(Prostorija prostorija) {
+                return prostorijaMapper.map(prostorija);
+            }
+        };
+        modelMapper.addConverter(prostorijaDtoConverter);
     }
 
     private void initilizeStudijskiProgramConverters(ModelMapper modelMapper) {

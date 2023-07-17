@@ -166,6 +166,20 @@ class Prostorija(ReadWrite):
     sekundarnaOrgJedinica: list = None
     odobreniPredmeti: list = None
 
+    @staticmethod
+    def from_json(obj: dict) -> 'Prostorija':
+        _id = str(obj.get("id"))
+        _oznaka = str(obj.get("oznaka"))
+        _oznakaSistem = str(obj.get("oznakaSistem"))
+        _tip = str(obj.get("tip"))
+        _kapacitet = int(obj.get("kapacitet"))
+        _orgJedinica = [str(x) for x in obj.get("orgJedinica")]
+        _sekundarniTip = str(obj.get("sekundarniTip"))
+        _sekundarnaOrgJedinica = [str(y) for y in obj.get("sekundarnaOrgJedinica")]
+        _odobreniPredmeti = [str(z) for z in obj.get("odobreniPredmeti")]
+        return Prostorija(_id, _oznaka, _oznakaSistem, _tip, _kapacitet, _orgJedinica,
+                          _sekundarniTip, _sekundarnaOrgJedinica, _odobreniPredmeti)
+
 @dataclass
 class Dan(ReadWrite):
     id: int

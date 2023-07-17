@@ -3,6 +3,7 @@ package com.wrapper.app.mapper;
 import com.wrapper.app.domain.OrganizacionaJedinica;
 import com.wrapper.app.domain.Prostorija;
 import com.wrapper.app.dto.ProstorijaRequestDto;
+import com.wrapper.app.dto.generator.ProstorijaDto;
 import com.wrapper.app.service.OrganizacionaJedinicaService;
 import org.springframework.stereotype.Component;
 
@@ -33,5 +34,18 @@ public class ProstorijaMapper {
             results.add(organizacionaJedinicaService.getById(orgJedId));
         }
         return results;
+    }
+
+    public ProstorijaDto map(Prostorija prostorija) {
+        return new ProstorijaDto(prostorija.getId(),
+                prostorija.getOznaka(),
+                prostorija.getOznakaSistem(),
+                prostorija.getTip().toString(),
+                prostorija.getKapacitet(),
+                prostorija.getOrgJedinica().stream().map(OrganizacionaJedinica::getId).toList(),
+                prostorija.getSekundarnaOrgJedinica().stream().map(OrganizacionaJedinica::getId).toList(),
+                prostorija.getSekundarniTip(),
+                prostorija.getOdobreniPredmeti()
+        );
     }
 }

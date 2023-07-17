@@ -1,6 +1,5 @@
 package com.wrapper.app.controller;
 
-import com.wrapper.app.domain.OrganizacionaJedinica;
 import com.wrapper.app.dto.OrganizacionaJedinicaDto;
 import com.wrapper.app.service.OrganizacionaJedinicaService;
 import org.modelmapper.ModelMapper;

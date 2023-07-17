@@ -1,5 +1,7 @@
 package com.wrapper.app.controller;
 
+import com.wrapper.app.dto.generator.MeetingDto;
+import com.wrapper.app.dto.generator.ProstorijaDto;
 import com.wrapper.app.service.RasporedService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.core.io.Resource;
@@ -12,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/raspored")
@@ -25,8 +28,8 @@ public class RasporedController {
 
     @PostMapping("/generate/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public void generate(@PathVariable String id) {
-        service.startGenerating(id);
+    public List<MeetingDto> generate(@PathVariable String id) {
+        return service.startGenerating(id);
     }
 
     @PostMapping("/finish/{id}")

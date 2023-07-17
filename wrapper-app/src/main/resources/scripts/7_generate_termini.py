@@ -247,7 +247,7 @@ def get_velika_rac_prostorija(
             # preuzmi organizacionu jedinicu cija je katedra
             org_jedinica = prostorija.orgJedinica
             # ako nije u vlasnistvu, smesti u opste
-            if org_jedinica == None:
+            if org_jedinica is None or org_jedinica == []:
                 org_jedinica = 'opsta'
             # ako ima vise vlasnika, uzmi prvu
             if type(org_jedinica) == list:
@@ -341,19 +341,19 @@ def create_vezbe_for_predmet(
     asistent_generator = get_asistent(asistent_zauzeca)
 
     # auditorne
-    if aud != -1 and aud <= 3:
+    if aud != 0 and aud <= 3:
         meetings.extend(create_tip_vezbe(predmet.id, stud_grupe, 'AUD', aud, min_per_aud_meeting, max_per_aud_meeting, asistent_generator))
     if aud > 3:
         meetings.extend(create_tip_vezbe(predmet.id, stud_grupe, 'AUD', aud, min_per_aud_meeting, max_per_aud_meeting, asistent_generator))
         meetings.extend(create_tip_vezbe(predmet.id, stud_grupe, 'AUD', aud, min_per_aud_meeting, max_per_aud_meeting, asistent_generator))
 
     # laboratorijske
-    if lab != -1:
+    if lab != 0:
         # ako je grupa manja od 12, spoj ih do max 12, ako nije, stavi je samu
         meetings.extend(create_tip_vezbe(predmet.id, stud_grupe, 'LAB', lab, min_per_lab_meeting, max_per_lab_meeting, asistent_generator))
     
     # racunarske
-    if rac != -1:
+    if rac != 0:
         next(available_velika_rac_prostorija_generator)
         # ako postoji dostupih velikih ucionica, povecaj max_per_rac_meeting i umanji slobodne ucionice
         if available_velika_rac_prostorija_generator.send((org_jedinica, len(stud_grupe) * rac)):
@@ -393,7 +393,7 @@ def create_vezbe(
                     continue
                 # pronadji org jedinicu za asistenta da bi pronasao veliku prostoriju ako postoji za tu org jedinicu
                 org_jedinica_id = None
-                if predmet.brojCasovaRac != -1:
+                if predmet.brojCasovaRac != 0:
                     org_jedinica_id = next(x.orgJedinica for x in predavaci if x.id == asistentZauzeca[0].asistentId)
 
                 meetings.extend(create_vezbe_for_predmet(predmet, asistentZauzeca, studGrupe, org_jedinica_id, available_velika_rac_prostorija_generator))
@@ -451,6 +451,7 @@ studijskiProgramList = [StudijskiProgram.from_json(item) for item in input_data[
 studentskaGrupaList = [StudentskaGrupa.from_json(item) for item in input_data['studentskaGrupaList']]
 
 # Create list of Prostorija objects
+prostorijaList = [Prostorija.from_json(item) for item in input_data['prostorijaList']]
 
 #Create list of Predmet objects
 predmetList = [Predmet.from_json(item) for item in input_data['predmetList']]
@@ -465,7 +466,7 @@ realizacija_json = json.dumps(realizacija, cls=RealizacijaDtoEncoder)
 studijskiProgramList_json = json.dumps([p.__dict__ for p in studijskiProgramList])
 
 # Serialize the prostorijaList
-
+prostorijaList_json = json.dumps([p.__dict__ for p in prostorijaList])
 
 # Serialize the studentskaGrupaList
 studentskaGrupaList_json = json.dumps([p.__dict__ for p in studentskaGrupaList])
@@ -476,36 +477,14 @@ predmetList_json = json.dumps([p.__dict__ for p in predmetList])
 # Serializethe predavacList
 predavacList_json = json.dumps([p.__dict__ for p in predavacList])
 
+meetings_oas = create_nastava(
+realizacija, studijskiProgramList, studentskaGrupaList, prostorijaList, predmetList, predavacList, 1)
+
+meetings_oas_json = json.dumps([p.__dict__ for p in meetings_oas])
+
 # Print the JSON representations
-print(predavacList_json)
-# print(studijskiProgramList_json)
+print(meetings_oas_json)
 
-
-#
-#     # Map the attribute names in input_data to the expected attribute names in Realizacija
-# mapped_input_data = {
-#     'godina': input_data.get('godina'),
-#     'semestar': input_data.get('semestar'),
-#     'studijskiProgramPredmeti': input_data.get('studijskiProgramPredmeti')
-# }
-
-    #print('Ovdee')
-
-    # Deserialize the JSON into Realizacija object
-    #realizacija = Realizacija.from_json(mapped_input_data)
-#realizacija = Realizacija(**mapped_input_data)
-
-    # Perform any necessary operations on realizacija object
-    # ...
-
-    # Serialize the updated Realizacija object to JSON
-#json_updated_realizacija = json.dumps(realizacija.__dict__)
-
-    # Print the JSON representation
-    #print("Ovdee")
-#     print(mapped_input_data)
-
-    # Flush the output to ensure it's immediately available
 sys.stdout.flush()
 
 

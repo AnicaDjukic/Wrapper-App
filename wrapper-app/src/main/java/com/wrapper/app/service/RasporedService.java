@@ -3,6 +3,7 @@ package com.wrapper.app.service;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
 import com.wrapper.app.domain.*;
 import com.wrapper.app.dto.generator.*;
 import com.wrapper.app.repository.CollectionNameProvider;
@@ -35,6 +36,7 @@ public class RasporedService {
 
     private static final String STUDIJSKI_PROGRAM_PREDMETI = "StudijskiProgramPredmeti";
     private static final String STUDIJSKI_PROGRAMI = "StudijskiProgrami";
+    private static final String PROSTORIJE = "Prostorije";
     private static final String STUDENTSKE_GRUPE = "StudentskeGrupe";
     private static final String PREDMETI = "Predmeti";
     private static final String PREDAVACI = "Predavaci";
@@ -47,17 +49,20 @@ public class RasporedService {
         this.modelMapper = modelMapper;
     }
 
-    public void startGenerating(String id) {
+    public List<MeetingDto> startGenerating(String id) {
         Database database = databaseService.getById(id);
         CollectionNameProvider.setCollectionName(database.getGodina() + database.getSemestar().charAt(0));
         RealizacijaDto realizacija = createRealizacija(database);
         List<StudijskiProgramDto> studijskiProgrami = getStudijskiProgrami(database);
+        List<ProstorijaDto> prostorije = getProstorije(database);
         List<StudentskaGrupaDto> studentskeGrupe = getStudentskeGrupe(database);
         List<PredmetDto> predmeti = getPredmeti(database);
         List<PredavacDto> predavaci = getPredavaci(database);
+        List<MeetingDto> updatedRealizacija = null;
         try {
             // TODO: ovde umesto realizacije ce se dobiti lista Meeting objekata
-            RealizacijaDto updatedRealizacija = callPythonScript(realizacija, studijskiProgrami, studentskeGrupe, predmeti, predavaci);
+            updatedRealizacija = callPythonScript(realizacija,
+                    studijskiProgrami, prostorije, studentskeGrupe, predmeti, predavaci);
             // TODO: pozvati jos 2 endpointa
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -66,6 +71,7 @@ public class RasporedService {
         database.setGenerationFinished(null);
         database.setPath(null);
         databaseService.update(database);
+        return updatedRealizacija;
     }
 
     private RealizacijaDto createRealizacija(Database database) {
@@ -83,7 +89,7 @@ public class RasporedService {
         List<StudijskiProgramPredmetiDto> studijskiProgramPredmetiDtos = new ArrayList<>();
         for (StudijskiProgramPredmeti studijskiProgramPredmet : studijskiProgramPredmeti) {
             StudijskiProgramPredmetiDto studijskiProgramPredmetiDto = new StudijskiProgramPredmetiDto();
-            studijskiProgramPredmetiDto.setStudijskiProgramId(studijskiProgramPredmetiDto.getStudijskiProgramId());
+            studijskiProgramPredmetiDto.setStudijskiProgramId(studijskiProgramPredmet.getStudijskiProgram().getId());
             List<PredmetPredavacDto> predmetPredavacDtos = getPredmetPredavacDtos(studijskiProgramPredmet.getPredmetPredavaci());
             studijskiProgramPredmetiDto.setPredmetPredavaci(predmetPredavacDtos);
             studijskiProgramPredmetiDtos.add(studijskiProgramPredmetiDto);
@@ -120,6 +126,12 @@ public class RasporedService {
         return studijskiProgrami.stream().map(s -> modelMapper.map(s, StudijskiProgramDto.class)).toList();
     }
 
+    private List<ProstorijaDto> getProstorije(Database database) {
+        String collectionName = PROSTORIJE + database.getGodina() + database.getSemestar().charAt(0);
+        List<Prostorija> prostorije = mongoTemplate.findAll(Prostorija.class, collectionName);
+        return prostorije.stream().map(s -> modelMapper.map(s, ProstorijaDto.class)).toList();
+    }
+
     private List<StudentskaGrupaDto> getStudentskeGrupe(Database database) {
         String collectionName = STUDENTSKE_GRUPE + database.getGodina() + database.getSemestar().charAt(0);
         List<StudentskaGrupa> studentskeGrupe = mongoTemplate.findAll(StudentskaGrupa.class, collectionName);
@@ -138,8 +150,9 @@ public class RasporedService {
         return predavaci.stream().map(p -> modelMapper.map(p, PredavacDto.class)).toList();
     }
 
-    private RealizacijaDto callPythonScript(RealizacijaDto realizacija,
+    private List<MeetingDto> callPythonScript(RealizacijaDto realizacija,
                                             List<StudijskiProgramDto> studijskiProgramList,
+                                            List<ProstorijaDto> prostorije,
                                             List<StudentskaGrupaDto> studentskaGrupaList,
                                             List<PredmetDto> predmetList,
                                             List<PredavacDto> predavacList) throws IOException {
@@ -152,12 +165,9 @@ public class RasporedService {
         inputData.add("realizacija", JsonParser.parseString(gson.toJson(realizacija)));
         inputData.add("studijskiProgramList", JsonParser.parseString(gson.toJson(studijskiProgramList)));
         inputData.add("studentskaGrupaList", JsonParser.parseString(gson.toJson(studentskaGrupaList)));
-        // TODO: Prostorije
-
+        inputData.add("prostorijaList", JsonParser.parseString(gson.toJson(prostorije)));
         inputData.add("predmetList", JsonParser.parseString(gson.toJson(predmetList)));
         inputData.add("predavacList", JsonParser.parseString(gson.toJson(predavacList)));
-
-
 
         // Convert the JSON object to a string
         String jsonInput = inputData.toString();
@@ -199,9 +209,9 @@ public class RasporedService {
         System.out.println("JSON Output: " + jsonOutput);
 
         // Deserialize the JSON output into a RealizacijaDto object
-
+        List<MeetingDto> meetings = gson.fromJson(jsonOutput, new TypeToken<List<MeetingDto>>(){}.getType());
         // Return the updated RealizacijaDto object
-        return realizacija;
+        return meetings;
     }
 
     private Date getLocalDate() {
