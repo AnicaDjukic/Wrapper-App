@@ -1,9 +1,9 @@
 package com.wrapper.app.service;
 
-import com.google.gson.Gson;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.google.gson.reflect.TypeToken;
 import com.wrapper.app.domain.*;
 import com.wrapper.app.dto.generator.*;
 import com.wrapper.app.repository.CollectionNameProvider;
@@ -160,14 +160,14 @@ public class RasporedService {
         String pythonScriptPath = "src/main/resources/scripts/7_generate_termini.py";
 
         // Create a JSON object that contains the `realizacija` and `studijskiProgramList`
-        Gson gson = new Gson();
+        ObjectMapper objectMapper = new ObjectMapper();
         JsonObject inputData = new JsonObject();
-        inputData.add("realizacija", JsonParser.parseString(gson.toJson(realizacija)));
-        inputData.add("studijskiProgramList", JsonParser.parseString(gson.toJson(studijskiProgramList)));
-        inputData.add("studentskaGrupaList", JsonParser.parseString(gson.toJson(studentskaGrupaList)));
-        inputData.add("prostorijaList", JsonParser.parseString(gson.toJson(prostorije)));
-        inputData.add("predmetList", JsonParser.parseString(gson.toJson(predmetList)));
-        inputData.add("predavacList", JsonParser.parseString(gson.toJson(predavacList)));
+        inputData.add("realizacija", JsonParser.parseString(objectMapper.writeValueAsString(realizacija)));
+        inputData.add("studijskiProgramList", JsonParser.parseString(objectMapper.writeValueAsString(studijskiProgramList)));
+        inputData.add("studentskaGrupaList", JsonParser.parseString(objectMapper.writeValueAsString(studentskaGrupaList)));
+        inputData.add("prostorijaList", JsonParser.parseString(objectMapper.writeValueAsString(prostorije)));
+        inputData.add("predmetList", JsonParser.parseString(objectMapper.writeValueAsString(predmetList)));
+        inputData.add("predavacList", JsonParser.parseString(objectMapper.writeValueAsString(predavacList)));
 
         // Convert the JSON object to a string
         String jsonInput = inputData.toString();
@@ -209,7 +209,7 @@ public class RasporedService {
         System.out.println("JSON Output: " + jsonOutput);
 
         // Deserialize the JSON output into a RealizacijaDto object
-        List<MeetingDto> meetings = gson.fromJson(jsonOutput, new TypeToken<List<MeetingDto>>(){}.getType());
+        List<MeetingDto> meetings = objectMapper.readValue(jsonOutput, new TypeReference<>(){});
         // Return the updated RealizacijaDto object
         return meetings;
     }

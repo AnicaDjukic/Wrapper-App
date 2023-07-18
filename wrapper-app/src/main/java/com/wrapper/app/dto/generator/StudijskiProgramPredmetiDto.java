@@ -9,5 +9,5 @@ import java.util.List;
 public class StudijskiProgramPredmetiDto {
 
     private String studijskiProgramId;
-    private List<PredmetPredavacDto> predmetPredavaci = new ArrayList<>();
+    private List<PredmetPredavacDto> predmetPredavaci;
 }

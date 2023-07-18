@@ -10,5 +10,5 @@ public class RealizacijaDto {
 
     private String godina;
     private String semestar;
-    private List<StudijskiProgramPredmetiDto> studijskiProgramPredmeti = new ArrayList<>();
+    private List<StudijskiProgramPredmetiDto> studijskiProgramPredmeti;
 }
