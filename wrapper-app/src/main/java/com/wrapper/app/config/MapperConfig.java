@@ -28,18 +28,22 @@ public class MapperConfig {
 
     private final StudentskaGrupaMapper studentskaGrupaMapper;
 
+    private final StudijskiProgramPredmetiMapper studijskiProgramPredmetiMapper;
+
     public MapperConfig(PredmetMapper predmetMapper,
                         PredavacMapper predavacMapper,
                         PredmetPredavacMapper predmetPredavacMapper,
                         StudijskiProgramMapper studijskiProgramMapper,
                         ProstorijaMapper prostorijaMapper,
-                        StudentskaGrupaMapper studentskaGrupaMapper) {
+                        StudentskaGrupaMapper studentskaGrupaMapper,
+                        StudijskiProgramPredmetiMapper studijskiProgramPredmetiMapper) {
         this.predmetMapper = predmetMapper;
         this.predavacMapper = predavacMapper;
         this.predmetPredavacMapper = predmetPredavacMapper;
         this.studijskiProgramMapper = studijskiProgramMapper;
         this.prostorijaMapper = prostorijaMapper;
         this.studentskaGrupaMapper = studentskaGrupaMapper;
+        this.studijskiProgramPredmetiMapper = studijskiProgramPredmetiMapper;
     }
 
     @Bean
@@ -51,6 +55,7 @@ public class MapperConfig {
         initilizeStudijskiProgramConverters(modelMapper);
         initilizePredmetPredavacConverters(modelMapper);
         initilizeStudentskaGrupaConverters(modelMapper);
+        initilizeStudijskiProgramPredmetiConverters(modelMapper);
         return modelMapper;
     }
 
@@ -165,6 +170,16 @@ public class MapperConfig {
             }
         };
         modelMapper.addConverter(studentskaGrupaDtoConverter);
+    }
+
+    private void initilizeStudijskiProgramPredmetiConverters(ModelMapper modelMapper) {
+        Converter<StudijskiProgramPredmeti, com.wrapper.app.dto.generator.StudijskiProgramPredmetiDto> converter = new AbstractConverter<>() {
+            @Override
+            protected com.wrapper.app.dto.generator.StudijskiProgramPredmetiDto convert(StudijskiProgramPredmeti studijskiProgramPredmeti) {
+                return studijskiProgramPredmetiMapper.map(studijskiProgramPredmeti);
+            }
+        };
+        modelMapper.addConverter(converter);
     }
 
 }

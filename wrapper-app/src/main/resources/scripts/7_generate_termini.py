@@ -338,6 +338,10 @@ def create_vezbe_for_predmet(
     lab = predmet.brojCasovaLab
     rac = predmet.brojCasovaRac
 
+    # ako ne postoji nijedan asistent, necemo kreirati vezbe
+    if len(asistent_zauzeca) == 0:
+        return meetings
+
     asistent_generator = get_asistent(asistent_zauzeca)
 
     # auditorne
@@ -459,62 +463,20 @@ predmetList = [Predmet.from_json(item) for item in input_data['predmetList']]
 # Create list of Predavac objects
 predavacList = [Predavac.from_json(item) for item in input_data['predavacList']]
 
-# Serialize the Realizacija object
-realizacija_json = json.dumps(realizacija, cls=RealizacijaDtoEncoder)
-
-# Serialize the studijskiProgramList
-studijskiProgramList_json = json.dumps([p.__dict__ for p in studijskiProgramList])
-
-# Serialize the prostorijaList
-prostorijaList_json = json.dumps([p.__dict__ for p in prostorijaList])
-
-# Serialize the studentskaGrupaList
-studentskaGrupaList_json = json.dumps([p.__dict__ for p in studentskaGrupaList])
-
-# Serialize the predmetList
-predmetList_json = json.dumps([p.__dict__ for p in predmetList])
-
-# Serializethe predavacList
-predavacList_json = json.dumps([p.__dict__ for p in predavacList])
-
 meetings_oas = create_nastava(
-realizacija, studijskiProgramList, studentskaGrupaList, prostorijaList, predmetList, predavacList, 1)
+    realizacija, studijskiProgramList, studentskaGrupaList, prostorijaList, predmetList, predavacList, 1)
 
-meetings_oas_json = json.dumps([p.__dict__ for p in meetings_oas])
+meetings_mas = create_nastava(
+    realizacija, studijskiProgramList, studentskaGrupaList, prostorijaList, predmetList, predavacList, 2)
+
+meetings = meetings_oas + meetings_mas
+
+meetings_json = json.dumps([p.__dict__ for p in meetings])
 
 # Print the JSON representations
-print(meetings_oas_json)
+print(meetings_json)
 
 sys.stdout.flush()
-
-
-# %%
-# schedule = MeetingSchedule.read_entity_from_file('4_svi_fajlovi_spojeni')
-# schedule_izmene = MeetingSchedule.read_entity_from_file('4_svi_fajlovi_spojeni')
-
-# realizacija = Realizacija.read_entity_from_file('6_realizacija_bez_izbornih')
-# realizacija_izmene = Realizacija.read_entity_from_file('6_realizacija_bez_izbornih')
-
-# meetings_oas = create_nastava(
-#     realizacija, schedule.studProgramList, schedule.studentskaGrupaList, schedule.prostorijaList, schedule.predmetList, schedule.predavacList, 1)
-# meeting_mas = create_nastava(
-#     realizacija, schedule.studProgramList, schedule.studentskaGrupaList, schedule.prostorijaList, schedule.predmetList, schedule.predavacList, 2)
-
-# 2550 sada, pre 2616
-# 604 sada, pre 545
-# print(len(meetings_oas))
-# print(len(meeting_mas))
-
-# %% [markdown]
-# ### Zapisivanje u fajl generisanih termina uz sve ostale parsirane podatke
-
-# %%
-# schedule.meetingList = meetings_oas
-# ReadWrite.write_to_file(schedule, '7_schedule_oas')
-# schedule.meetingList = meeting_mas
-# ReadWrite.write_to_file(schedule, '7_schedule_mas')
-
-# %%
 
 
 
