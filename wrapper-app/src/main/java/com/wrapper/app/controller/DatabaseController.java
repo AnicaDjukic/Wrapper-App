@@ -1,8 +1,8 @@
 package com.wrapper.app.controller;
 
 import com.wrapper.app.domain.Database;
-import com.wrapper.app.dto.DatabaseRequestDto;
-import com.wrapper.app.dto.DatabaseResponseDto;
+import com.wrapper.app.dto.request.DatabaseRequestDto;
+import com.wrapper.app.dto.response.DatabaseResponseDto;
 import com.wrapper.app.security.util.TokenUtils;
 import com.wrapper.app.service.DatabaseService;
 import jakarta.servlet.http.HttpServletRequest;

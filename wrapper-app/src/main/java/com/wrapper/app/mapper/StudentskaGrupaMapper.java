@@ -1,7 +1,7 @@
 package com.wrapper.app.mapper;
 
 import com.wrapper.app.domain.StudentskaGrupa;
-import com.wrapper.app.dto.StudentskaGrupaRequestDto;
+import com.wrapper.app.dto.request.StudentskaGrupaRequestDto;
 import com.wrapper.app.dto.generator.StudentskaGrupaDto;
 import com.wrapper.app.service.StudijskiProgramService;
 import org.springframework.stereotype.Component;

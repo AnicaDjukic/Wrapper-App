@@ -2,7 +2,7 @@ package com.wrapper.app.mapper;
 
 import com.wrapper.app.domain.OrganizacionaJedinica;
 import com.wrapper.app.domain.Prostorija;
-import com.wrapper.app.dto.ProstorijaRequestDto;
+import com.wrapper.app.dto.request.ProstorijaRequestDto;
 import com.wrapper.app.dto.generator.ProstorijaDto;
 import com.wrapper.app.service.OrganizacionaJedinicaService;
 import org.springframework.stereotype.Component;

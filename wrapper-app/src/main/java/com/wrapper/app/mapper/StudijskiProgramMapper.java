@@ -1,8 +1,8 @@
 package com.wrapper.app.mapper;
 
 import com.wrapper.app.domain.StudijskiProgram;
-import com.wrapper.app.dto.StudijskiProgramDto;
-import com.wrapper.app.dto.StudijskiProgramResponseDto;
+import com.wrapper.app.dto.response.StudijskiProgramDto;
+import com.wrapper.app.dto.response.StudijskiProgramResponseDto;
 import org.springframework.stereotype.Component;
 
 @Component

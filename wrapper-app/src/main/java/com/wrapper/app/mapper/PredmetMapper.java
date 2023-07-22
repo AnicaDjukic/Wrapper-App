@@ -1,7 +1,7 @@
 package com.wrapper.app.mapper;
 
 import com.wrapper.app.domain.Predmet;
-import com.wrapper.app.dto.PredmetRequestDto;
+import com.wrapper.app.dto.request.PredmetRequestDto;
 import com.wrapper.app.dto.generator.PredmetDto;
 import com.wrapper.app.service.StudijskiProgramService;
 import org.springframework.stereotype.Component;

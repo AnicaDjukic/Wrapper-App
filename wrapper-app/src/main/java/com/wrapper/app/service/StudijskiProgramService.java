@@ -1,7 +1,7 @@
 package com.wrapper.app.service;
 
 import com.wrapper.app.domain.StudijskiProgram;
-import com.wrapper.app.dto.StudijskiProgramSearchDto;
+import com.wrapper.app.dto.search.StudijskiProgramSearchDto;
 import com.wrapper.app.exception.AlreadyExistsException;
 import com.wrapper.app.exception.NotFoundException;
 import com.wrapper.app.repository.StudijskiProgramRepository;

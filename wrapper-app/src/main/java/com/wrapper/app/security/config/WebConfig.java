@@ -1,6 +1,6 @@
 package com.wrapper.app.security.config;
 
-import com.wrapper.app.security.interceptor.CollectionNameInterceptor;
+import com.wrapper.app.repository.CollectionNameInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;

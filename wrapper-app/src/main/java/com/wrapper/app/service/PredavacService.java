@@ -2,9 +2,7 @@ package com.wrapper.app.service;
 
 import com.wrapper.app.domain.OrganizacionaJedinica;
 import com.wrapper.app.domain.Predavac;
-import com.wrapper.app.domain.Prostorija;
-import com.wrapper.app.dto.PredavacSearchDto;
-import com.wrapper.app.dto.ProstorijaSearchDto;
+import com.wrapper.app.dto.search.PredavacSearchDto;
 import com.wrapper.app.exception.AlreadyExistsException;
 import com.wrapper.app.exception.NotFoundException;
 import com.wrapper.app.repository.PredavacRepository;

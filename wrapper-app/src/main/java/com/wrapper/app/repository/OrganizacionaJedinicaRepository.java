@@ -10,4 +10,7 @@ public interface OrganizacionaJedinicaRepository extends MongoRepository<Organiz
 
     @Query("{'naziv': {$regex : ?0, $options: 'i'}}")
     List<OrganizacionaJedinica> searchByNaziv(String naziv);
+
+    // Get just Katedra or Departman objects
+    List<OrganizacionaJedinica> findByDepartmanExists(boolean exists);
 }

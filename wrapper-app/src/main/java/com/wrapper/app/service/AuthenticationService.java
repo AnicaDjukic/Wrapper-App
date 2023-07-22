@@ -1,8 +1,8 @@
 package com.wrapper.app.service;
 
 import com.wrapper.app.domain.User;
-import com.wrapper.app.dto.JwtAuthenticationRequest;
-import com.wrapper.app.dto.UserTokenState;
+import com.wrapper.app.dto.request.JwtAuthenticationRequest;
+import com.wrapper.app.dto.response.UserTokenState;
 import com.wrapper.app.security.util.TokenUtils;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

@@ -20,7 +20,7 @@ public class MeetingService {
 
     private final ModelMapper modelMapper;
 
-    ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper;
 
     private static final String STUDIJSKI_PROGRAM_PREDMETI = "StudijskiProgramPredmeti";
     private static final String STUDIJSKI_PROGRAMI = "StudijskiProgrami";
@@ -29,15 +29,17 @@ public class MeetingService {
     private static final String PREDMETI = "Predmeti";
     private static final String PREDAVACI = "Predavaci";
 
-    public MeetingService(MongoTemplate mongoTemplate, ModelMapper modelMapper) {
+    public MeetingService(MongoTemplate mongoTemplate, ModelMapper modelMapper, ObjectMapper objectMapper) {
         this.mongoTemplate = mongoTemplate;
         this.modelMapper = modelMapper;
+        this.objectMapper = objectMapper;
     }
 
     public List<MeetingDto> generateMeetings(Database database) throws IOException {
         Process process = executePythonScript(database);
         String jsonOutput = readPythonScriptOutput(process);
-        return objectMapper.readValue(jsonOutput, new TypeReference<>(){});
+        return objectMapper.readValue(jsonOutput, new TypeReference<>() {
+        });
     }
 
     private Process executePythonScript(Database database) throws IOException {

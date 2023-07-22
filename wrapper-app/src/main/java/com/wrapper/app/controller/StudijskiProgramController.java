@@ -1,9 +1,9 @@
 package com.wrapper.app.controller;
 
 import com.wrapper.app.domain.StudijskiProgram;
-import com.wrapper.app.dto.StudijskiProgramRequestDto;
-import com.wrapper.app.dto.StudijskiProgramResponseDto;
-import com.wrapper.app.dto.StudijskiProgramSearchDto;
+import com.wrapper.app.dto.request.StudijskiProgramRequestDto;
+import com.wrapper.app.dto.response.StudijskiProgramResponseDto;
+import com.wrapper.app.dto.search.StudijskiProgramSearchDto;
 import com.wrapper.app.service.StudijskiProgramService;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;

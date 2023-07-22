@@ -1,7 +1,7 @@
 package com.wrapper.app.controller;
 
-import com.wrapper.app.dto.JwtAuthenticationRequest;
-import com.wrapper.app.dto.UserTokenState;
+import com.wrapper.app.dto.request.JwtAuthenticationRequest;
+import com.wrapper.app.dto.response.UserTokenState;
 import com.wrapper.app.service.AuthenticationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

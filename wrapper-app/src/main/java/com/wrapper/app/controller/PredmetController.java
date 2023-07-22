@@ -1,10 +1,9 @@
 package com.wrapper.app.controller;
 
 import com.wrapper.app.domain.Predmet;
-import com.wrapper.app.domain.PredmetPredavac;
-import com.wrapper.app.dto.PredmetRequestDto;
-import com.wrapper.app.dto.PredmetResponseDto;
-import com.wrapper.app.dto.PredmetSearchDto;
+import com.wrapper.app.dto.request.PredmetRequestDto;
+import com.wrapper.app.dto.response.PredmetResponseDto;
+import com.wrapper.app.dto.search.PredmetSearchDto;
 import com.wrapper.app.service.PredmetService;
 import jakarta.validation.Valid;
 import org.modelmapper.*;

@@ -1,7 +1,9 @@
 package com.wrapper.app.controller;
 
 import com.wrapper.app.domain.Predavac;
-import com.wrapper.app.dto.*;
+import com.wrapper.app.dto.request.PredavacRequestDto;
+import com.wrapper.app.dto.response.PredavacResponseDto;
+import com.wrapper.app.dto.search.PredavacSearchDto;
 import com.wrapper.app.service.PredavacService;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;

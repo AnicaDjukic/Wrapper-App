@@ -2,7 +2,8 @@ package com.wrapper.app.mapper;
 
 import com.wrapper.app.domain.AsistentZauzece;
 import com.wrapper.app.domain.PredmetPredavac;
-import com.wrapper.app.dto.*;
+import com.wrapper.app.dto.request.PredavaciDto;
+import com.wrapper.app.dto.request.PredmetPredavaciDto;
 import com.wrapper.app.service.PredavacService;
 import com.wrapper.app.service.PredmetService;
 import org.springframework.stereotype.Component;

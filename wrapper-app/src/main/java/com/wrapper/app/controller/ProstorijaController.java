@@ -1,7 +1,9 @@
 package com.wrapper.app.controller;
 
 import com.wrapper.app.domain.Prostorija;
-import com.wrapper.app.dto.*;
+import com.wrapper.app.dto.request.ProstorijaRequestDto;
+import com.wrapper.app.dto.response.ProstorijaResponseDto;
+import com.wrapper.app.dto.search.ProstorijaSearchDto;
 import com.wrapper.app.service.ProstorijaService;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;

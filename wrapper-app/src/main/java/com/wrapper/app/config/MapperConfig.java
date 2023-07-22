@@ -1,10 +1,15 @@
 package com.wrapper.app.config;
 
 import com.wrapper.app.domain.*;
-import com.wrapper.app.dto.*;
+import com.wrapper.app.dto.generator.MeetingDto;
 import com.wrapper.app.dto.generator.PredmetDto;
 import com.wrapper.app.dto.generator.ProstorijaDto;
 import com.wrapper.app.dto.generator.StudentskaGrupaDto;
+import com.wrapper.app.dto.optimizator.Meeting;
+import com.wrapper.app.dto.request.*;
+import com.wrapper.app.dto.response.PredavacResponseDto;
+import com.wrapper.app.dto.response.StudijskiProgramDto;
+import com.wrapper.app.dto.response.StudijskiProgramResponseDto;
 import com.wrapper.app.mapper.*;
 import org.modelmapper.AbstractConverter;
 import org.modelmapper.Converter;
@@ -30,13 +35,15 @@ public class MapperConfig {
 
     private final StudijskiProgramPredmetiMapper studijskiProgramPredmetiMapper;
 
+    private final MeetingMapper meetingMapper;
+
     public MapperConfig(PredmetMapper predmetMapper,
                         PredavacMapper predavacMapper,
                         PredmetPredavacMapper predmetPredavacMapper,
                         StudijskiProgramMapper studijskiProgramMapper,
                         ProstorijaMapper prostorijaMapper,
                         StudentskaGrupaMapper studentskaGrupaMapper,
-                        StudijskiProgramPredmetiMapper studijskiProgramPredmetiMapper) {
+                        StudijskiProgramPredmetiMapper studijskiProgramPredmetiMapper, MeetingMapper meetingMapper) {
         this.predmetMapper = predmetMapper;
         this.predavacMapper = predavacMapper;
         this.predmetPredavacMapper = predmetPredavacMapper;
@@ -44,6 +51,7 @@ public class MapperConfig {
         this.prostorijaMapper = prostorijaMapper;
         this.studentskaGrupaMapper = studentskaGrupaMapper;
         this.studijskiProgramPredmetiMapper = studijskiProgramPredmetiMapper;
+        this.meetingMapper = meetingMapper;
     }
 
     @Bean
@@ -56,6 +64,7 @@ public class MapperConfig {
         initilizePredmetPredavacConverters(modelMapper);
         initilizeStudentskaGrupaConverters(modelMapper);
         initilizeStudijskiProgramPredmetiConverters(modelMapper);
+        initilizeMeetingConverters(modelMapper);
         return modelMapper;
     }
 
@@ -180,6 +189,16 @@ public class MapperConfig {
             }
         };
         modelMapper.addConverter(converter);
+    }
+
+    private void initilizeMeetingConverters(ModelMapper modelMapper) {
+        Converter<MeetingDto, Meeting> meetingConverter = new AbstractConverter<MeetingDto, Meeting>() {
+            @Override
+            protected Meeting convert(MeetingDto meetingDto) {
+                return meetingMapper.map(meetingDto);
+            }
+        };
+        modelMapper.addConverter(meetingConverter);
     }
 
 }

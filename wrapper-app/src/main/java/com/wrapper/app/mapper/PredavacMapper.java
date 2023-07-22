@@ -1,7 +1,7 @@
 package com.wrapper.app.mapper;
 
 import com.wrapper.app.domain.Predavac;
-import com.wrapper.app.dto.PredavacRequestDto;
+import com.wrapper.app.dto.request.PredavacRequestDto;
 import com.wrapper.app.dto.generator.PredavacDto;
 import com.wrapper.app.service.OrganizacionaJedinicaService;
 import org.springframework.stereotype.Component;
