@@ -63,7 +63,8 @@ public class RasporedService {
         List<MeetingDto> meetings = null;
         try {
             meetings = meetingService.generateMeetings(database);
-            //startOptimizator(database, meetings);
+            sendDataToOptimizator(database, meetings);
+            startOptimizator();
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -74,12 +75,20 @@ public class RasporedService {
         return createMeetingShedule(database, meetings);
     }
 
-    public void startOptimizator(Database database, List<MeetingDto> meetings) {
+    public void sendDataToOptimizator(Database database, List<MeetingDto> meetings) {
         String apiUrl = "http://localhost:8081/timeTable";
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         MeetingSchedule meetingSchedule = createMeetingShedule(database, meetings);
         HttpEntity<MeetingSchedule> httpEntity = new HttpEntity<>(meetingSchedule, headers);
+        restTemplate.exchange(apiUrl, HttpMethod.POST, httpEntity, Void.class);
+    }
+
+    private void startOptimizator() {
+        String apiUrl = "http://localhost:8081/timeTable/solve";
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<Object> httpEntity = new HttpEntity<>(null, headers);
         restTemplate.exchange(apiUrl, HttpMethod.POST, httpEntity, Void.class);
     }
 
