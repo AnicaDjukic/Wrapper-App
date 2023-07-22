@@ -1,7 +1,7 @@
 package com.wrapper.app.config;
 
 import com.wrapper.app.domain.Database;
-import com.wrapper.app.repository.CollectionNameProvider;
+import com.wrapper.app.repository.util.CollectionNameProvider;
 import com.wrapper.app.repository.DatabaseRepository;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;

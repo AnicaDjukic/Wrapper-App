@@ -1,4 +1,4 @@
-package com.wrapper.app.repository;
+package com.wrapper.app.repository.util;
 
 import java.util.HashMap;
 import java.util.Map;

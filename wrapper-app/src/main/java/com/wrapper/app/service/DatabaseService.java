@@ -3,7 +3,7 @@ package com.wrapper.app.service;
 import com.wrapper.app.domain.*;
 import com.wrapper.app.exception.AlreadyExistsException;
 import com.wrapper.app.exception.NotFoundException;
-import com.wrapper.app.repository.CollectionNameProvider;
+import com.wrapper.app.repository.util.CollectionNameProvider;
 import com.wrapper.app.repository.DatabaseRepository;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;

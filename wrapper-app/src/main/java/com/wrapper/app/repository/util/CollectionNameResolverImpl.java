@@ -1,4 +1,4 @@
-package com.wrapper.app.repository;
+package com.wrapper.app.repository.util;
 
 import com.wrapper.app.domain.*;
 import org.springframework.stereotype.Component;

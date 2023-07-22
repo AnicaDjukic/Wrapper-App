@@ -25,8 +25,8 @@ public class RasporedController {
 
     @PostMapping("/generate/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public MeetingSchedule generate(@PathVariable String id) {
-        return service.startGenerating(id);
+    public void generate(@PathVariable String id) {
+        service.startGenerating(id);
     }
 
     @PostMapping("/finish/{id}")

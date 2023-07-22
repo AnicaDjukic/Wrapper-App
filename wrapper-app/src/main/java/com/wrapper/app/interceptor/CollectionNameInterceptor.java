@@ -1,7 +1,7 @@
-package com.wrapper.app.repository;
+package com.wrapper.app.interceptor;
 
 import com.wrapper.app.domain.Database;
-import com.wrapper.app.repository.CollectionNameProvider;
+import com.wrapper.app.repository.util.CollectionNameProvider;
 import com.wrapper.app.security.util.TokenUtils;
 import com.wrapper.app.service.DatabaseService;
 import jakarta.servlet.http.HttpServletRequest;

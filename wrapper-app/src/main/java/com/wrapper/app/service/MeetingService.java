@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.wrapper.app.domain.*;
 import com.wrapper.app.dto.generator.*;
+import com.wrapper.app.repository.util.CollectionNameProvider;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
@@ -52,6 +53,7 @@ public class MeetingService {
     }
 
     private String prepareData(Database database) throws IOException {
+        CollectionNameProvider.setCollectionName(database.getGodina() + database.getSemestar().charAt(0));
         JsonObject inputData = new JsonObject();
         inputData.add("realizacija", JsonParser.parseString(objectMapper.writeValueAsString(createRealizacija(database))));
         inputData.add("studijskiProgramList", JsonParser.parseString(objectMapper.writeValueAsString(getStudijskiProgrami(database))));
