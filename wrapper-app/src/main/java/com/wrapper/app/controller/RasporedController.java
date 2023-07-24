@@ -35,6 +35,12 @@ public class RasporedController {
         service.finish(id, raspored);
     }
 
+//    @PostMapping("/finish/{id}")
+//    @ResponseStatus(HttpStatus.OK)
+//    public void finish(@PathVariable String id, @RequestParam("raspored") MultipartFile raspored) {
+//        service.finish(id, raspored);
+//    }
+
     @GetMapping("/download/{filename}")
     public ResponseEntity<Resource> downloadPDFResource(@PathVariable String filename) throws IOException {
         Resource file = service.download(filename);

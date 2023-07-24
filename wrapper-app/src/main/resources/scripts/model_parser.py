@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+import inspect
 import json
 
 # utility za pisanje klasa u fajlove
@@ -10,16 +11,20 @@ class ClassEncoder(json.JSONEncoder):
 class ReadWrite:
     @classmethod
     def from_json(cls, data):
-        return cls(**data)
-    
+        return cls(**{
+            k: v for k, v in data.items()
+            if k in inspect.signature(cls).parameters
+        })
+        # return cls(**data)
+
     @classmethod
     def from_json_list(cls, data):
         return list(map(cls.from_json, data))
 
     @classmethod
     def write_to_file(
-            cls, 
-            data, 
+            cls,
+            data,
             file_name: str,
             dir_path: str = '../out_data/'
     ):
@@ -69,7 +74,7 @@ class RasporedTermin(RasporedIds):
     ukupnoStud: str = None
     trajanje: int = None
 
-    # parsirana imena svih predavaca u terminu
+    # parsirana imena svih predavaca u terminu - medjukorak, da li je potreban u modelu???
     predavaci_imena: list[tuple[str]] = None
 
 
@@ -102,8 +107,8 @@ class Predavac(ReadWrite):
 
     def __eq__(self, other):
         return (isinstance(other, self.__class__) and
-            getattr(other, 'ime', None) == self.ime and
-            getattr(other, 'prezime', None) == self.prezime)
+                getattr(other, 'ime', None) == self.ime and
+                getattr(other, 'prezime', None) == self.prezime)
 
     def __hash__(self):
         return hash(self.ime + self.prezime)
@@ -118,7 +123,7 @@ class StudijskiProgram(ReadWrite):
 
     def __hash__(self):
         return hash(self.oznaka)
-    
+
 @dataclass
 class Predmet(ReadWrite):
     id: str
@@ -128,7 +133,7 @@ class Predmet(ReadWrite):
     godina: int
     semestar: str # L/Z
     brojCasovaPred: int
-    studijskiProgram: str
+    studijskiProgram: str = ''
     brojCasovaVezbe: int = -1
     # radi spajanja sa rasporedom
     sifraStruke: str = ''
@@ -140,7 +145,7 @@ class Predmet(ReadWrite):
 
     def __hash__(self):
         return hash(self.oznaka)
-    
+
 # kako znamo koja grupa slusa koje predmete kada imamo izborne?
 @dataclass
 class StudentskaGrupa(ReadWrite):
@@ -158,27 +163,13 @@ class StudentskaGrupa(ReadWrite):
 class Prostorija(ReadWrite):
     id: str
     oznaka: str
-    oznakaSistem: str
     tip: str
     kapacitet: int
-    orgJedinica: list
+    orgJedinica: list[str]
+    oznakaSistem: str = None
     sekundarniTip: str = None
-    sekundarnaOrgJedinica: list = None
-    odobreniPredmeti: list = None
-
-    @staticmethod
-    def from_json(obj: dict) -> 'Prostorija':
-        _id = str(obj.get("id"))
-        _oznaka = str(obj.get("oznaka"))
-        _oznakaSistem = str(obj.get("oznakaSistem"))
-        _tip = str(obj.get("tip"))
-        _kapacitet = int(obj.get("kapacitet"))
-        _orgJedinica = [str(x) for x in obj.get("orgJedinica")]
-        _sekundarniTip = str(obj.get("sekundarniTip"))
-        _sekundarnaOrgJedinica = [str(y) for y in obj.get("sekundarnaOrgJedinica")]
-        _odobreniPredmeti = [str(z) for z in obj.get("odobreniPredmeti")]
-        return Prostorija(_id, _oznaka, _oznakaSistem, _tip, _kapacitet, _orgJedinica,
-                          _sekundarniTip, _sekundarnaOrgJedinica, _odobreniPredmeti)
+    sekundarnaOrgJedinica: list[str] = None
+    odobreniPredmeti: list[str] = None
 
 @dataclass
 class Dan(ReadWrite):
@@ -191,7 +182,7 @@ class TimeGrain(ReadWrite):
     grainIndex: int
     pocetniMinut: int
     dan: int
-    
+
 # TODO
 # GENERISANJE GRUPA DELIMICNO GOTOVO (racunarske spajanje grupa ostalo)
 @dataclass
@@ -204,17 +195,18 @@ class Meeting(ReadWrite):
     # 1 cas = 45 min
     brojCasova: int
     predavac: str
-    ostaliPredavaci: list
+    ostaliPredavaci: list[str]
     predmet: str
-    studentskeGrupe: list # NIZ ID-EVA
+    studentskeGrupe: list[str] # NIZ ID-EVA
     biWeekly: bool = False
-    
+
+
 @dataclass
 class MeetingAssignment(ReadWrite):
     id: str
-    meeting: str
-    startingTimeGrain: object = None #-> inicijalno null, postavlja ih sistem
-    prostorija: object = None #-> inicijalno null, postavlja ih sistem
+    meeting: Meeting
+    startingTimeGrain: TimeGrain = None #-> inicijalno null, postavlja ih sistem
+    prostorija: Prostorija = None #-> inicijalno null, postavlja ih sistem
 
 @dataclass
 class MeetingSchedule(ReadWrite):
@@ -250,8 +242,22 @@ class MeetingSchedule(ReadWrite):
         meetingAssignmentList = None
         if data['meetingAssignmentList']:
             meetingAssignmentList = list(map(MeetingAssignment.from_json, data['meetingAssignmentList']))
-        return cls(semestar, \
-            departmanList, katedraList, predmetList, studProgramList, \
-            prostorijaList, predavacList, studentskaGrupaList, \
-            danList, timeGrainList, \
-            meetingList, meetingAssignmentList)
+        return cls(semestar,
+                   departmanList, katedraList, predmetList, studProgramList,
+                   prostorijaList, predavacList, studentskaGrupaList,
+                   danList, timeGrainList,
+                   meetingList, meetingAssignmentList)
+
+
+# Kombinovanje vise studijskih programa u jedan Raspored
+# Parsiranje iz plana
+@dataclass
+class RasporedPrikaz(ReadWrite):
+    nazivRasporeda: str
+    studProgrami: list[str]
+
+    @classmethod
+    def from_json(cls, obj: any) -> 'RasporedPrikaz':
+        _nazivRasporeda = str(obj.get("nazivRasporeda"))
+        _studProgrami = [str(y) for y in obj.get("studProgrami")]
+        return cls(_nazivRasporeda, _studProgrami)
