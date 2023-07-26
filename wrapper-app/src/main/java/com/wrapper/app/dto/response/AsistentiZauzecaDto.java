@@ -1,4 +1,4 @@
-package com.wrapper.app.dto.search;
+package com.wrapper.app.dto.response;
 
 import com.wrapper.app.dto.response.PredavacDto;
 import lombok.AllArgsConstructor;

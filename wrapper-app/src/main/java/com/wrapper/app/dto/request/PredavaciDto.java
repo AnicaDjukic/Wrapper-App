@@ -17,5 +17,5 @@ public class PredavaciDto {
 
     private List<String> ostaliProfesori;
 
-    private List<AsistentZauzeceDto> asistentZauzeca;
+    private List<AsistentZauzecaDto> asistentZauzeca;
 }

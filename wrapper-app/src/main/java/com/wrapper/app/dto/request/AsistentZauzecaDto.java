@@ -12,7 +12,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class AsistentZauzeceDto {
+public class AsistentZauzecaDto {
 
     @NotNull
     @NotBlank
