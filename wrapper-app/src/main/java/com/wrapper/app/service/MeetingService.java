@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.wrapper.app.domain.*;
-import com.wrapper.app.dto.converter.RasporedPrikaz;
 import com.wrapper.app.dto.generator.*;
 import com.wrapper.app.repository.util.CollectionNameProvider;
 import org.modelmapper.ModelMapper;
@@ -143,7 +142,4 @@ public class MeetingService {
         return predavaci.stream().map(p -> modelMapper.map(p, PredavacDto.class)).toList();
     }
 
-    public List<RasporedPrikaz> getPlan() {
-        return mongoTemplate.findAll(RasporedPrikaz.class, "Plan");
-    }
 }

@@ -1234,7 +1234,7 @@ def generate_all(
         schedule: MeetingSchedule,
         meeting_assignments: list[MeetingAssignmentJoined],
         raspored_combinations: list[RasporedPrikaz],
-        out_dir_path: str = 'I:/Wrapper-App/wrapper-app/src/main/resources/files/',
+        out_dir_path: str,
         grains_per_day: int = 60,
         start_hour: int = 7,
         day_num: int = 6
@@ -1329,7 +1329,9 @@ raspored_prikaz = [RasporedPrikaz.from_json(item) for item in input_data['raspor
 
 json_output = json.dumps([p.__dict__ for p in raspored_prikaz])
 
-generate_all(schedule, meeting_assignment_list, raspored_prikaz)
+path = input_data['path']
+
+generate_all(schedule, meeting_assignment_list, raspored_prikaz, path)
 
 print(json_output)
 

@@ -23,15 +23,13 @@ public class RasporedService {
 
     private final OptimizatorService optimizatorService;
 
-    private final ParserService parserService;
+    private final ConverterService converterService;
 
-    private static final String LOCAL_PATH = "src/main/resources/files/";
-
-    public RasporedService(DatabaseService databaseService, MeetingService meetingService, OptimizatorService optimizatorService, ParserService parserService) {
+    public RasporedService(DatabaseService databaseService, MeetingService meetingService, OptimizatorService optimizatorService, ConverterService converterService) {
         this.databaseService = databaseService;
         this.meetingService = meetingService;
         this.optimizatorService = optimizatorService;
-        this.parserService = parserService;
+        this.converterService = converterService;
     }
 
     public void startGenerating(String id) {
@@ -57,19 +55,10 @@ public class RasporedService {
     public void finishGenerating(List<MeetingAssignment> meetingAssignments) {
         Database database = databaseService.getUnfinished();
         database.setGenerationFinished(getLocalDate());
-        System.out.println(parserService.parse(meetingAssignments, database));
+        System.out.println(converterService.convert(meetingAssignments, database));
         databaseService.update(database);
 
     }
-
-//    public void finish(String id, MultipartFile raspored) {
-//        Database database = databaseService.getById(id);
-//        String filename = database.getGodina().replace("/", "_") + "_" + database.getSemestar() + ".xlsx";
-//        File rasporedFile = fileHandler.saveFile(raspored, LOCAL_PATH + filename);
-//        database.setGenerationFinished(getLocalDate());
-//        database.setPath(filename);
-//        databaseService.update(database);
-//    }
 
     private Date getLocalDate() {
         LocalDate localDate = LocalDate.now();
@@ -78,7 +67,4 @@ public class RasporedService {
         return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
     }
 
-//    public Resource download(String filename) {
-//        return fileHandler.download(filename);
-//    }
 }
