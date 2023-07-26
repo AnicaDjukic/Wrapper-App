@@ -397,7 +397,7 @@ def create_vezbe(
                     continue
                 # pronadji org jedinicu za asistenta da bi pronasao veliku prostoriju ako postoji za tu org jedinicu
                 org_jedinica_id = None
-                if predmet.brojCasovaRac != 0:
+                if predmet.brojCasovaRac != 0 and len(asistentZauzeca) > 0:
                     org_jedinica_id = next(x.orgJedinica for x in predavaci if x.id == asistentZauzeca[0].asistentId)
 
                 meetings.extend(create_vezbe_for_predmet(predmet, asistentZauzeca, studGrupe, org_jedinica_id, available_velika_rac_prostorija_generator))

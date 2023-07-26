@@ -2,10 +2,10 @@ package com.wrapper.app.config;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
-import com.wrapper.app.repository.util.CollectionNameResolver;
-import com.wrapper.app.repository.util.CollectionNameResolverImpl;
 import com.wrapper.app.repository.cascade.CascadingMongoDeleteEventListener;
 import com.wrapper.app.repository.cascade.CascadingMongoSaveEventListener;
+import com.wrapper.app.repository.util.CollectionNameResolver;
+import com.wrapper.app.repository.util.CollectionNameResolverImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.config.AbstractMongoClientConfiguration;

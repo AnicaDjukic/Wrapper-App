@@ -165,7 +165,7 @@ class Prostorija(ReadWrite):
     oznaka: str
     tip: str
     kapacitet: int
-    orgJedinica: list[str]
+    orgJedinica: list[str] = None
     oznakaSistem: str = None
     sekundarniTip: str = None
     sekundarnaOrgJedinica: list[str] = None

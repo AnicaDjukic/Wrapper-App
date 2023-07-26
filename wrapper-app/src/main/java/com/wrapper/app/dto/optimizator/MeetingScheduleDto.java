@@ -1,14 +1,12 @@
 package com.wrapper.app.dto.optimizator;
 
 import com.wrapper.app.domain.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.util.List;
 
 @Data
-@AllArgsConstructor
-public class MeetingSchedule {
+public class MeetingScheduleDto {
 
     private List<StudijskiProgram> studProgramList;
 
@@ -25,5 +23,4 @@ public class MeetingSchedule {
     private List<StudentskaGrupa> studentskaGrupaList;
 
     private Semestar semestar;
-
 }

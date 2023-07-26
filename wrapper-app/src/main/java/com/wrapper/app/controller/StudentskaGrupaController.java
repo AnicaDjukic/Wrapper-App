@@ -2,9 +2,9 @@ package com.wrapper.app.controller;
 
 import com.wrapper.app.domain.StudentskaGrupa;
 import com.wrapper.app.dto.request.StudentskaGrupaRequestDto;
+import com.wrapper.app.dto.request.StudentskeGrupeRequestDto;
 import com.wrapper.app.dto.response.StudentskaGrupaResponseDto;
 import com.wrapper.app.dto.search.StudentskaGrupaSearchDto;
-import com.wrapper.app.dto.request.StudentskeGrupeRequestDto;
 import com.wrapper.app.service.StudentskaGrupaService;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;

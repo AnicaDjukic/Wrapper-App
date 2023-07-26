@@ -1,6 +1,5 @@
 package com.wrapper.app.domain;
 
-import com.wrapper.app.domain.Dan;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;

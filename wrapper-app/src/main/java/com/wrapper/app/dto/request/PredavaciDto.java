@@ -1,6 +1,5 @@
 package com.wrapper.app.dto.request;
 
-import com.wrapper.app.dto.request.AsistentZauzeceDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

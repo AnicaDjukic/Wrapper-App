@@ -1201,3 +1201,74 @@ def generate_all(
     prostorija_odrzavanje = meeting_assignments_to_edit_view(meeting_assignments, day_num, grains_per_day_edit)
     file_name = 'edit_raspored_prikaz'
     write_edit_view(prostorija_odrzavanje, file_name, out_dir_path)
+
+import json
+import sys
+from typing import List
+
+def default_encoder(obj):
+    return obj.__dict__
+
+def deserialize_meeting_assignment_list(json_data: str) -> List[MeetingAssignmentJoined]:
+    data = json.loads(json_data)
+    meeting_assignment_list = []
+
+    for item in data.get('meetingAssignmentList', []):
+        meeting_assignment = MeetingAssignmentJoined(
+            id=item.get('id'),
+            meeting=MeetingJoined.from_json(item.get('meeting')),
+            prostorija=Prostorija.from_json(item.get('prostorija')),
+            startingTimeGrain=TimeGrainJoined.from_json(item.get('startingTimeGrain')),
+        )
+        meeting_assignment_list.append(meeting_assignment)
+
+    return meeting_assignment_list
+
+class MeetingScheduleEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, MeetingSchedule):
+            return obj.__dict__  # Convert the MeetingSchedule object to a dictionary
+        elif isinstance(obj, Predmet):
+            return obj.__dict__  # Convert the Predmet object to a dictionary using __dict__
+        elif isinstance(obj, StudijskiProgram):
+            return obj.__dict__  # Convert the Predmet object to a dictionary using __dict__
+        elif isinstance(obj, Prostorija):
+            return obj.__dict__  # Convert the Predmet object to a dictionary using __dict__
+        elif isinstance(obj, Predavac):
+            return obj.__dict__
+        elif isinstance(obj, StudentskaGrupa):
+            return obj.__dict__
+        elif isinstance(obj, Dan):
+            return obj.__dict__
+        elif isinstance(obj, TimeGrain):
+            return obj.__dict__
+        elif isinstance(obj, Meeting):
+            return obj.__dict__
+        elif isinstance(obj, MeetingAssignment):
+            return obj.__dict__
+        return json.JSONEncoder.default(self, obj)
+
+# Read the JSON file path from command-line argument
+json_file_path = sys.argv[1]
+
+# Read the JSON data from the file with specified encoding
+with open(json_file_path, encoding='utf-8') as file:
+    json_input = file.read()
+
+# Create a list of MeetingAssignmentJoined objects
+#meeting_assignment_list = deserialize_meeting_assignment_list(json_input)
+
+input_data = json.loads(json_input)
+
+schedule = MeetingSchedule.from_json(input_data['schedule'])
+
+# Convert the list of objects to JSON using custom encoder
+#json_output = json.dumps([p for p in meeting_assignment_list], default=default_encoder, indent=2)
+
+# Convert the MeetingSchedule object to JSON using the custom encoder
+json_output = json.dumps(schedule, cls=MeetingScheduleEncoder, indent=2)
+
+print(json_output)
+
+sys.stdout.flush()
+

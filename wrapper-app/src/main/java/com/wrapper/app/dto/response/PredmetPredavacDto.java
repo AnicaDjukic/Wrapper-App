@@ -1,6 +1,5 @@
 package com.wrapper.app.dto.response;
 
-import com.wrapper.app.dto.response.PredavacDto;
 import com.wrapper.app.dto.search.AsistentiZauzecaDto;
 import lombok.Getter;
 import lombok.Setter;

@@ -1,11 +1,10 @@
 package com.wrapper.app.config;
 
 import com.wrapper.app.domain.*;
-import com.wrapper.app.dto.generator.MeetingDto;
 import com.wrapper.app.dto.generator.PredmetDto;
 import com.wrapper.app.dto.generator.ProstorijaDto;
 import com.wrapper.app.dto.generator.StudentskaGrupaDto;
-import com.wrapper.app.dto.optimizator.Meeting;
+import com.wrapper.app.dto.generator.MeetingDto;
 import com.wrapper.app.dto.request.*;
 import com.wrapper.app.dto.response.PredavacResponseDto;
 import com.wrapper.app.dto.response.StudijskiProgramDto;
@@ -43,7 +42,8 @@ public class MapperConfig {
                         StudijskiProgramMapper studijskiProgramMapper,
                         ProstorijaMapper prostorijaMapper,
                         StudentskaGrupaMapper studentskaGrupaMapper,
-                        StudijskiProgramPredmetiMapper studijskiProgramPredmetiMapper, MeetingMapper meetingMapper) {
+                        StudijskiProgramPredmetiMapper studijskiProgramPredmetiMapper,
+                        MeetingMapper meetingMapper) {
         this.predmetMapper = predmetMapper;
         this.predavacMapper = predavacMapper;
         this.predmetPredavacMapper = predmetPredavacMapper;
@@ -84,6 +84,14 @@ public class MapperConfig {
             }
         };
         modelMapper.addConverter(predmetDtoConverter);
+
+        Converter<Predmet, com.wrapper.app.dto.converter.PredmetDto> converterPredmetDtoConverter = new AbstractConverter<>() {
+            @Override
+            protected com.wrapper.app.dto.converter.PredmetDto convert(Predmet predmet) {
+                return predmetMapper.mapToConverterDto(predmet);
+            }
+        };
+        modelMapper.addConverter(converterPredmetDtoConverter);
     }
 
     private void initilizePredavacConverters(ModelMapper modelMapper) {
@@ -107,6 +115,14 @@ public class MapperConfig {
             }
         };
         modelMapper.addConverter(predavacDtoConverter);
+
+        Converter<Predavac, com.wrapper.app.dto.converter.PredavacDto> converterPredavacDtoConverter =  new AbstractConverter<>() {
+            @Override
+            protected com.wrapper.app.dto.converter.PredavacDto convert(Predavac predavac) {
+                return predavacMapper.mapToConverterDto(predavac);
+            }
+        };
+        modelMapper.addConverter(converterPredavacDtoConverter);
     }
 
     private void initilizeProstorijaConverters(ModelMapper modelMapper) {
@@ -192,7 +208,7 @@ public class MapperConfig {
     }
 
     private void initilizeMeetingConverters(ModelMapper modelMapper) {
-        Converter<MeetingDto, Meeting> meetingConverter = new AbstractConverter<MeetingDto, Meeting>() {
+        Converter<MeetingDto, Meeting> meetingConverter = new AbstractConverter<>() {
             @Override
             protected Meeting convert(MeetingDto meetingDto) {
                 return meetingMapper.map(meetingDto);

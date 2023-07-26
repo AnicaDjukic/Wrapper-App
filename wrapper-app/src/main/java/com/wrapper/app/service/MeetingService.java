@@ -29,6 +29,7 @@ public class MeetingService {
     private static final String STUDENTSKE_GRUPE = "StudentskeGrupe";
     private static final String PREDMETI = "Predmeti";
     private static final String PREDAVACI = "Predavaci";
+    private static final String MEETINGS = "Meetings";
 
     public MeetingService(MongoTemplate mongoTemplate, ModelMapper modelMapper, ObjectMapper objectMapper) {
         this.mongoTemplate = mongoTemplate;
@@ -37,14 +38,28 @@ public class MeetingService {
     }
 
     public List<MeetingDto> generateMeetings(Database database) throws IOException {
-        Process process = executePythonScript(database);
+        String jsonFilePath = prepareData(database);
+        Process process = executePythonScript(jsonFilePath);
         String jsonOutput = readPythonScriptOutput(process);
-        return objectMapper.readValue(jsonOutput, new TypeReference<>() {
-        });
+        List<MeetingDto> meetingsDtos = objectMapper.readValue(jsonOutput, new TypeReference<>() {});
+        saveMeetings(database, meetingsDtos);
+        return meetingsDtos;
     }
 
-    private Process executePythonScript(Database database) throws IOException {
-        String jsonFilePath = prepareData(database);
+    private void saveMeetings(Database database, List<MeetingDto> meetingsDtos) {
+        List<Meeting> meetings = meetingsDtos.stream().map(m -> modelMapper.map(m, Meeting.class)).toList();
+        String collectionName = MEETINGS + database.getGodina() + database.getSemestar().charAt(0);
+        mongoTemplate.dropCollection(collectionName);
+        mongoTemplate.createCollection(collectionName);
+        mongoTemplate.insert(meetings,collectionName);
+    }
+
+    public List<Meeting> getMeetings(Database database) {
+        String collectionName = MEETINGS + database.getGodina() + database.getSemestar().charAt(0);
+        return mongoTemplate.findAll(Meeting.class, collectionName);
+    }
+
+    private Process executePythonScript(String jsonFilePath) throws IOException {
         String pythonScriptPath = "src/main/resources/scripts/7_generate_termini.py";
         String[] command = {"python", pythonScriptPath, jsonFilePath};
         ProcessBuilder processBuilder = new ProcessBuilder(command);

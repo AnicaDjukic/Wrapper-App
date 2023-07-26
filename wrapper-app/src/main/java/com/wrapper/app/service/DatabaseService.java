@@ -3,12 +3,15 @@ package com.wrapper.app.service;
 import com.wrapper.app.domain.*;
 import com.wrapper.app.exception.AlreadyExistsException;
 import com.wrapper.app.exception.NotFoundException;
-import com.wrapper.app.repository.util.CollectionNameProvider;
 import com.wrapper.app.repository.DatabaseRepository;
+import com.wrapper.app.repository.util.CollectionNameProvider;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class DatabaseService<T> {
@@ -156,5 +159,10 @@ public class DatabaseService<T> {
 
     public void update(Database database) {
         repository.save(database);
+    }
+
+    public Database getUnfinished() {
+        return repository.findByGenerationFinishedIsNullAndGenerationStartedIsNotNull()
+                .orElseThrow(() -> new NotFoundException(Database.class.getSimpleName()));
     }
 }

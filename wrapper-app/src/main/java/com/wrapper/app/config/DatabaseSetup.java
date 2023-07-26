@@ -1,11 +1,12 @@
 package com.wrapper.app.config;
 
 import com.wrapper.app.domain.Database;
-import com.wrapper.app.repository.util.CollectionNameProvider;
 import com.wrapper.app.repository.DatabaseRepository;
+import com.wrapper.app.repository.util.CollectionNameProvider;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
+
 import java.util.List;
 
 @Component

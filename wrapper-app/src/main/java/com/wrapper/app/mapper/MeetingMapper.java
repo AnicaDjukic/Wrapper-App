@@ -1,8 +1,8 @@
 package com.wrapper.app.mapper;
 
+import com.wrapper.app.domain.Meeting;
 import com.wrapper.app.domain.Predavac;
 import com.wrapper.app.dto.generator.MeetingDto;
-import com.wrapper.app.dto.optimizator.Meeting;
 import com.wrapper.app.service.PredavacService;
 import com.wrapper.app.service.PredmetService;
 import com.wrapper.app.service.StudentskaGrupaService;
@@ -37,7 +37,7 @@ public class MeetingMapper {
                 predmetService.getById(meetingDto.getPredmet()), meetingDto.getStudentskeGrupe().stream().map(studentskaGrupaService::getById).toList(),
                 meetingDto.isBiWeekly()
         );
-}
+    }
 
     private List<Predavac> getOstaliProfesori(MeetingDto meetingDto) {
         if(meetingDto.getOstaliPredavaci().size() == 1 && meetingDto.getOstaliPredavaci().get(0).isEmpty())

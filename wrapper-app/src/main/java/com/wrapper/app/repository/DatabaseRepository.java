@@ -8,4 +8,6 @@ import java.util.Optional;
 public interface DatabaseRepository extends MongoRepository<Database, String> {
 
     Optional<Database> findBySemestarAndGodina(String semestar, String godina);
+
+    Optional<Database> findByGenerationFinishedIsNullAndGenerationStartedIsNotNull();
 }

@@ -49,6 +49,7 @@ public class WebSecurityConfig {
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
 				.authorizeHttpRequests()
 				.requestMatchers("/auth/login").permitAll()
+				.requestMatchers("/api/v1/raspored/finish").permitAll()
 				.anyRequest().authenticated();
 
 		http.addFilterBefore(new TokenAuthenticationFilter(tokenUtils, userService),

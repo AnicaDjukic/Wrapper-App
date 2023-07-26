@@ -58,6 +58,21 @@ class MeetingJoined(ReadWrite):
     requiredCapacity: int
     biWeekly: bool = False
 
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'tipProstorije': self.tipProstorije,
+            'meetingTip': self.meetingTip,
+            'predavac': self.predavac.to_dict(),
+            'ostaliPredavaci': [p.to_dict() for p in self.ostaliPredavaci],
+            'predmet': self.predmet.to_dict(),
+            'brojCasova': self.brojCasova,
+            'durationInGrains': self.durationInGrains,
+            'studentskeGrupe': [g.to_dict() for g in self.studentskeGrupe],
+            'requiredCapacity': self.requiredCapacity,
+            'biWeekly': self.biWeekly
+        }
+
     @classmethod
     def from_json(cls, data):
         id = str(data['id'])
@@ -71,15 +86,15 @@ class MeetingJoined(ReadWrite):
         studentskeGrupe = list(map(StudentskaGrupaJoined.from_json, data['studentskeGrupe']))
         requiredCapacity = int(data['requiredCapacity'])
         biWeekly = bool(data['biWeekly'])
-        return cls(id, tipProstorije, meetingTip, predavac, ostaliPredavaci, predmet, \
+        return cls(id, tipProstorije, meetingTip, predavac, ostaliPredavaci, predmet,
                    brojCasova, durationInGrains, studentskeGrupe, requiredCapacity, biWeekly)
 
 @dataclass
 class MeetingAssignmentJoined(ReadWrite):
     id: str
     meeting: MeetingJoined
+    prostorija: Prostorija
     startingTimeGrain: TimeGrainJoined = None
-    prostorija: Prostorija = None
 
     @classmethod
     def from_json(cls, data):
