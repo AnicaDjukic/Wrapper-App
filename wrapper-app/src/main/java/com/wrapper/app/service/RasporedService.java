@@ -55,7 +55,7 @@ public class RasporedService {
     public void finishGenerating(List<MeetingAssignment> meetingAssignments) {
         Database database = databaseService.getUnfinished();
         database.setGenerationFinished(getLocalDate());
-        System.out.println(converterService.convert(meetingAssignments, database));
+        CompletableFuture.runAsync(() -> converterService.convert(meetingAssignments, database));
         databaseService.update(database);
 
     }

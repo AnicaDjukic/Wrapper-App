@@ -2,6 +2,7 @@ package com.wrapper.app.service;
 
 import com.wrapper.app.domain.*;
 import com.wrapper.app.domain.MeetingSchedule;
+import com.wrapper.app.dto.converter.RasporedPrikaz;
 import com.wrapper.app.dto.optimizator.MeetingAssignment;
 import com.wrapper.app.dto.optimizator.Semestar;
 import com.wrapper.app.repository.util.CollectionNameProvider;
@@ -16,16 +17,14 @@ public class MeetingScheduleService {
 
     private final MongoTemplate mongoTemplate;
 
-    private final ModelMapper modelMapper;
-
     private static final String STUDIJSKI_PROGRAMI = "StudijskiProgrami";
     private static final String PROSTORIJE = "Prostorije";
     private static final String STUDENTSKE_GRUPE = "StudentskeGrupe";
     private static final String PREDAVACI = "Predavaci";
+    private static final String RASPORED_PRIKAZ = "RasporedPrikaz";
 
-    public MeetingScheduleService(MongoTemplate mongoTemplate, ModelMapper modelMapper) {
+    public MeetingScheduleService(MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
-        this.modelMapper = modelMapper;
     }
 
     public MeetingSchedule createMeetingShedule(Database database, List<Meeting> meetings, List<MeetingAssignment> meetingAssignments) {
@@ -87,5 +86,9 @@ public class MeetingScheduleService {
     private List<StudentskaGrupa> getStudentskeGrupe(Database database) {
         String collectionName = STUDENTSKE_GRUPE + database.getGodina() + database.getSemestar().charAt(0);
         return mongoTemplate.findAll(StudentskaGrupa.class, collectionName);
+    }
+
+    public List<RasporedPrikaz> getRasporedPrikaz() {
+        return mongoTemplate.findAll(RasporedPrikaz.class, RASPORED_PRIKAZ);
     }
 }
