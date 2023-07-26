@@ -1,0 +1,80 @@
+html,
+body {
+  height: auto;
+}
+
+h1,
+h2 {
+  text-decoration: underline;
+}
+
+table {
+  width: 90%;
+  margin: 0 auto;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+
+table,
+td,
+th {
+  border: 1px solid;
+}
+
+th {
+  background-color: yellow;
+}
+
+.page {
+  width: 100%;
+  page-break-after: always;
+}
+
+.page:last-of-type {
+  page-break-after: auto;
+}
+
+.right {
+  text-align: right;
+}
+
+.five {
+  width: 5%;
+}
+
+.seven {
+  width: 7%;
+}
+
+.ten {
+  width: 10%;
+}
+
+.eleven {
+  width: 11%;
+}
+
+.fifteen {
+  width: 15%;
+}
+
+.twenty {
+  width: 20%;
+}
+
+.twenty-five {
+  width: 25%;
+}
+
+.thirty {
+  width: 30%;
+}
+
+.day {
+  text-transform: uppercase;
+}
+
+td {
+  text-align: center;
+}
+/* A4 = 210 x 297 mm */

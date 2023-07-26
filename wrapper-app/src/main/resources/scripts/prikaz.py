@@ -1,13 +1,12 @@
 # %% [markdown]
-# #### Formatiranje termina
-
-# - 9_format_termini.ipynb
-
-# %% [markdown]
-# ### Formatiranje termina u model za prikazivanje
+#  #### Formatiranje termina
+#  - 9_format_termini.ipynb
 
 # %% [markdown]
-# #### Metode za mapiranje
+#  ### Formatiranje termina u model za prikazivanje
+
+# %% [markdown]
+#  #### Metode za mapiranje
 
 # %%
 from model_parser import ReadWrite, MeetingSchedule, RasporedPrikaz
@@ -15,8 +14,10 @@ from model_joined import *
 from model_prikaz import *
 from parser_utils import *
 
+
 # %%
 from collections import defaultdict
+
 
 # %%
 import numpy as np
@@ -36,6 +37,7 @@ def time_grain_index_to_time(
     minute = time % 60
     return f'{hour:02d}:{minute:02d}'
 
+
 # %%
 def minute_to_time(
         minutes: int
@@ -43,6 +45,7 @@ def minute_to_time(
     hour = minutes // 60
     minute = minutes % 60
     return f'{hour:02d}:{minute:02d}'
+
 
 # %%
 def predavac_to_ispis(
@@ -52,11 +55,13 @@ def predavac_to_ispis(
         return f'{predavac.prezime} {predavac.titula} {predavac.ime}'
     return f'{predavac.prezime} {predavac.ime}'
 
+
 # %%
 def predavac_to_oznaka(
         predavac: Predavac
 ) -> str:
     return str(predavac.oznaka)
+
 
 # %%
 def stud_grupe_to_ispis(
@@ -80,17 +85,20 @@ def stud_grupe_to_ispis(
     else:
         return ', '.join(oznake)
 
+
 # %%
 def meeting_assignment_to_dan(
         ma: MeetingAssignmentJoined
 ) -> str:
     return ma.startingTimeGrain.dan.danUNedelji
 
+
 # %%
 def meeting_assignment_to_prostorija_id(
         ma: MeetingAssignmentJoined
 ) -> str:
     return ma.prostorija.id
+
 
 # %%
 def meeting_assignment_to_prostorija_zauzece(
@@ -101,6 +109,7 @@ def meeting_assignment_to_prostorija_zauzece(
     duration_in_grains = ma.meeting.durationInGrains
     last_time_grain = first_time_grain + duration_in_grains
     return ProstorijaZauzece(prostorija_oznaka, first_time_grain, last_time_grain)
+
 
 # %%
 def meeting_assignment_to_stud_grupe(
@@ -120,6 +129,7 @@ def meeting_assignment_to_stud_grupe(
         stud_program_godine.append((stud_program_id, godina))
     return stud_program_godine
 
+
 # %%
 def meeting_assignment_to_predavaci_ids(
         ma: MeetingAssignmentJoined
@@ -129,6 +139,7 @@ def meeting_assignment_to_predavaci_ids(
     predavaci_ids = [pred.id for pred in ostali_predavaci]
     predavaci_ids.append(predavac_id)
     return predavaci_ids
+
 
 # %%
 def meeting_assignment_to_red(
@@ -151,6 +162,7 @@ def meeting_assignment_to_red(
     vreme_kraja = time_grain_index_to_time(end_time_grain, grains_per_day, start_hour)
     
     return Red(stud_grupa, vreme_pocetka, vreme_kraja, tip_nastave, predmet_naziv)
+
 
 # %%
 def meeting_assignment_to_prostorija_red(
@@ -180,6 +192,7 @@ def meeting_assignment_to_prostorija_red(
     red.predavac = predavaci
     return ProstorijaRed(**vars(red))
 
+
 # %%
 def meeting_assignment_to_predavac_red(
         ma: MeetingAssignmentJoined,
@@ -203,6 +216,7 @@ def meeting_assignment_to_predavac_red(
     red.semestar = semestar
     return PredavacRed(**vars(red))
 
+
 # %%
 def meeting_assignment_to_raspored_red(
         ma: MeetingAssignmentJoined,
@@ -224,6 +238,7 @@ def meeting_assignment_to_raspored_red(
     red.prostorija = prostorija
     red.predavac = predavaci
     return RasporedRed(**vars(red))
+
 
 # %%
 def meeting_assignment_to_edit_prikaz(
@@ -256,10 +271,11 @@ def meeting_assignment_to_edit_prikaz(
     return EditPrikaz(meeting_id, nastava_tip, predmet_prikaz, predavac_prikaz, list(stud_programi), 
                         stud_grupe_list, potreban_kapacitet, prekoracen_kapacitet)
 
+
 # %% [markdown]
-# ### Kreiranje **Raspored prikaza**
+#  ### Kreiranje **Raspored prikaza**
 # 
-# - transformacija ```MeetingAssignment``` u ```StudProgramiRaspored```
+#  - transformacija ```MeetingAssignment``` u ```StudProgramiRaspored```
 
 # %%
 def stepen_nivo_to_stud_program_stepen_studija(
@@ -276,6 +292,7 @@ def stepen_nivo_to_stud_program_stepen_studija(
         stepen_studija = "mss"
     return stepen_studija
 
+
 # %%
 # u slucaju novih 2-godisnjih master stud programa, dodati ga u listu
 # TODO: (izmena da informacija o tome da li je stud program cuva u samom programu)
@@ -284,12 +301,14 @@ def is_dvogodisnji_master(
 ) -> bool:
     return oznaka in ["AI1", "AI2", "AI3", "AI4", "AI5", "AI6", "AI7", "AI8"]
 
+
 # %%
 def create_dani_dict():
     dani = {}
     for i in range(0, 6):
         dani[i] = RasporedDan(i, [])
     return dani
+
 
 # %%
 def create_semestar(
@@ -299,6 +318,7 @@ def create_semestar(
     semestar = Semestar(start_semestar + (semestar_num - 1) *2, dict())
     semestar.dani = create_dani_dict()
     return semestar
+
 
 # %%
 def create_semestri(
@@ -327,6 +347,7 @@ def create_semestri(
             if nivo == 1 and i == 1 and not is_dvogodisnji_master(oznaka):
                 break
     return stud_program_raspored
+
 
 # %%
 def meeting_assignments_to_stud_programi_raspored(
@@ -382,10 +403,11 @@ def meeting_assignments_to_stud_programi_raspored(
 
     return raspored
 
+
 # %% [markdown]
-# ### Kreiranje **Prostorije raspored prikaza**
+#  ### Kreiranje **Prostorije raspored prikaza**
 # 
-# - transformacija ```MeetingAssignment``` u ```ProstorijeRaspored```
+#  - transformacija ```MeetingAssignment``` u ```ProstorijeRaspored```
 
 # %%
 def meeting_assignments_to_prostorije_raspored(
@@ -426,10 +448,11 @@ def meeting_assignments_to_prostorije_raspored(
 
     return raspored
 
+
 # %% [markdown]
-# ### Kreiranje **Predavaci raspored prikaza**
+#  ### Kreiranje **Predavaci raspored prikaza**
 # 
-# - transformacija ```MeetingAssignment``` u ```PredavaciRaspored```
+#  - transformacija ```MeetingAssignment``` u ```PredavaciRaspored```
 
 # %%
 def meeting_assignments_to_predavaci_raspored(
@@ -471,10 +494,11 @@ def meeting_assignments_to_predavaci_raspored(
 
     return raspored
 
+
 # %% [markdown]
-# ### Kreiranje **Google kalendar prikaza**
+#  ### Kreiranje **Google kalendar prikaza**
 # 
-# - transformacija ```MeetingAssignment``` u ```GoogleCalendarPrikaz```
+#  - transformacija ```MeetingAssignment``` u ```GoogleCalendarPrikaz```
 
 # %%
 from datetime import datetime, timedelta
@@ -532,6 +556,7 @@ def meeting_assignment_to_predavac_google_red(
     
     return prikazi
 
+
 # %%
 def meeting_assignments_to_predavac_google_calendar(
         meeting_assignments: list[MeetingAssignmentJoined],
@@ -550,6 +575,7 @@ def meeting_assignments_to_predavac_google_calendar(
             raspored.extend(meeting_assignment_to_predavac_google_red(ma, grains_per_day, start_hour, pocetni_dan, repeat_num))
     return raspored
 
+
 # %%
 def write_google_calendar_csv(
         filePath: str,
@@ -566,11 +592,12 @@ def write_google_calendar_csv(
     df = pd.DataFrame.from_records([r.to_dict() for r in raspored])
     df.to_csv(filePath, index=False)
 
+
 # %% [markdown]
-# ### Kreiranje prikaza za **Edit-ovanje**
+#  ### Kreiranje prikaza za **Edit-ovanje**
 # 
-# - zauzece prostorija po time-grains (podeoci od 15 minuta)
-# - prikaz celog mitinga u svakom time-grain koji zauzima
+#  - zauzece prostorija po time-grains (podeoci od 15 minuta)
+#  - prikaz celog mitinga u svakom time-grain koji zauzima
 
 # %%
 def generate_grains_per_day(
@@ -581,6 +608,7 @@ def generate_grains_per_day(
     for j in range(count_per_day):
         day.append(start_idx * count_per_day + j)
     return day
+
 
 # %%
 def generate_grains(
@@ -595,6 +623,7 @@ def generate_grains(
         grains_per_day.append(day)
         all_grains.extend(day)
     return grains_per_day, all_grains
+
 
 # %%
 def meeting_assignments_to_edit_view(
@@ -616,6 +645,7 @@ def meeting_assignments_to_edit_view(
     return prostorija_odrzavanje
 
 
+
 # %%
 def create_columns(
         grains_per_day: int, 
@@ -625,6 +655,7 @@ def create_columns(
     # dodavanje kolone za oznaku
     columns = ['Oznaka'] + [time_grain_index_to_time(grain, grains_per_day, start_hour) for grain in grains]
     return columns
+
 
 # %%
 def create_prostorija_row(
@@ -640,6 +671,7 @@ def create_prostorija_row(
     daily_prikaz = [str(zauzece) if type(zauzece) != int else '' for zauzece in daily_zauzece]
     return daily_prikaz
 
+
 # %%
 def create_all_rows(
         day_num: int, 
@@ -650,6 +682,7 @@ def create_all_rows(
     for oznaka, prostorija_zauzece in all_zauzeca.items():
         all_rows.append([str(oznaka)] + create_prostorija_row(day_num, grains_per_day, prostorija_zauzece))
     return all_rows
+
 
 # %%
 def create_day_edit(
@@ -662,6 +695,7 @@ def create_day_edit(
     rows = create_all_rows(day_num, grains_per_day, all_zauzeca)
     return columns, rows
 
+
 # %%
 def style_cell(
         value: str, 
@@ -673,6 +707,7 @@ def style_cell(
         return danger
     if 'prekoracenje: 0' in value:
         return ok
+
 
 # %%
 def write_edit_view(
@@ -735,16 +770,16 @@ def write_edit_view(
                     style = style_cell(current_meeting, merge_ok_format, merge_warn_format, merge_danger_format)
                     worksheet.merge_range(row_idx+1, merge_start, row_idx+1, merge_end, current_meeting, style)
 
-# %% [markdown]
-# #### Prikaz termina
-
-# - 10_prikaz_termina.ipynb
 
 # %% [markdown]
-# #### Rad sa fajlovima
+#  #### Prikaz termina
+#  - 10_prikaz_termina.ipynb
+
+# %% [markdown]
+#  #### Rad sa fajlovima
 # 
-# - zapisivanje tekstualnog sadržaja u fajl
-# - čitanje tekstualnog sadržaja iz fajla
+#  - zapisivanje tekstualnog sadržaja u fajl
+#  - čitanje tekstualnog sadržaja iz fajla
 
 # %%
 def write_to_file(
@@ -756,15 +791,17 @@ def write_to_file(
     with open(dir_path + file_name + '.' + extension, 'w', encoding='utf-8') as out_file:
         out_file.write(content)
 
-# %% [markdown]
-# #### Stilizovanje rasporeda
-# - ```styles.css```
 
 # %% [markdown]
-# #### HTML to PDF
+#  #### Stilizovanje rasporeda
+#  - ```styles.css```
+
+# %% [markdown]
+#  #### HTML to PDF
 
 # %%
 import pdfkit
+from unidecode import unidecode
 
 # %%
 def write_pdf_from_html(
@@ -788,8 +825,9 @@ def write_pdf_from_html(
     }
     pdfkit.from_file(file_path, options=options, css=css_path, output_path=out_path, configuration=config)
 
+
 # %% [markdown]
-# ### HTML raspored
+#  ### HTML raspored
 
 # %%
 def dan_num_to_dan(
@@ -805,11 +843,13 @@ def dan_num_to_dan(
     }
     return dani[dan_num]
 
+
 # %%
 def semestar_num_to_semestar(
         semestar_num: int
 ) -> str:
     return str(semestar_num) + '. semestar'
+
 
 # %%
 def oznaka_stepena_to_stepen_studija(
@@ -823,6 +863,7 @@ def oznaka_stepena_to_stepen_studija(
     }
     return stepeni[oznaka_stepena]
 
+
 # %%
 def vrsta_nastave_to_naziv_nastave(
         vrsta_nastave: str
@@ -835,6 +876,7 @@ def vrsta_nastave_to_naziv_nastave(
     }
     return vrste_nastave[vrsta_nastave]
 
+
 # %%
 # Grupa-e	Od	Do	Učionica	Vrsta nast.	Naziv predmeta	Izvođač
 def raspored_red_to_ispis(
@@ -843,6 +885,7 @@ def raspored_red_to_ispis(
     return [red.studGrupa, red.vremePocetka, red.vremeKraja, \
         red.prostorija, vrsta_nastave_to_naziv_nastave(red.vrstaNastave), \
         red.nazivPred, red.predavac]
+
 
 # %%
 # Grupa-e	Od	Do	Odsek	Sem.	Vrsta nast.	Naziv Predmeta	Izvođač
@@ -853,6 +896,7 @@ def prostorija_red_to_ispis(
         red.odsek, red.semestar, vrsta_nastave_to_naziv_nastave(red.vrstaNastave), \
         red.nazivPred, red.predavac]
 
+
 # %%
 # Grupa-e	Od	Do	Učionica	Odsek	Sem.	Vrsta nast.	Naziv Predmeta
 def predavac_red_to_ispis(
@@ -861,6 +905,7 @@ def predavac_red_to_ispis(
     return [red.studGrupa, red.vremePocetka, red.vremeKraja, \
         red.prostorija, red.odsek, red.semestar, \
         vrsta_nastave_to_naziv_nastave(red.vrstaNastave), red.nazivPred]
+
 
 # %%
 def stud_program_header(
@@ -878,6 +923,7 @@ def stud_program_header(
     table += '  </thead>\n'
     return table
 
+
 # %%
 def prostorija_header(
         cols: int, 
@@ -893,6 +939,7 @@ def prostorija_header(
             '<th>Naziv predmeta</th><th>Izvođač</th></tr>\n'
     table += '  </thead>\n'
     return table
+
 
 # %%
 def predavac_header(
@@ -910,6 +957,7 @@ def predavac_header(
     table += '  </thead>\n'
     return table
 
+
 # %%
 def stud_program_colgroup() -> str:
     # colgroup
@@ -923,6 +971,7 @@ def stud_program_colgroup() -> str:
     table += '<col class="twenty-five" />'
     table += '</colgroup>'
     return table
+
 
 # %%
 def prostorija_colgroup() -> str:
@@ -939,6 +988,7 @@ def prostorija_colgroup() -> str:
     table += '</colgroup>'
     return table
 
+
 # %%
 def predavac_colgroup() -> str:
     # colgroup
@@ -953,6 +1003,7 @@ def predavac_colgroup() -> str:
     table += '<col class="thirty" />'
     table += '</colgroup>'
     return table
+
 
 # %%
 def table_head(
@@ -969,6 +1020,7 @@ def table_head(
         colgroup = predavac_colgroup()
         head = predavac_header(8, day)
     return colgroup + head
+
 
 # %%
 def html_table(
@@ -988,6 +1040,7 @@ def html_table(
     table += '</table>\n'
     return table
 
+
 # %%
 def html_head() -> str:
     html = '<html>'
@@ -999,6 +1052,7 @@ def html_head() -> str:
     html += '<link rel="stylesheet" href="styles.css">'
     html += '</head>'
     return html
+
 
 # %%
 def stud_program_tables(
@@ -1031,6 +1085,7 @@ def stud_program_tables(
         stud_program_tables[stud_program_id] = html
     return stud_program_tables
 
+
 # %%
 def prostorija_table(
         raspored: ProstorijaRaspored
@@ -1047,6 +1102,7 @@ def prostorija_table(
         html += dani_html
     html += '</body></html>'
     return html
+
 
 # %%
 def predavac_table(
@@ -1065,8 +1121,9 @@ def predavac_table(
     html += '</body></html>'
     return html
 
+
 # %% [markdown]
-# ### Mapiranje rasporeda studijskih programa
+#  ### Mapiranje rasporeda studijskih programa
 
 # %%
 def html_generator(
@@ -1086,6 +1143,7 @@ def html_generator(
     html += '</body></html>'
     return html
 
+
 # %%
 def generate_all_rasporedi(
         raspored: StudProgramiRaspored,
@@ -1097,15 +1155,15 @@ def generate_all_rasporedi(
 
     for combination in raspored_combinations:
         html = html_generator(combination.studProgrami, raspored)
-        file_name = combination.nazivRasporeda
+        file_name = unidecode(combination.nazivRasporeda)
         html_file = 'html'
         write_to_file(html, file_name, html_file, dir_path)
-        pdf_file = 'pdf'
-        write_pdf_from_html(file_name, css_file, dir_path)
-        print(combination.nazivRasporeda + ' DONE')
+        # write_pdf_from_html(file_name, css_file, dir_path)
+        #print(combination.nazivRasporeda.encode('utf-8').decode('utf-8') + ' DONE')
+
 
 # %% [markdown]
-# ### Mapiranje svih prostorija rasporeda
+#  ### Mapiranje svih prostorija rasporeda
 
 # %%
 def generate_all_prostorija_rasporedi(
@@ -1116,19 +1174,19 @@ def generate_all_prostorija_rasporedi(
     css_file = dir_path + css
 
     for prostorija in raspored.prostorije.values():
-        oznaka = prostorija.prostorijaOznaka
+        oznaka = str(prostorija.prostorijaOznaka)
         oznaka_clean = oznaka.replace('.', ' ').replace('/', ' ')
-        file_name = dir_path + oznaka_clean
+        file_name = unidecode(oznaka_clean)
         html = prostorija_table(prostorija)
         html_file = 'html'
         write_to_file(html, file_name, html_file, dir_path)
-        pdf_file = 'pdf'
-        write_pdf_from_html(file_name, css_file, dir_path)
-        print(oznaka + ' DONE')
+        # write_pdf_from_html(file_name, css_file, dir_path)
+        # print(oznaka + ' DONE')
     
 
+
 # %% [markdown]
-# ### Mapiranje svih predavac rasporeda
+#  ### Mapiranje svih predavac rasporeda
 
 # %%
 def generate_all_predavac_rasporedi(
@@ -1140,46 +1198,43 @@ def generate_all_predavac_rasporedi(
 
     for predavac in raspored.predavaci.values():
         ime = predavac.predavacIme
-        file_name = dir_path + ime
+        file_name = unidecode(ime)
         html = predavac_table(predavac)
         html_file = 'html'
         write_to_file(html, file_name, html_file, dir_path)
-        pdf_file = 'pdf'
-        write_pdf_from_html(file_name, css_file, dir_path)
-        print(ime + ' DONE')
+        # write_pdf_from_html(file_name, css_file, dir_path)
+        #print(ime + ' DONE')
+
 
 
 # %% [markdown]
-# ### Primer izvršavanja
+#  ### Primer izvršavanja
+#  - potrebno je ucitati celokupan MeetingSchedule (koji sadrzi liste entiteta)
+#    - od listi entiteta su potrebne:
+#        - studProgramList
+#        - prostorijaList
+#        - predavacList
+#    - pored toga, potrebna informacija o semestru -> 'Z' ili 'L'
+#  (ako je jednostavnije, moze se izmeniti metoda tako da prima direktno liste i oznaku semestra -> da se ne bi kreirao ceo MeetingSchedule objekat)
+#  - potrebno je proslediti listu MeetingAssignment objekata koja se dobija od optimizatora
+#    - mapiranje je pravljeno po izlazu iz optimizatora
+#  - BITNO I NOVO: potrebno je proslediti listu RasporedPrikaz objekata
+#    - ovi objekti sadrze id-eve studijskih programa koji treba da budu u okviru istog rasporeda
+#    - mogu se samo cuvati u bazi, mozemo racunati da se ne menjaju (nema potrebe za podrskom kroz UI)
+#  Kako bi se pokrenuo kod, neophodno je instalirati potrebne Python zavisnosti
+#    - requirements.txt fajl
+#    - zgodno kreirati virtuelno okruzenje i u okviru njega ih instalirati
+#  Potrebno je postaviti styles.css fajl u svim folderima u kojima ce biti zapisani fajlovi
+#    - skripta ne vraca nista, samo kreira fajlove
+#  Za kreiranje PDF fajlova je potreban dodatni softver
+#    - za rad lokalnog testiranja, mogu se samo zakomentarisati linije koje kreiraju PDF fajlove
 
-# - potrebno je ucitati celokupan MeetingSchedule (koji sadrzi liste entiteta)
-#   - od listi entiteta su potrebne:
-#       - studProgramList
-#       - prostorijaList
-#       - predavacList
-#   - pored toga, potrebna informacija o semestru -> 'Z' ili 'L'
-# (ako je jednostavnije, moze se izmeniti metoda tako da prima direktno liste i oznaku semestra -> da se ne bi kreirao ceo MeetingSchedule objekat)
-# - potrebno je proslediti listu MeetingAssignment objekata koja se dobija od optimizatora
-#   - mapiranje je pravljeno po izlazu iz optimizatora
-# - BITNO I NOVO: potrebno je proslediti listu RasporedPrikaz objekata
-#   - ovi objekti sadrze id-eve studijskih programa koji treba da budu u okviru istog rasporeda
-#   - mogu se samo cuvati u bazi, mozemo racunati da se ne menjaju (nema potrebe za podrskom kroz UI)
-
-# Kako bi se pokrenuo kod, neophodno je instalirati potrebne Python zavisnosti
-#   - requirements.txt fajl
-#   - zgodno kreirati virtuelno okruzenje i u okviru njega ih instalirati
-
-# Potrebno je postaviti styles.css fajl u svim folderima u kojima ce biti zapisani fajlovi
-#   - skripta ne vraca nista, samo kreira fajlove
-
-# Za kreiranje PDF fajlova je potreban dodatni softver
-#   - za rad lokalnog testiranja, mogu se samo zakomentarisati linije koje kreiraju PDF fajlove
 # %%
 def generate_all(
         schedule: MeetingSchedule,
         meeting_assignments: list[MeetingAssignmentJoined],
         raspored_combinations: list[RasporedPrikaz],
-        out_dir_path: str,
+        out_dir_path: str = 'I:/Wrapper-App/wrapper-app/src/main/resources/files/',
         grains_per_day: int = 60,
         start_hour: int = 7,
         day_num: int = 6
@@ -1202,6 +1257,8 @@ def generate_all(
     file_name = 'edit_raspored_prikaz'
     write_edit_view(prostorija_odrzavanje, file_name, out_dir_path)
 
+
+# %%
 import json
 import sys
 from typing import List
@@ -1256,19 +1313,29 @@ with open(json_file_path, encoding='utf-8') as file:
     json_input = file.read()
 
 # Create a list of MeetingAssignmentJoined objects
-#meeting_assignment_list = deserialize_meeting_assignment_list(json_input)
+meeting_assignment_list = deserialize_meeting_assignment_list(json_input)
 
 input_data = json.loads(json_input)
 
 schedule = MeetingSchedule.from_json(input_data['schedule'])
 
+raspored_prikaz = [RasporedPrikaz.from_json(item) for item in input_data['raspored_prikaz']]
+
 # Convert the list of objects to JSON using custom encoder
 #json_output = json.dumps([p for p in meeting_assignment_list], default=default_encoder, indent=2)
 
 # Convert the MeetingSchedule object to JSON using the custom encoder
-json_output = json.dumps(schedule, cls=MeetingScheduleEncoder, indent=2)
+#json_output = json.dumps(schedule, cls=MeetingScheduleEncoder, indent=2)
+
+json_output = json.dumps([p.__dict__ for p in raspored_prikaz])
+
+generate_all(schedule, meeting_assignment_list, raspored_prikaz)
 
 print(json_output)
 
 sys.stdout.flush()
+
+# %%
+
+
 

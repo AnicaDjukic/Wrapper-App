@@ -2,7 +2,6 @@ package com.wrapper.app.service;
 
 import com.wrapper.app.domain.Database;
 import com.wrapper.app.dto.generator.MeetingDto;
-import com.wrapper.app.dto.converter.MeetingAssignmentDto;
 import com.wrapper.app.dto.optimizator.MeetingAssignment;
 import org.springframework.stereotype.Service;
 

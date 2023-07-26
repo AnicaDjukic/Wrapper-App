@@ -1,6 +1,5 @@
 package com.wrapper.app.controller;
 
-import com.wrapper.app.dto.converter.MeetingAssignmentDto;
 import com.wrapper.app.dto.optimizator.MeetingAssignment;
 import com.wrapper.app.service.RasporedService;
 import org.springframework.http.HttpStatus;
