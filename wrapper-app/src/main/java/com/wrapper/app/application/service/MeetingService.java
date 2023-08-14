@@ -7,12 +7,16 @@ import com.google.gson.JsonParser;
 import com.wrapper.app.domain.model.*;
 import com.wrapper.app.infrastructure.dto.generator.*;
 import com.wrapper.app.infrastructure.persistence.util.CollectionNameProvider;
+import com.wrapper.app.infrastructure.util.ExecutionResult;
+import com.wrapper.app.infrastructure.util.PythonScriptExecutor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 // TODO: refactor
 @Service
@@ -24,6 +28,8 @@ public class MeetingService {
 
     private final ObjectMapper objectMapper;
 
+    private final PythonScriptExecutor scriptExecutor;
+
     private static final String STUDIJSKI_PROGRAM_PREDMETI = "StudijskiProgramPredmeti";
     private static final String STUDIJSKI_PROGRAMI = "StudijskiProgrami";
     private static final String PROSTORIJE = "Prostorije";
@@ -32,23 +38,28 @@ public class MeetingService {
     private static final String PREDAVACI = "Predavaci";
     private static final String MEETINGS = "Meetings";
 
-    public MeetingService(MongoTemplate mongoTemplate, ModelMapper modelMapper, ObjectMapper objectMapper) {
+    public MeetingService(MongoTemplate mongoTemplate, ModelMapper modelMapper, ObjectMapper objectMapper, PythonScriptExecutor scriptExecutor) {
         this.mongoTemplate = mongoTemplate;
         this.modelMapper = modelMapper;
         this.objectMapper = objectMapper;
+        this.scriptExecutor = scriptExecutor;
     }
 
-    public List<MeetingDto> generateMeetings(Database database) throws IOException {
+    public List<MeetingDto> generateMeetings(Database database) throws IOException, InterruptedException {
         String jsonFilePath = prepareData(database);
-        Process process = executePythonScript(jsonFilePath);
-        String jsonOutput = readPythonScriptOutput(process);
-        List<MeetingDto> meetingsDtos = objectMapper.readValue(jsonOutput, new TypeReference<>() {});
+        String pythonScriptPath = "src/main/resources/scripts/7_generate_termini.py";
+        String virtualEnvPython = "python";
+        ExecutionResult executionResult = scriptExecutor.executeScriptAndGetOutput(jsonFilePath, pythonScriptPath, virtualEnvPython);
+        List<MeetingDto> meetingsDtos = objectMapper.readValue(executionResult.getScriptOutput(), new TypeReference<>() {});
         saveMeetings(database, meetingsDtos);
         return meetingsDtos;
     }
 
     private void saveMeetings(Database database, List<MeetingDto> meetingsDtos) {
-        List<Meeting> meetings = meetingsDtos.stream().map(m -> modelMapper.map(m, Meeting.class)).toList();
+        List<Meeting> meetings = meetingsDtos.parallelStream()
+                .map(dto -> CompletableFuture.supplyAsync(() -> modelMapper.map(dto, Meeting.class)))
+                .map(CompletableFuture::join)
+                .collect(Collectors.toList());
         String collectionName = MEETINGS + database.getGodina() + database.getSemestar().charAt(0);
         mongoTemplate.dropCollection(collectionName);
         mongoTemplate.createCollection(collectionName);
@@ -58,14 +69,6 @@ public class MeetingService {
     public List<Meeting> getMeetings(Database database) {
         String collectionName = MEETINGS + database.getGodina() + database.getSemestar().charAt(0);
         return mongoTemplate.findAll(Meeting.class, collectionName);
-    }
-
-    private Process executePythonScript(String jsonFilePath) throws IOException {
-        String pythonScriptPath = "src/main/resources/scripts/7_generate_termini.py";
-        String[] command = {"python", pythonScriptPath, jsonFilePath};
-        ProcessBuilder processBuilder = new ProcessBuilder(command);
-        processBuilder.redirectErrorStream(true);
-        return processBuilder.start();
     }
 
     private String prepareData(Database database) throws IOException {
@@ -84,18 +87,6 @@ public class MeetingService {
             fileWriter.write(jsonInput);
         }
         return tempFile.getAbsolutePath();
-    }
-
-    private String readPythonScriptOutput(Process process) throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-        String line;
-        StringBuilder outputBuilder = new StringBuilder();
-        while ((line = reader.readLine()) != null) {
-            outputBuilder.append(line);
-        }
-        String jsonOutput = outputBuilder.toString();
-        reader.close();
-        return jsonOutput;
     }
 
     private RealizacijaDto createRealizacija(Database database) {

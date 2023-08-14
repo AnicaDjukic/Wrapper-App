@@ -47,7 +47,7 @@ public class RasporedService {
         try {
             List<MeetingDto> meetings = meetingService.generateMeetings(database);
             optimizatorService.startOptimizator(database, meetings);
-        } catch (IOException ex) {
+        } catch (IOException | InterruptedException ex) {
             database.setGenerationStarted(null);
             databaseService.update(database);
             ex.printStackTrace();
