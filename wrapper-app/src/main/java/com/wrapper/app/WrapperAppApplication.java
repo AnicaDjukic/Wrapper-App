@@ -1,17 +1,13 @@
 package com.wrapper.app;
 
-import com.wrapper.app.domain.*;
-import com.wrapper.app.repository.*;
-import com.wrapper.app.service.StudijskiProgramPredmetiService;
+import com.wrapper.app.application.service.StudijskiProgramPredmetiService;
+import com.wrapper.app.infrastructure.persistence.repository.PredmetRepository;
+import com.wrapper.app.infrastructure.persistence.repository.StudijskiProgramPredmetiRepository;
+import com.wrapper.app.infrastructure.persistence.repository.StudijskiProgramRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 @SpringBootApplication
 public class WrapperAppApplication implements CommandLineRunner {
