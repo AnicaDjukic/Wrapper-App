@@ -1,4 +1,4 @@
-package com.wrapper.app.application.service;
+package com.wrapper.app.infrastructure.external;
 
 import java.util.List;
 

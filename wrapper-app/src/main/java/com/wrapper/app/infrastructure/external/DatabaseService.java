@@ -1,10 +1,11 @@
-package com.wrapper.app.application.service;
+package com.wrapper.app.infrastructure.external;
 
 import com.wrapper.app.domain.exception.AlreadyExistsException;
 import com.wrapper.app.domain.exception.NotFoundException;
 import com.wrapper.app.domain.model.*;
 import com.wrapper.app.infrastructure.persistence.repository.DatabaseRepository;
 import com.wrapper.app.infrastructure.persistence.util.CollectionNameProvider;
+import com.wrapper.app.infrastructure.persistence.util.CollectionTypes;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
@@ -22,13 +23,6 @@ public class DatabaseService<T> {
 
     private final DatabaseRepository repository;
 
-    private static final String STUDIJSKI_PROGRAMI = "StudijskiProgrami";
-    private static final String PREDMETI = "Predmeti";
-    private static final String PREDAVACI = "Predavaci";
-    private static final String STUDIJSKI_PROGRAM_PREDMETI = "StudijskiProgramPredmeti";
-    private static final String STUDENTSKE_GRUPE = "StudentskeGrupe";
-    private static final String PROSTORIJE = "Prostorije";
-
     public DatabaseService(DataService<T> dataService, MongoTemplate mongoTemplate, DatabaseRepository repository) {
         this.dataService = dataService;
         this.mongoTemplate = mongoTemplate;
@@ -42,7 +36,7 @@ public class DatabaseService<T> {
     public List<Database> getUnblocked() {
         List<Database> unblockedDatabases = new ArrayList<>(repository.findAll());
         for (Database database: repository.findAll()) {
-            String collectionName = STUDIJSKI_PROGRAMI + database.getGodina() + database.getSemestar().charAt(0);
+            String collectionName = CollectionTypes.STUDIJSKI_PROGRAMI + database.getGodina() + database.getSemestar().charAt(0);
             List<StudijskiProgram> studijskiProgrami = mongoTemplate.findAll(StudijskiProgram.class, collectionName);
             boolean isBlocked = studijskiProgrami.stream().anyMatch(StudijskiProgram::isBlock);
             if(isBlocked) {
@@ -86,12 +80,12 @@ public class DatabaseService<T> {
     }
 
     private void createCollections(Database database, String newSemester) {
-        createCollection(database.getStudijskiProgrami(), STUDIJSKI_PROGRAMI, newSemester);
-        createCollection(database.getPredmeti(), PREDMETI, newSemester);
-        createCollection(database.getPredavaci(), PREDAVACI, newSemester);
-        createCollection(database.getRealizacija(), STUDIJSKI_PROGRAM_PREDMETI, newSemester);
-        createCollection(database.getStudentskeGrupe(), STUDENTSKE_GRUPE, newSemester);
-        createCollection(database.getProstorije(), PROSTORIJE, newSemester);
+        createCollection(database.getStudijskiProgrami(), CollectionTypes.STUDIJSKI_PROGRAMI, newSemester);
+        createCollection(database.getPredmeti(), CollectionTypes.PREDMETI, newSemester);
+        createCollection(database.getPredavaci(), CollectionTypes.PREDAVACI, newSemester);
+        createCollection(database.getRealizacija(), CollectionTypes.STUDIJSKI_PROGRAM_PREDMETI, newSemester);
+        createCollection(database.getStudentskeGrupe(), CollectionTypes.STUDENTSKE_GRUPE, newSemester);
+        createCollection(database.getProstorije(), CollectionTypes.PROSTORIJE, newSemester);
         cleanData(newSemester);
     }
 
@@ -104,7 +98,7 @@ public class DatabaseService<T> {
 
     private void cleanData(String newSemester) {
         CollectionNameProvider.setCollectionName(newSemester);
-        String collectionName = STUDIJSKI_PROGRAM_PREDMETI + newSemester;
+        String collectionName = CollectionTypes.STUDIJSKI_PROGRAM_PREDMETI + newSemester;
         List<StudijskiProgramPredmeti> studijskiProgramPredmetiList = mongoTemplate.findAll(StudijskiProgramPredmeti.class, collectionName);
         for (StudijskiProgramPredmeti studijskiProgramPredmeti : studijskiProgramPredmetiList) {
             studijskiProgramPredmeti.removeMissingPredavaci();
@@ -113,12 +107,12 @@ public class DatabaseService<T> {
     }
 
     private void updateCollections(Database database, String newSemester) {
-        updateCollection(database.getStudijskiProgrami(), STUDIJSKI_PROGRAMI, newSemester);
-        updateCollection(database.getPredmeti(), PREDMETI, newSemester);
-        updateCollection(database.getPredavaci(), PREDAVACI, newSemester);
-        updateCollection(database.getRealizacija(), STUDIJSKI_PROGRAM_PREDMETI, newSemester);
-        updateCollection(database.getStudentskeGrupe(), STUDENTSKE_GRUPE, newSemester);
-        updateCollection(database.getProstorije(), PROSTORIJE, newSemester);
+        updateCollection(database.getStudijskiProgrami(), CollectionTypes.STUDIJSKI_PROGRAMI, newSemester);
+        updateCollection(database.getPredmeti(), CollectionTypes.PREDMETI, newSemester);
+        updateCollection(database.getPredavaci(), CollectionTypes.PREDAVACI, newSemester);
+        updateCollection(database.getRealizacija(), CollectionTypes.STUDIJSKI_PROGRAM_PREDMETI, newSemester);
+        updateCollection(database.getStudentskeGrupe(), CollectionTypes.STUDENTSKE_GRUPE, newSemester);
+        updateCollection(database.getProstorije(), CollectionTypes.PROSTORIJE, newSemester);
         cleanData(newSemester);
     }
 
@@ -132,17 +126,17 @@ public class DatabaseService<T> {
 
     @SuppressWarnings("unchecked")
     private Class<T> getGenericTypeClass(String collectionName) {
-        if (collectionName.startsWith(STUDIJSKI_PROGRAMI)) {
+        if (collectionName.startsWith(CollectionTypes.STUDIJSKI_PROGRAMI)) {
             return (Class<T>) StudijskiProgram.class;
-        } else if (collectionName.startsWith(PREDMETI)) {
+        } else if (collectionName.startsWith(CollectionTypes.PREDMETI)) {
             return (Class<T>) Predmet.class;
-        } else if (collectionName.startsWith(PREDAVACI)) {
+        } else if (collectionName.startsWith(CollectionTypes.PREDAVACI)) {
             return (Class<T>) Predavac.class;
-        } else if (collectionName.startsWith(STUDIJSKI_PROGRAM_PREDMETI)) {
+        } else if (collectionName.startsWith(CollectionTypes.STUDIJSKI_PROGRAM_PREDMETI)) {
             return (Class<T>) StudijskiProgramPredmeti.class;
-        } else if (collectionName.startsWith(STUDENTSKE_GRUPE)) {
+        } else if (collectionName.startsWith(CollectionTypes.STUDENTSKE_GRUPE)) {
             return (Class<T>) StudentskaGrupa.class;
-        } else if (collectionName.startsWith(PROSTORIJE)) {
+        } else if (collectionName.startsWith(CollectionTypes.PROSTORIJE)) {
             return (Class<T>) Prostorija.class;
         } else {
             throw new IllegalArgumentException("Invalid collection name: " + collectionName);

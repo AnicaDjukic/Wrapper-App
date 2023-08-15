@@ -7,7 +7,9 @@ import com.google.gson.JsonParser;
 import com.wrapper.app.domain.model.*;
 import com.wrapper.app.infrastructure.dto.generator.*;
 import com.wrapper.app.infrastructure.persistence.util.CollectionNameProvider;
+import com.wrapper.app.infrastructure.persistence.util.CollectionTypes;
 import com.wrapper.app.infrastructure.util.ExecutionResult;
+import com.wrapper.app.infrastructure.util.FileExtensions;
 import com.wrapper.app.infrastructure.util.PythonScriptExecutor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -29,12 +31,16 @@ public class GeneratorService {
 
     private final ModelMapper modelMapper;
 
-    private static final String STUDIJSKI_PROGRAM_PREDMETI = "StudijskiProgramPredmeti";
-    private static final String STUDIJSKI_PROGRAMI = "StudijskiProgrami";
-    private static final String PROSTORIJE = "Prostorije";
-    private static final String STUDENTSKE_GRUPE = "StudentskeGrupe";
-    private static final String PREDMETI = "Predmeti";
-    private static final String PREDAVACI = "Predavaci";
+    private static final String SCRIPT_PATH = "src/main/resources/scripts/7_generate_termini.py";
+    private static final String VENV_PATH = "python";
+
+    private static final String REALIZACIJA_PROP_NAME = "realizacija";
+    private static final String STUDIJSKI_PROGRAMI_PROP_NAME = "studijskiProgramList";
+    private static final String STUDENTSKE_GRUPE_PROP_NAME = "studentskaGrupaList";
+    private static final String PROSTORIJE_PROP_NAME = "prostorijaList";
+    private static final String PREDMETI_PROP_NAME = "predmetList";
+    private static final String PREDAVACI_PROP_NAME = "predavacList";
+    private static final String JSON_FILE_NAME = "data";
 
     public GeneratorService(ObjectMapper objectMapper, PythonScriptExecutor scriptExecutor, MongoTemplate mongoTemplate, ModelMapper modelMapper) {
         this.objectMapper = objectMapper;
@@ -45,24 +51,22 @@ public class GeneratorService {
 
     public List<MeetingDto> generateMeetings(Database database) throws IOException, InterruptedException {
         String jsonFilePath = prepareData(database);
-        String pythonScriptPath = "src/main/resources/scripts/7_generate_termini.py";
-        String virtualEnvPython = "python";
-        ExecutionResult executionResult = scriptExecutor.executeScriptAndGetOutput(jsonFilePath, pythonScriptPath, virtualEnvPython);
+        ExecutionResult executionResult = scriptExecutor.executeScriptAndGetOutput(jsonFilePath, SCRIPT_PATH, VENV_PATH);
         return objectMapper.readValue(executionResult.getScriptOutput(), new TypeReference<>() {});
     }
 
     private String prepareData(Database database) throws IOException {
         CollectionNameProvider.setCollectionName(database.getGodina() + database.getSemestar().charAt(0));
         JsonObject inputData = new JsonObject();
-        inputData.add("realizacija", JsonParser.parseString(objectMapper.writeValueAsString(createRealizacija(database))));
-        inputData.add("studijskiProgramList", JsonParser.parseString(objectMapper.writeValueAsString(getStudijskiProgrami(database))));
-        inputData.add("studentskaGrupaList", JsonParser.parseString(objectMapper.writeValueAsString(getStudentskeGrupe(database))));
-        inputData.add("prostorijaList", JsonParser.parseString(objectMapper.writeValueAsString(getProstorije(database))));
-        inputData.add("predmetList", JsonParser.parseString(objectMapper.writeValueAsString(getPredmeti(database))));
-        inputData.add("predavacList", JsonParser.parseString(objectMapper.writeValueAsString(getPredavaci(database))));
+        inputData.add(REALIZACIJA_PROP_NAME, JsonParser.parseString(objectMapper.writeValueAsString(createRealizacija(database))));
+        inputData.add(STUDIJSKI_PROGRAMI_PROP_NAME, JsonParser.parseString(objectMapper.writeValueAsString(getStudijskiProgrami(database))));
+        inputData.add(STUDENTSKE_GRUPE_PROP_NAME, JsonParser.parseString(objectMapper.writeValueAsString(getStudentskeGrupe(database))));
+        inputData.add(PROSTORIJE_PROP_NAME, JsonParser.parseString(objectMapper.writeValueAsString(getProstorije(database))));
+        inputData.add(PREDMETI_PROP_NAME, JsonParser.parseString(objectMapper.writeValueAsString(getPredmeti(database))));
+        inputData.add(PREDAVACI_PROP_NAME, JsonParser.parseString(objectMapper.writeValueAsString(getPredavaci(database))));
 
         String jsonInput = inputData.toString();
-        File tempFile = File.createTempFile("data", ".json");
+        File tempFile = File.createTempFile(JSON_FILE_NAME, FileExtensions.JSON);
         try (FileWriter fileWriter = new FileWriter(tempFile)) {
             fileWriter.write(jsonInput);
         }
@@ -73,7 +77,7 @@ public class GeneratorService {
         RealizacijaDto realizacija = new RealizacijaDto();
         realizacija.setGodina(database.getGodina());
         realizacija.setSemestar(database.getSemestar().substring(0, 1));
-        String collectionName = STUDIJSKI_PROGRAM_PREDMETI + database.getGodina() + database.getSemestar().charAt(0);
+        String collectionName = CollectionTypes.STUDIJSKI_PROGRAM_PREDMETI + database.getGodina() + database.getSemestar().charAt(0);
         List<StudijskiProgramPredmeti> studijskiProgramPredmeti = mongoTemplate.findAll(StudijskiProgramPredmeti.class, collectionName);
         List<StudijskiProgramPredmetiDto> studijskiProgramPredmetiDtos = getStudijskiProgramPredmetiDtos(studijskiProgramPredmeti);
         realizacija.setStudijskiProgramPredmeti(studijskiProgramPredmetiDtos);
@@ -85,31 +89,31 @@ public class GeneratorService {
     }
 
     private List<StudijskiProgramDto> getStudijskiProgrami(Database database) {
-        String collectionName = STUDIJSKI_PROGRAMI + database.getGodina() + database.getSemestar().charAt(0);
+        String collectionName = CollectionTypes.STUDIJSKI_PROGRAMI + database.getGodina() + database.getSemestar().charAt(0);
         List<StudijskiProgram> studijskiProgrami = mongoTemplate.findAll(StudijskiProgram.class, collectionName);
         return studijskiProgrami.stream().map(s -> modelMapper.map(s, StudijskiProgramDto.class)).toList();
     }
 
     private List<ProstorijaDto> getProstorije(Database database) {
-        String collectionName = PROSTORIJE + database.getGodina() + database.getSemestar().charAt(0);
+        String collectionName = CollectionTypes.PROSTORIJE + database.getGodina() + database.getSemestar().charAt(0);
         List<Prostorija> prostorije = mongoTemplate.findAll(Prostorija.class, collectionName);
         return prostorije.stream().map(s -> modelMapper.map(s, ProstorijaDto.class)).toList();
     }
 
     private List<StudentskaGrupaDto> getStudentskeGrupe(Database database) {
-        String collectionName = STUDENTSKE_GRUPE + database.getGodina() + database.getSemestar().charAt(0);
+        String collectionName = CollectionTypes.STUDENTSKE_GRUPE + database.getGodina() + database.getSemestar().charAt(0);
         List<StudentskaGrupa> studentskeGrupe = mongoTemplate.findAll(StudentskaGrupa.class, collectionName);
         return studentskeGrupe.stream().map(s -> modelMapper.map(s, StudentskaGrupaDto.class)).toList();
     }
 
     private List<PredmetDto> getPredmeti(Database database) {
-        String collectionName = PREDMETI + database.getGodina() + database.getSemestar().charAt(0);
+        String collectionName = CollectionTypes.PREDMETI + database.getGodina() + database.getSemestar().charAt(0);
         List<Predmet> predmeti = mongoTemplate.findAll(Predmet.class, collectionName);
         return predmeti.stream().map(p -> modelMapper.map(p, PredmetDto.class)).toList();
     }
 
     private List<PredavacDto> getPredavaci(Database database) {
-        String collectionName = PREDAVACI + database.getGodina() + database.getSemestar().charAt(0);
+        String collectionName = CollectionTypes.PREDAVACI + database.getGodina() + database.getSemestar().charAt(0);
         List<Predavac> predavaci = mongoTemplate.findAll(Predavac.class, collectionName);
         return predavaci.stream().map(p -> modelMapper.map(p, PredavacDto.class)).toList();
     }

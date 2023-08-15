@@ -41,7 +41,7 @@ public class FileHandler {
             e.printStackTrace();
         }
 
-        return folder.getAbsolutePath().replace("\\", "/");
+        return folder.getAbsolutePath().replace("\\", File.separator);
     }
 
     public String zipFolder(String sourceFolderName, String zipFolderName) {
@@ -64,16 +64,16 @@ public class FileHandler {
             return;
         }
         if (fileToZip.isDirectory()) {
-            if (fileName.endsWith("/")) {
+            if (fileName.endsWith(File.separator)) {
                 zipOut.putNextEntry(new ZipEntry(fileName));
                 zipOut.closeEntry();
             } else {
-                zipOut.putNextEntry(new ZipEntry(fileName + "/"));
+                zipOut.putNextEntry(new ZipEntry(fileName + File.separator));
                 zipOut.closeEntry();
             }
             File[] children = fileToZip.listFiles();
             for (File childFile : children) {
-                zipFile(childFile, fileName + "/" + childFile.getName(), zipOut);
+                zipFile(childFile, fileName + File.separator + childFile.getName(), zipOut);
             }
             return;
         }

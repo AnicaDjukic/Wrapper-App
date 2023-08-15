@@ -6,14 +6,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class CollectionNameResolverImpl implements CollectionNameResolver {
 
-    private static final String PREDMETI = "Predmeti";
-    private static final String STUDIJSKI_PROGRAMI = "StudijskiProgrami";
-    private static final String STUDENTSKE_GRUPE = "StudentskeGrupe";
-    private static final String PREDAVACI = "Predavaci";
-    private static final String PROSTORIJE = "Prostorije";
-    private static final String STUDIJSKI_PROGRAM_PREDMETI = "StudijskiProgramPredmeti";
-    private static final String MEETINGS = "Meetings";
-
     @Override
     public String resolveCollectionName(Class<?> entityClass) {
         String className = entityClass.getSimpleName();
@@ -23,19 +15,19 @@ public class CollectionNameResolverImpl implements CollectionNameResolver {
 
     private String getCollectionName(String className, String collectionName) {
         if (className.equals(Predmet.class.getSimpleName())) {
-            return PREDMETI + collectionName;
+            return CollectionTypes.PREDMETI + collectionName;
         } else if (className.equals(StudijskiProgram.class.getSimpleName()))  {
-            return STUDIJSKI_PROGRAMI + collectionName;
+            return CollectionTypes.STUDIJSKI_PROGRAMI + collectionName;
         } else if (className.equals(StudentskaGrupa.class.getSimpleName())) {
-            return STUDENTSKE_GRUPE + collectionName;
+            return CollectionTypes.STUDENTSKE_GRUPE + collectionName;
         } else if (className.equals(Predavac.class.getSimpleName())) {
-            return PREDAVACI + collectionName;
+            return CollectionTypes.PREDAVACI + collectionName;
         } else if (className.equals(Prostorija.class.getSimpleName())) {
-            return PROSTORIJE + collectionName;
+            return CollectionTypes.PROSTORIJE + collectionName;
         } else if (className.equals(StudijskiProgramPredmeti.class.getSimpleName())) {
-            return STUDIJSKI_PROGRAM_PREDMETI + collectionName;
+            return CollectionTypes.STUDIJSKI_PROGRAM_PREDMETI + collectionName;
         } else if (className.equals(Meeting.class.getSimpleName())) {
-            return MEETINGS + collectionName;
+            return CollectionTypes.MEETINGS + collectionName;
         } else {
             return null;
         }

@@ -1,4 +1,4 @@
-package com.wrapper.app.application.service;
+package com.wrapper.app.infrastructure.external;
 
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;

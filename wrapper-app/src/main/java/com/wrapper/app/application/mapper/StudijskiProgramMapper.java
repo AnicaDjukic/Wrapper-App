@@ -1,5 +1,6 @@
 package com.wrapper.app.application.mapper;
 
+import com.wrapper.app.application.util.StudyTypes;
 import com.wrapper.app.domain.model.StudijskiProgram;
 import com.wrapper.app.presentation.dto.response.StudijskiProgramDto;
 import com.wrapper.app.presentation.dto.response.StudijskiProgramResponseDto;
@@ -7,11 +8,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class StudijskiProgramMapper {
-
-    private static final String OAS = "OSNOVNE AKADEMSKE STUDIJE";
-    private static final String OSS = "OSNOVNE STRUKOVNE STUDIJE";
-    private static final String MAS = "MASTER AKADEMSKE STUDIJE";
-    private static final String MSS = "MASTER STRUKOVNE STUDIJE";
 
     public StudijskiProgramResponseDto mapToResponseDto(StudijskiProgram studijskiProgram) {
         StudijskiProgramResponseDto dto = new StudijskiProgramResponseDto();
@@ -35,8 +31,8 @@ public class StudijskiProgramMapper {
 
     public String getStepenStudija(int stepen, int nivo) {
         return switch (stepen) {
-            case 1 -> (nivo == 1) ? OAS : OSS;
-            case 2 -> (nivo == 1) ? MAS : MSS;
+            case 1 -> (nivo == 1) ? StudyTypes.OAS : StudyTypes.OSS;
+            case 2 -> (nivo == 1) ? StudyTypes.MAS : StudyTypes.MSS;
             default -> "";
         };
     }

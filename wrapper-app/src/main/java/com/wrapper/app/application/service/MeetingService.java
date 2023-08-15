@@ -3,6 +3,7 @@ package com.wrapper.app.application.service;
 import com.wrapper.app.domain.model.*;
 import com.wrapper.app.infrastructure.dto.generator.*;
 import com.wrapper.app.infrastructure.external.GeneratorService;
+import com.wrapper.app.infrastructure.persistence.util.CollectionTypes;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
@@ -21,8 +22,6 @@ public class MeetingService {
 
     private final GeneratorService generatorService;
 
-    private static final String MEETINGS = "Meetings";
-
     public MeetingService(MongoTemplate mongoTemplate, ModelMapper modelMapper, GeneratorService generatorService) {
         this.mongoTemplate = mongoTemplate;
         this.modelMapper = modelMapper;
@@ -40,14 +39,14 @@ public class MeetingService {
                 .map(dto -> CompletableFuture.supplyAsync(() -> modelMapper.map(dto, Meeting.class)))
                 .map(CompletableFuture::join)
                 .collect(Collectors.toList());
-        String collectionName = MEETINGS + database.getGodina() + database.getSemestar().charAt(0);
+        String collectionName = CollectionTypes.MEETINGS + database.getGodina() + database.getSemestar().charAt(0);
         mongoTemplate.dropCollection(collectionName);
         mongoTemplate.createCollection(collectionName);
         mongoTemplate.insert(meetings,collectionName);
     }
 
     public List<Meeting> getMeetings(Database database) {
-        String collectionName = MEETINGS + database.getGodina() + database.getSemestar().charAt(0);
+        String collectionName = CollectionTypes.MEETINGS + database.getGodina() + database.getSemestar().charAt(0);
         return mongoTemplate.findAll(Meeting.class, collectionName);
     }
 }

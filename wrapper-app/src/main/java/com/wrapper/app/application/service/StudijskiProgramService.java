@@ -1,5 +1,6 @@
 package com.wrapper.app.application.service;
 
+import com.wrapper.app.application.util.StudyTypes;
 import com.wrapper.app.domain.model.StudijskiProgram;
 import com.wrapper.app.presentation.dto.search.StudijskiProgramSearchDto;
 import com.wrapper.app.domain.exception.AlreadyExistsException;
@@ -16,10 +17,11 @@ public class StudijskiProgramService {
 
     private final StudijskiProgramRepository repository;
 
-    private static final String OAS = "OSNOVNE AKADEMSKE STUDIJE";
-    private static final String OSS = "OSNOVNE STRUKOVNE STUDIJE";
-    private static final String MAS = "MASTER AKADEMSKE STUDIJE";
-    private static final String MSS = "MASTER STRUKOVNE STUDIJE";
+    private static final String PRVI_STEPEN = "1";
+    private static final String DRUGI_STEPEN = "2";
+    private static final String AKADEMSKI_NIVO = "1";
+    private static final String STRUKOVNE_OSNOVNI_NIVO = "2";
+    private static final String MASTER_STRUKOVNE_NIVO = "5";
 
     public StudijskiProgramService(StudijskiProgramRepository repository) {
         this.repository = repository;
@@ -36,17 +38,17 @@ public class StudijskiProgramService {
 
     private String getStepen(String stepenStudija) {
         return switch (stepenStudija) {
-            case OAS, OSS -> "1";
-            case MAS, MSS -> "2";
+            case StudyTypes.OAS, StudyTypes.OSS -> PRVI_STEPEN;
+            case StudyTypes.MAS, StudyTypes.MSS -> DRUGI_STEPEN;
             default -> "";
         };
     }
 
     private String getNivo(String stepenStudija) {
         return switch (stepenStudija) {
-            case OAS, MAS -> "1";
-            case OSS -> "2";
-            case MSS -> "5";
+            case StudyTypes.OAS, StudyTypes.MAS -> AKADEMSKI_NIVO;
+            case StudyTypes.OSS -> STRUKOVNE_OSNOVNI_NIVO;
+            case StudyTypes.MSS -> MASTER_STRUKOVNE_NIVO;
             default -> "";
         };
     }

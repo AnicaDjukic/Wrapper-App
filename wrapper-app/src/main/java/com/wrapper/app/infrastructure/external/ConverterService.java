@@ -13,6 +13,7 @@ import com.wrapper.app.domain.model.Database;
 import com.wrapper.app.domain.model.Meeting;
 import com.wrapper.app.domain.model.MeetingSchedule;
 import com.wrapper.app.infrastructure.util.ExecutionResult;
+import com.wrapper.app.infrastructure.util.FileExtensions;
 import com.wrapper.app.infrastructure.util.FileHandler;
 import com.wrapper.app.infrastructure.util.PythonScriptExecutor;
 import org.modelmapper.ModelMapper;
@@ -38,6 +39,15 @@ public class ConverterService {
 
     private final NotificationService notificationService;
 
+    private static final String SCRIPT_PATH = "src/main/resources/scripts/prikaz.py";
+    private static final String VENV_PATH = "C:/Venv/venv/Scripts/python";
+
+    private static final String MEETING_ASSIGNMENTS_PROP_NAME = "meetingAssignmentList";
+    private static final String SCHEDULE_PROP_NAME = "schedule";
+    private static final String RASPORED_PRIKAZ_PROP_NAME = "raspored_prikaz";
+    private static final String FOLDER_PATH_PROP_NAME = "path";
+    private static final String JSON_FILE_NAME = "data";
+
     public ConverterService(ObjectMapper objectMapper,
                             ModelMapper modelMapper,
                             MeetingService meetingService,
@@ -56,9 +66,7 @@ public class ConverterService {
     public void convert(List<MeetingAssignment> meetingAssignments, Database database) {
         try {
             String jsonFilePath = prepareData(meetingAssignments, database);
-            String pythonScript = "src/main/resources/scripts/prikaz.py";
-            String virtualEnvPython = "C:/Venv/venv/Scripts/python";
-            ExecutionResult executionResult = scriptExecutor.executeScriptAndGetOutput(jsonFilePath, pythonScript, virtualEnvPython);
+            ExecutionResult executionResult = scriptExecutor.executeScriptAndGetOutput(jsonFilePath, SCRIPT_PATH, VENV_PATH);
 
             if (executionResult.getExitCode() == 0) {
                 sendConvertedSchedule(database);
@@ -73,21 +81,21 @@ public class ConverterService {
     private String prepareData(List<MeetingAssignment> meetingAssignments, Database database) throws IOException {
         JsonObject inputData = new JsonObject();
         List<MeetingAssignmentDto> meetingAssignmentDtos = meetingAssignments.stream().map(m -> modelMapper.map(m, MeetingAssignmentDto.class)).toList();
-        inputData.add("meetingAssignmentList", JsonParser.parseString(objectMapper.writeValueAsString(meetingAssignmentDtos)));
+        inputData.add(MEETING_ASSIGNMENTS_PROP_NAME, JsonParser.parseString(objectMapper.writeValueAsString(meetingAssignmentDtos)));
 
         List<Meeting> meetings = meetingService.getMeetings(database);
         MeetingSchedule meetingSchedule = meetingScheduleService.createMeetingShedule(database, meetings, meetingAssignments);
         MeetingScheduleDto meetingScheduleDto = modelMapper.map(meetingSchedule, MeetingScheduleDto.class);
-        inputData.add("schedule", JsonParser.parseString(objectMapper.writeValueAsString(meetingScheduleDto)));
+        inputData.add(SCHEDULE_PROP_NAME, JsonParser.parseString(objectMapper.writeValueAsString(meetingScheduleDto)));
 
         List<RasporedPrikaz> rasporedPrikaz = meetingScheduleService.getRasporedPrikaz();
-        inputData.add("raspored_prikaz", JsonParser.parseString(objectMapper.writeValueAsString(rasporedPrikaz)));
+        inputData.add(RASPORED_PRIKAZ_PROP_NAME, JsonParser.parseString(objectMapper.writeValueAsString(rasporedPrikaz)));
 
         String folderPath = fileHandler.createFiles(database.getGodina().replace("/", "_") + database.getSemestar());
-        inputData.addProperty("path", folderPath + "/");
+        inputData.addProperty(FOLDER_PATH_PROP_NAME, folderPath + File.separator);
 
         String jsonInput = inputData.toString();
-        File tempFile = File.createTempFile("data", ".json");
+        File tempFile = File.createTempFile(JSON_FILE_NAME, FileExtensions.JSON);
         try (FileWriter fileWriter = new FileWriter(tempFile)) {
             fileWriter.write(jsonInput);
         }
@@ -96,7 +104,7 @@ public class ConverterService {
 
     private void sendConvertedSchedule(Database database) {
         String folderName = database.getGodina().replace("/", "_") + database.getSemestar();
-        String zipFolderName = database.getGodina().replace("/", "_") + database.getSemestar() + ".zip";
+        String zipFolderName = database.getGodina().replace("/", "_") + database.getSemestar() + FileExtensions.ZIP;
         String zipPath = fileHandler.zipFolder(folderName, zipFolderName);
         notificationService.sendNotification(zipPath);
     }

@@ -4,6 +4,7 @@ import com.wrapper.app.infrastructure.dto.generator.MeetingDto;
 import com.wrapper.app.domain.model.Database;
 import com.wrapper.app.infrastructure.dto.optimizator.MeetingAssignment;
 import com.wrapper.app.infrastructure.external.ConverterService;
+import com.wrapper.app.infrastructure.external.DatabaseService;
 import com.wrapper.app.infrastructure.external.OptimizatorService;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +28,8 @@ public class ScheduleService {
 
     private final ConverterService converterService;
 
-    public ScheduleService(DatabaseService databaseService, MeetingService meetingService, OptimizatorService optimizatorService, ConverterService converterService) {
+    public ScheduleService(DatabaseService databaseService, MeetingService meetingService,
+                           OptimizatorService optimizatorService, ConverterService converterService) {
         this.databaseService = databaseService;
         this.meetingService = meetingService;
         this.optimizatorService = optimizatorService;

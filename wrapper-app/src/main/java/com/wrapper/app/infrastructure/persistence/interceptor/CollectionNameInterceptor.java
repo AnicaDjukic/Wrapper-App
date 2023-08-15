@@ -3,7 +3,7 @@ package com.wrapper.app.infrastructure.persistence.interceptor;
 import com.wrapper.app.domain.model.Database;
 import com.wrapper.app.infrastructure.persistence.util.CollectionNameProvider;
 import com.wrapper.app.infrastructure.security.util.TokenUtils;
-import com.wrapper.app.application.service.DatabaseService;
+import com.wrapper.app.infrastructure.external.DatabaseService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;

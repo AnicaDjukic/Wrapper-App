@@ -9,11 +9,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/raspored")
-public class RasporedController {
+public class ScheduleController {
 
     private final ScheduleService service;
 
-    public RasporedController(ScheduleService service) {
+    public ScheduleController(ScheduleService service) {
         this.service = service;
     }
 

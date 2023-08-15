@@ -4,7 +4,7 @@ import com.wrapper.app.domain.model.Database;
 import com.wrapper.app.presentation.dto.request.DatabaseRequestDto;
 import com.wrapper.app.presentation.dto.response.DatabaseResponseDto;
 import com.wrapper.app.infrastructure.security.util.TokenUtils;
-import com.wrapper.app.application.service.DatabaseService;
+import com.wrapper.app.infrastructure.external.DatabaseService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
