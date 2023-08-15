@@ -12,7 +12,6 @@ import com.wrapper.app.application.service.MeetingService;
 import com.wrapper.app.domain.model.Database;
 import com.wrapper.app.domain.model.Meeting;
 import com.wrapper.app.domain.model.MeetingSchedule;
-import com.wrapper.app.infrastructure.util.EmailSender;
 import com.wrapper.app.infrastructure.util.ExecutionResult;
 import com.wrapper.app.infrastructure.util.FileHandler;
 import com.wrapper.app.infrastructure.util.PythonScriptExecutor;
@@ -33,24 +32,25 @@ public class ConverterService {
 
     private final MeetingScheduleService meetingScheduleService;
 
+    private final PythonScriptExecutor scriptExecutor;
+
     private final FileHandler fileHandler;
 
-    private final EmailSender emailSender;
-
-    private final PythonScriptExecutor scriptExecutor;
+    private final NotificationService notificationService;
 
     public ConverterService(ObjectMapper objectMapper,
                             ModelMapper modelMapper,
                             MeetingService meetingService,
                             MeetingScheduleService meetingScheduleService,
-                            FileHandler fileHandler, EmailSender emailSender, PythonScriptExecutor scriptExecutor) {
+                            PythonScriptExecutor scriptExecutor,
+                            FileHandler fileHandler, NotificationService notificationService) {
         this.objectMapper = objectMapper;
         this.modelMapper = modelMapper;
         this.meetingService = meetingService;
         this.meetingScheduleService = meetingScheduleService;
-        this.fileHandler = fileHandler;
-        this.emailSender = emailSender;
         this.scriptExecutor = scriptExecutor;
+        this.fileHandler = fileHandler;
+        this.notificationService = notificationService;
     }
 
     public void convert(List<MeetingAssignment> meetingAssignments, Database database) {
@@ -61,8 +61,7 @@ public class ConverterService {
             ExecutionResult executionResult = scriptExecutor.executeScriptAndGetOutput(jsonFilePath, pythonScript, virtualEnvPython);
 
             if (executionResult.getExitCode() == 0) {
-                String zipPath = fileHandler.zipFolder(database.getGodina().replace("/", "_") + database.getSemestar(), database.getGodina().replace("/", "_") + database.getSemestar() + ".zip");
-                emailSender.sendEmail("wrapper.app@outlook.com", "Raspored", "", zipPath);
+                sendConvertedSchedule(database);
             }
             System.out.println(executionResult.getScriptOutput());
 
@@ -84,7 +83,7 @@ public class ConverterService {
         List<RasporedPrikaz> rasporedPrikaz = meetingScheduleService.getRasporedPrikaz();
         inputData.add("raspored_prikaz", JsonParser.parseString(objectMapper.writeValueAsString(rasporedPrikaz)));
 
-        String folderPath = fileHandler.crateFolder(database.getGodina().replace("/", "_") + database.getSemestar());
+        String folderPath = fileHandler.createFiles(database.getGodina().replace("/", "_") + database.getSemestar());
         inputData.addProperty("path", folderPath + "/");
 
         String jsonInput = inputData.toString();
@@ -93,5 +92,12 @@ public class ConverterService {
             fileWriter.write(jsonInput);
         }
         return tempFile.getAbsolutePath();
+    }
+
+    private void sendConvertedSchedule(Database database) {
+        String folderName = database.getGodina().replace("/", "_") + database.getSemestar();
+        String zipFolderName = database.getGodina().replace("/", "_") + database.getSemestar() + ".zip";
+        String zipPath = fileHandler.zipFolder(folderName, zipFolderName);
+        notificationService.sendNotification(zipPath);
     }
 }

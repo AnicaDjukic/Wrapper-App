@@ -1,7 +1,7 @@
 package com.wrapper.app.presentation.controller;
 
 import com.wrapper.app.infrastructure.dto.optimizator.MeetingAssignment;
-import com.wrapper.app.application.service.RasporedService;
+import com.wrapper.app.application.service.ScheduleService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,9 +11,9 @@ import java.util.List;
 @RequestMapping("/api/v1/raspored")
 public class RasporedController {
 
-    private final RasporedService service;
+    private final ScheduleService service;
 
-    public RasporedController(RasporedService service) {
+    public RasporedController(ScheduleService service) {
         this.service = service;
     }
 

@@ -20,7 +20,7 @@ public class FileHandler {
 
     private static final String PREDAVACI_FOLDER = "predavaci";
 
-    public String crateFolder(String folderName) {
+    public String createFiles(String folderName) {
         File folder = new File(BASE_PATH + folderName);
         folder.mkdir(); // Create the folder
 
@@ -44,10 +44,10 @@ public class FileHandler {
         return folder.getAbsolutePath().replace("\\", "/");
     }
 
-    public String zipFolder(String sourceFolderPath, String zipFilePath) {
+    public String zipFolder(String sourceFolderName, String zipFolderName) {
         try {
-            File sourceFolder = new File(BASE_PATH + sourceFolderPath);
-            FileOutputStream fos = new FileOutputStream(BASE_PATH + zipFilePath);
+            File sourceFolder = new File(BASE_PATH + sourceFolderName);
+            FileOutputStream fos = new FileOutputStream(BASE_PATH + zipFolderName);
             ZipOutputStream zipOut = new ZipOutputStream(fos);
 
             zipFile(sourceFolder, sourceFolder.getName(), zipOut);
@@ -56,7 +56,7 @@ public class FileHandler {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return BASE_PATH + zipFilePath;
+        return BASE_PATH + zipFolderName;
     }
 
     private static void zipFile(File fileToZip, String fileName, ZipOutputStream zipOut) throws IOException {

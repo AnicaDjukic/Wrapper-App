@@ -7,12 +7,13 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import java.util.List;
 import java.util.Properties;
 
 @Component
 public class EmailSender {
 
-    public void sendEmail(String recipientEmail, String subject, String body, String attachmentFilePath) {
+    public void sendEmail(List<String> recipientEmails, String subject, String body, String attachmentFilePath) {
         // Sender's email credentials
         final String senderEmail = "wrapper.app@outlook.com";
         final String senderPassword = "wrapper1234";
@@ -36,7 +37,8 @@ public class EmailSender {
             // Create the message
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(senderEmail));
-            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipientEmail));
+            InternetAddress[] recipientAddresses = convertToInternetAddresses(recipientEmails);
+            message.setRecipients(Message.RecipientType.TO, recipientAddresses);
             message.setSubject(subject);
 
             // Create the email body
@@ -62,5 +64,18 @@ public class EmailSender {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private InternetAddress[] convertToInternetAddresses(List<String> recipientEmails) {
+        return recipientEmails.stream()
+                .map(email -> {
+                    try {
+                        return new InternetAddress(email);
+                    } catch (javax.mail.internet.AddressException e) {
+                        e.printStackTrace();
+                        return null;
+                    }
+                })
+                .toArray(InternetAddress[]::new);
     }
 }

@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @Service
-public class RasporedService {
+public class ScheduleService {
 
     private final DatabaseService databaseService;
 
@@ -27,7 +27,7 @@ public class RasporedService {
 
     private final ConverterService converterService;
 
-    public RasporedService(DatabaseService databaseService, MeetingService meetingService, OptimizatorService optimizatorService, ConverterService converterService) {
+    public ScheduleService(DatabaseService databaseService, MeetingService meetingService, OptimizatorService optimizatorService, ConverterService converterService) {
         this.databaseService = databaseService;
         this.meetingService = meetingService;
         this.optimizatorService = optimizatorService;
@@ -36,14 +36,14 @@ public class RasporedService {
 
     public void startGenerating(String id) {
         Database database = databaseService.getById(id);
-        CompletableFuture.runAsync(() -> generateMeetingsAndStartOptimizator(database));
+        CompletableFuture.runAsync(() -> createMeetingsAndStartOptimizator(database));
         database.setGenerationStarted(getLocalDate());
         database.setGenerationFinished(null);
         database.setPath(null);
         databaseService.update(database);
     }
 
-    private void generateMeetingsAndStartOptimizator(Database database) {
+    private void createMeetingsAndStartOptimizator(Database database) {
         try {
             List<MeetingDto> meetings = meetingService.createMeetings(database);
             optimizatorService.startOptimizator(database, meetings);
@@ -59,7 +59,6 @@ public class RasporedService {
         database.setGenerationFinished(getLocalDate());
         CompletableFuture.runAsync(() -> converterService.convert(meetingAssignments, database));
         databaseService.update(database);
-
     }
 
     private Date getLocalDate() {

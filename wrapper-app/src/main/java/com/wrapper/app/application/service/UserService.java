@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -26,5 +27,9 @@ public class UserService implements UserDetailsService {
         } else {
             return user.get();
         }
+    }
+
+    public List<User> getAll() {
+        return repository.findAll();
     }
 }
