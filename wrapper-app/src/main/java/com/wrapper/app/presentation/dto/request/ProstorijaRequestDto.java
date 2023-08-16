@@ -24,9 +24,13 @@ public class ProstorijaRequestDto {
     @NotNull
     private TipProstorije tip;
 
+    private String sekundarniTip;
+
     // TODO: veci od nule
     @Min(1)
     private int kapacitet;
 
     private List<String> orgJedinica;
+
+    private List<String> sekundarnaOrgJedinica;
 }

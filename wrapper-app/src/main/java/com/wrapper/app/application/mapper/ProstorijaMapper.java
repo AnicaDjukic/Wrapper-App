@@ -23,8 +23,10 @@ public class ProstorijaMapper {
         Prostorija prostorija = new Prostorija();
         prostorija.setOznaka(dto.getOznaka());
         prostorija.setTip(dto.getTip());
+        prostorija.setSekundarniTip(!dto.getSekundarniTip().equals("") ? dto.getSekundarniTip() : null);
         prostorija.setKapacitet(dto.getKapacitet());
         prostorija.setOrgJedinica(getOrganizacioneJedinice(dto.getOrgJedinica()));
+        prostorija.setSekundarnaOrgJedinica(dto.getSekundarnaOrgJedinica() != null ? getOrganizacioneJedinice(dto.getSekundarnaOrgJedinica()) : null);
         return prostorija;
     }
 

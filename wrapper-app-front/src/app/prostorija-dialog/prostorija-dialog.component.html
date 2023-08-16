@@ -10,7 +10,17 @@
             <mat-form-field class="example-full-width">
                 <mat-label>Tip</mat-label>
                 <mat-select formControlName="tip">
-                    <mat-option value="">Izaberite tip prostorije</mat-option>
+                    <mat-option value="">Izaberite primarni tip prostorije</mat-option>
+                    <mat-option value="AUD">Auditorna</mat-option>
+                    <mat-option value="RAC">Računarska</mat-option>
+                    <mat-option value="LAB">Laboratorijska</mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <mat-form-field class="example-full-width">
+                <mat-label>Sekundarni tip</mat-label>
+                <mat-select formControlName="sekundarniTip">
+                    <mat-option value="">Izaberite sekundarni tip prostorije</mat-option>
                     <mat-option value="AUD">Auditorna</mat-option>
                     <mat-option value="RAC">Računarska</mat-option>
                     <mat-option value="LAB">Laboratorijska</mat-option>
@@ -25,6 +35,9 @@
                 </mat-error>
             </mat-form-field>
 
+
+            <div *ngIf="orgJedinicaFieldAsFormArray.length" class="heading2"> Primarne
+                organizacione jedinice: </div>
             <div *ngFor="let control of orgJedinicaFieldAsFormArray.controls; let i = index;"
                 formArrayName="orgJedinica" class="field-container">
                 <mat-form-field class="example-full-width" appearance="fill">
@@ -39,21 +52,51 @@
                     <mat-error *ngIf="orgJedinicaFieldAsFormArray.at(i).hasError('invalidOption')">
                         Morate izabrati organizacionu jedinicu
                     </mat-error>
-                    <mat-button mat-icon-button matSuffix (click)="orgJedinicaFieldAsFormArray.at(i).setValue('')" style="cursor: pointer;">
+                    <mat-button mat-icon-button matSuffix (click)="orgJedinicaFieldAsFormArray.at(i).setValue('')"
+                        style="cursor: pointer;">
                         <mat-icon>close</mat-icon>
                     </mat-button>
                 </mat-form-field>
-                <button mat-raised-button type="button" (click)="remove(i)"
+                <button mat-raised-button type="button" (click)="removeOrgJedinica(i)"
+                    style="margin-left: 3%; margin-bottom: 4%;">Ukloni</button>
+            </div>
+
+            <div *ngIf="sekundarnaOrgJedinicaFieldAsFormArray.length" class="heading2"> Sekundarne
+                organizacione jedinice: </div>
+            <div *ngFor="let control of sekundarnaOrgJedinicaFieldAsFormArray.controls; let i = index;"
+                formArrayName="sekundarnaOrgJedinica" class="field-container">
+                <mat-form-field class="example-full-width" appearance="fill">
+                    <mat-label>Organizaciona jedinica</mat-label>
+                    <input type="text" placeholder="Izaberite organizacionu jedinicu..." matInput [formControlName]="i"
+                        [matAutocomplete]="auto" (input)="_filter($event, i)">
+                    <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+                        <mat-option *ngFor="let option of options[i]" [value]="option">
+                            {{option}}
+                        </mat-option>
+                    </mat-autocomplete>
+                    <mat-error *ngIf="sekundarnaOrgJedinicaFieldAsFormArray.at(i).hasError('invalidOption')">
+                        Morate izabrati organizacionu jedinicu
+                    </mat-error>
+                    <mat-button mat-icon-button matSuffix
+                        (click)="sekundarnaOrgJedinicaFieldAsFormArray.at(i).setValue('')" style="cursor: pointer;">
+                        <mat-icon>close</mat-icon>
+                    </mat-button>
+                </mat-form-field>
+                <button mat-raised-button type="button" (click)="removeSekundarnaOrgJedinica(i)"
                     style="margin-left: 3%; margin-bottom: 4%;">Ukloni</button>
             </div>
         </form>
     </div>
 
     <div mat-dialog-actions [align]="'end'">
-        <button mat-raised-button class="button" (click)="addControl()">
+        <button mat-raised-button class="button" (click)="addOrgJedinicaControl()">
             <mat-icon>add</mat-icon> org jedinicu
         </button>
+        <button mat-raised-button class="button" (click)="addSekundarnaOrgJedinicaControl()">
+            <mat-icon>add</mat-icon> sekundarnu org jedinicu
+        </button>
         <button mat-raised-button color="warn" mat-dialog-close>Zatvori</button>
-        <button mat-raised-button color="primary" (click)="add()" [disabled]="!prostorijaForm.valid">{{actionBtn}}</button>
+        <button mat-raised-button color="primary" (click)="add()"
+            [disabled]="!prostorijaForm.valid">{{actionBtn}}</button>
     </div>
 </div>

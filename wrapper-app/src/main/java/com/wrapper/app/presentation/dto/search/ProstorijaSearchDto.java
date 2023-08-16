@@ -15,6 +15,8 @@ public class ProstorijaSearchDto {
 
     private String tip;
 
+    private String sekundarniTip;
+
     private String kapacitet;
 
     private String orgJedinica;

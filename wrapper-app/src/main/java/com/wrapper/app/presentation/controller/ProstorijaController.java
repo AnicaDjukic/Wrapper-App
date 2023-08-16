@@ -40,9 +40,10 @@ public class ProstorijaController {
                                            @RequestParam(required = false, defaultValue = "10") int size,
                                            @RequestParam String oznaka,
                                            @RequestParam String tip,
+                                           @RequestParam String sekundarniTip,
                                            @RequestParam String kapacitet,
                                            @RequestParam String orgJed) {
-        ProstorijaSearchDto searchDto = new ProstorijaSearchDto(oznaka.trim(), tip, kapacitet, orgJed.trim());
+        ProstorijaSearchDto searchDto = new ProstorijaSearchDto(oznaka.trim(), tip, sekundarniTip, kapacitet, orgJed.trim());
         return service.search(searchDto, PageRequest.of(page, size)).map(p -> modelMapper.map(p, ProstorijaResponseDto.class));
     }
 

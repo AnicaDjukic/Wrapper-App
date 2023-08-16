@@ -3,12 +3,22 @@
         <mat-form-field class="oznaka">
             <mat-label>Pretražite po oznaci</mat-label>
             <input matInput [(ngModel)]="oznaka"
-                (keyup)="oznaka || tip != 'SVE' || kapacitetStr || orgJedinica ? applyFilter(0, pageSize) : getAll(0, pageSize)">
+                (keyup)="oznaka || tip != 'SVE' || sekundarniTip != 'SVE' || kapacitetStr || orgJedinica ? applyFilter(0, pageSize) : getAll(0, pageSize)">
         </mat-form-field>
         <mat-form-field class="tip">
-            <mat-label>Tip prostorije</mat-label>
+            <mat-label>Primarni tip</mat-label>
             <mat-select [(value)]="tip" value="SVE" class="font-bold"
-                (selectionChange)="oznaka || tip != 'SVE' || kapacitetStr || orgJedinica ? applyFilter(0, pageSize) : getAll(0, pageSize)">
+                (selectionChange)="oznaka || tip != 'SVE' || sekundarniTip != 'SVE' || kapacitetStr || orgJedinica ? applyFilter(0, pageSize) : getAll(0, pageSize)">
+                <mat-option value="SVE">Sve</mat-option>
+                <mat-option value="AUD">Auditorne</mat-option>
+                <mat-option value="RAC">Računarske</mat-option>
+                <mat-option value="LAB">Laboratorijske</mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field class="tip">
+            <mat-label>Sekundarni tip</mat-label>
+            <mat-select [(value)]="sekundarniTip" value="SVE" class="font-bold"
+                (selectionChange)="oznaka || tip != 'SVE' || sekundarniTip != 'SVE' || kapacitetStr || orgJedinica ? applyFilter(0, pageSize) : getAll(0, pageSize)">
                 <mat-option value="SVE">Sve</mat-option>
                 <mat-option value="AUD">Auditorne</mat-option>
                 <mat-option value="RAC">Računarske</mat-option>
@@ -18,12 +28,12 @@
         <mat-form-field class="kapacitet">
             <mat-label>Pretražite po kapacitetu</mat-label>
             <input (input)="onInputChange($event)" matInput type="number"
-                (keyup)="oznaka || tip != 'SVE' || kapacitetStr || orgJedinica ? applyFilter(0, pageSize) : getAll(0, pageSize)">
+                (keyup)="oznaka || tip != 'SVE' || sekundarniTip != 'SVE' || kapacitetStr || orgJedinica ? applyFilter(0, pageSize) : getAll(0, pageSize)">
         </mat-form-field>
         <mat-form-field class="org-jed">
             <mat-label>Pretražite po organizacionoj jedinici</mat-label>
             <input [(ngModel)]="orgJedinica" matInput
-                (keyup)="oznaka || tip != 'SVE' || kapacitetStr || orgJedinica ? applyFilter(0, pageSize) : getAll(0, pageSize)">
+                (keyup)="oznaka || tip != 'SVE' || sekundarniTip != 'SVE' || kapacitetStr || orgJedinica ? applyFilter(0, pageSize) : getAll(0, pageSize)">
         </mat-form-field>
     </div>
 
@@ -36,9 +46,17 @@
                     <td mat-cell *matCellDef="let element"> {{element.oznaka}} </td>
                 </ng-container>
 
-                <ng-container matColumnDef="tip">
-                    <th mat-header-cell *matHeaderCellDef> Tip </th>
-                    <td mat-cell *matCellDef="let element"> {{element.tip}} </td>
+                <ng-container matColumnDef="primarniTip">
+                    <th mat-header-cell *matHeaderCellDef style="text-align: center;"> Primarni tip </th>
+                    <td mat-cell *matCellDef="let element" style="text-align: center;"> {{element.tip}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="sekundarniTip">
+                    <th mat-header-cell *matHeaderCellDef style="text-align: center;"> Sekundarni tip </th>
+                    <td mat-cell *matCellDef="let element" style="text-align: center;">
+                        <div *ngIf="!element.sekundarniTip">-</div>
+                        {{element.sekundarniTip}} 
+                    </td>
                 </ng-container>
 
                 <ng-container matColumnDef="kapacitet">
@@ -49,8 +67,20 @@
                 <ng-container matColumnDef="orgJedinica">
                     <th mat-header-cell *matHeaderCellDef> Organizacione jedinice </th>
                     <td mat-cell *matCellDef="let element">
-                        <div *ngIf="!element.orgJedinica || element.orgJedinica.length == 0" style="margin-left: 15%;">-</div>
+                        <div *ngIf="!element.orgJedinica || element.orgJedinica.length == 0" style="margin-left: 30%;">-</div>
                         <ng-container *ngFor="let item of element.orgJedinica">
+                            <div>
+                                <span>{{item.naziv}}</span>
+                            </div>
+                        </ng-container>
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="sekundarnaOrgJedinica">
+                    <th mat-header-cell *matHeaderCellDef> Sekundarne organizacione jedinice </th>
+                    <td mat-cell *matCellDef="let element">
+                        <div *ngIf="!element.sekundarnaOrgJedinica || element.sekundarnaOrgJedinica.length == 0" style="margin-left: 30%;">-</div>
+                        <ng-container *ngFor="let item of element.sekundarnaOrgJedinica">
                             <div>
                                 <span>{{item.naziv}}</span>
                             </div>

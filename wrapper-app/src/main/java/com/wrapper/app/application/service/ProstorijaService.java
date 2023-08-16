@@ -35,7 +35,7 @@ public class ProstorijaService {
     public Page<Prostorija> search(ProstorijaSearchDto searchDto, Pageable pageable) {
         List<Prostorija> results;
         if(searchDto.getOrgJedinica().isEmpty()) {
-            results = repository.search(searchDto.getOznaka(), searchDto.getTip(), searchDto.getKapacitet());
+            results = repository.search(searchDto.getOznaka(), searchDto.getTip(), searchDto.getSekundarniTip(), searchDto.getKapacitet());
         } else {
             results = search(searchDto);
         }
@@ -47,7 +47,7 @@ public class ProstorijaService {
                 .stream().map(OrganizacionaJedinica::getId).toList();
         List<Prostorija> results = new ArrayList<>();
         orgJedinicaIds.forEach(orgJedId -> results.addAll(repository.search(searchDto.getOznaka(),
-                searchDto.getTip(), searchDto.getKapacitet(), orgJedId)));
+                searchDto.getTip(), searchDto.getSekundarniTip(),searchDto.getKapacitet(), orgJedId)));
         return results;
     }
 
@@ -80,6 +80,7 @@ public class ProstorijaService {
         if(existing.isPresent() && !existing.get().getId().equals(id))
             throw new AlreadyExistsException(Prostorija.class.getSimpleName());
         prostorija.setId(id);
+        prostorija.setOdobreniPredmeti(getById(id).getOdobreniPredmeti());
         return repository.save(prostorija);
     }
 

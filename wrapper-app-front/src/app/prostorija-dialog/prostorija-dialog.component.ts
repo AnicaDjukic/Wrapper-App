@@ -37,8 +37,10 @@ export class ProstorijaDialogComponent {
     this.prostorijaForm = this.formBuilder.group({
       oznaka: ['', Validators.required],
       tip: ['', Validators.required],
+      sekundarniTip: [''],
       kapacitet: ['', [Validators.required, Validators.min(1)]],
-      orgJedinica: this.formBuilder.array([])
+      orgJedinica: this.formBuilder.array([]),
+      sekundarnaOrgJedinica: this.formBuilder.array([])
     });
 
     if (this.data.editData) {
@@ -46,10 +48,16 @@ export class ProstorijaDialogComponent {
       this.actionBtn = "Sačuvaj izmene";
       this.prostorijaForm.controls['oznaka'].setValue(this.data.editData.oznaka);
       this.prostorijaForm.controls['tip'].setValue(this.data.editData.tip);
+      this.prostorijaForm.controls['sekundarniTip'].setValue(this.data.editData.sekundarniTip ? this.data.editData.sekundarniTip : "");
       this.prostorijaForm.controls['kapacitet'].setValue(this.data.editData.kapacitet);
-      if(this.data.editData.orgJedinica) {
+      if (this.data.editData.orgJedinica) {
         for (let orgJed of this.data.editData.orgJedinica) {
           this.orgJedinicaFieldAsFormArray.push(this.formBuilder.control(orgJed.naziv, [Validators.required, autocompleteValidator(this.orgjediniceOptions)]));
+        }
+      }
+      if (this.data.editData.sekundarnaOrgJedinica) {
+        for (let orgJed of this.data.editData.sekundarnaOrgJedinica) {
+          this.sekundarnaOrgJedinicaFieldAsFormArray.push(this.formBuilder.control(orgJed.naziv, [Validators.required, autocompleteValidator(this.orgjediniceOptions)]));
         }
       }
     }
@@ -59,12 +67,24 @@ export class ProstorijaDialogComponent {
     return this.prostorijaForm.get('orgJedinica') as FormArray;
   }
 
-  addControl(): void {
+  addOrgJedinicaControl(): void {
     this.orgJedinicaFieldAsFormArray.push(this.formBuilder.control('', [Validators.required, autocompleteValidator(this.orgjediniceOptions)]));
   }
 
-  remove(i: number): void {
+  removeOrgJedinica(i: number): void {
     this.orgJedinicaFieldAsFormArray.removeAt(i);
+  }
+
+  get sekundarnaOrgJedinicaFieldAsFormArray(): any {
+    return this.prostorijaForm.get('sekundarnaOrgJedinica') as FormArray;
+  }
+
+  addSekundarnaOrgJedinicaControl(): void {
+    this.sekundarnaOrgJedinicaFieldAsFormArray.push(this.formBuilder.control('', [Validators.required, autocompleteValidator(this.orgjediniceOptions)]));
+  }
+
+  removeSekundarnaOrgJedinica(i: number): void {
+    this.sekundarnaOrgJedinicaFieldAsFormArray.removeAt(i);
   }
 
   public _filter($event: any, index: number) {
@@ -73,7 +93,7 @@ export class ProstorijaDialogComponent {
       this.options[index] = this.orgjediniceOptions;
       return;
     }
-    
+
     const filterValue = value.toLowerCase();
     let all = this.orgjediniceOptions;
     let options = all.filter(option => option.toLowerCase().includes(filterValue));
@@ -88,7 +108,14 @@ export class ProstorijaDialogComponent {
           org = this.organizacioneJedinice.filter(o => o.naziv == org).map(value => value.id)[0];
           orgJedinice.push(org);
         }
+
+        let sekundarneOrgJedinice = [];
+        for (let org of this.prostorijaForm.value.sekundarnaOrgJedinica) {
+          org = this.organizacioneJedinice.filter(o => o.naziv == org).map(value => value.id)[0];
+          sekundarneOrgJedinice.push(org);
+        }
         this.prostorijaForm.value.orgJedinica = orgJedinice;
+        this.prostorijaForm.value.sekundarnaOrgJedinica = sekundarneOrgJedinice;
         console.log(this.prostorijaForm);
         this.api.post(this.prostorijaForm.value)
           .subscribe({
@@ -126,7 +153,15 @@ export class ProstorijaDialogComponent {
       org = this.organizacioneJedinice.filter(o => o.naziv == org).map(value => value.id)[0];
       orgJedinice.push(org);
     }
+
+    let sekundarneOrgJedinice = [];
+    for (let org of this.prostorijaForm.value.sekundarnaOrgJedinica) {
+      org = this.organizacioneJedinice.filter(o => o.naziv == org).map(value => value.id)[0];
+      sekundarneOrgJedinice.push(org);
+    }
+
     this.prostorijaForm.value.orgJedinica = orgJedinice;
+    this.prostorijaForm.value.sekundarnaOrgJedinica = sekundarneOrgJedinice;
     this.api.put(this.prostorijaForm.value, this.data.editData.id)
       .subscribe({
         next: () => {

@@ -16,7 +16,7 @@ import { OrgJedinicaService } from '../services/org-jedinica.service';
   styleUrls: ['./prostorije.component.scss']
 })
 export class ProstorijeComponent {
-  displayedColumns: string[] = ['oznaka', 'tip', 'kapacitet', 'orgJedinica', 'actions'];
+  displayedColumns: string[] = ['oznaka', 'primarniTip', 'sekundarniTip', 'kapacitet', 'orgJedinica', 'sekundarnaOrgJedinica', 'actions'];
 
   dataSource = new MatTableDataSource<ProstorijaDto>();
   organizacioneJedinice: OrganizacionaJedinicaDto[] = [];
@@ -37,6 +37,7 @@ export class ProstorijeComponent {
 
   oznaka = '';
   tip = 'SVE';
+  sekundarniTip = 'SVE';
   kapacitet = 0;
   kapacitetStr = '';
   orgJedinica = '';
@@ -146,6 +147,7 @@ export class ProstorijeComponent {
     let prostorijaSearchDto = {
       oznaka: this.oznaka,
       tip: this.tip != 'SVE' ? this.tip : '',
+      sekundarniTip: this.sekundarniTip != 'SVE' ? this.sekundarniTip : '',
       kapacitet: this.kapacitetStr,
       orgJedinica: this.orgJedinica
     }

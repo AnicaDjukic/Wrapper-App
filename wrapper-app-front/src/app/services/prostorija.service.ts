@@ -14,10 +14,11 @@ export class ProstorijaService {
     return this.http.get<any>(`${this.prostorijeUrl}?page=` + page + `&size=` + size);
   }
 
-  search(page: number, size: number, searchParams: { oznaka: string; tip: string; kapacitet: string; orgJedinica: string; }) {
+  search(page: number, size: number, searchParams: { oznaka: string; tip: string; sekundarniTip: string, kapacitet: string; orgJedinica: string; }) {
     return this.http.get<any>(`${this.prostorijeUrl}/search?page=` + page + `&size=` + size 
     + `&oznaka=` + searchParams.oznaka
     + `&tip=`+ searchParams.tip
+    + `&sekundarniTip=` + searchParams.sekundarniTip
     + `&kapacitet=` + searchParams.kapacitet
     + '&orgJed=' + searchParams.orgJedinica);
   }

@@ -6,4 +6,5 @@ export interface ProstorijaDto {
     tip: string;
     kapacitet: number;
     orgJedinica: OrganizacionaJedinicaDto[];
+    sekundarniTip:string;
 }
