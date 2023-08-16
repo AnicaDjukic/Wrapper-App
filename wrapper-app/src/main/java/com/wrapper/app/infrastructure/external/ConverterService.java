@@ -17,6 +17,7 @@ import com.wrapper.app.infrastructure.util.FileExtensions;
 import com.wrapper.app.infrastructure.util.FileHandler;
 import com.wrapper.app.infrastructure.util.PythonScriptExecutor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -39,8 +40,10 @@ public class ConverterService {
 
     private final NotificationService notificationService;
 
-    private static final String SCRIPT_PATH = "src/main/resources/scripts/prikaz.py";
-    private static final String VENV_PATH = "C:/Venv/venv/Scripts/python";
+    @Value("${converter.script.path}")
+    private String scriptPath;
+    @Value("${converter.venv.path}")
+    private String venvPath;
 
     private static final String MEETING_ASSIGNMENTS_PROP_NAME = "meetingAssignmentList";
     private static final String SCHEDULE_PROP_NAME = "schedule";
@@ -66,7 +69,7 @@ public class ConverterService {
     public void convert(List<MeetingAssignment> meetingAssignments, Database database) {
         try {
             String jsonFilePath = prepareData(meetingAssignments, database);
-            ExecutionResult executionResult = scriptExecutor.executeScriptAndGetOutput(jsonFilePath, SCRIPT_PATH, VENV_PATH);
+            ExecutionResult executionResult = scriptExecutor.executeScriptAndGetOutput(jsonFilePath, scriptPath, venvPath);
 
             if (executionResult.getExitCode() == 0) {
                 sendConvertedSchedule(database);

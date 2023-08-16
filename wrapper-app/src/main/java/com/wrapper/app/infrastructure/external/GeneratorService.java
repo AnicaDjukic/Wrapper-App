@@ -12,6 +12,7 @@ import com.wrapper.app.infrastructure.util.ExecutionResult;
 import com.wrapper.app.infrastructure.util.FileExtensions;
 import com.wrapper.app.infrastructure.util.PythonScriptExecutor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
@@ -31,8 +32,10 @@ public class GeneratorService {
 
     private final ModelMapper modelMapper;
 
-    private static final String SCRIPT_PATH = "src/main/resources/scripts/7_generate_termini.py";
-    private static final String VENV_PATH = "python";
+    @Value("${generator.script.path}")
+    private String scriptPath;
+    @Value("${generator.venv.path}")
+    private String venvPath;
 
     private static final String REALIZACIJA_PROP_NAME = "realizacija";
     private static final String STUDIJSKI_PROGRAMI_PROP_NAME = "studijskiProgramList";
@@ -51,7 +54,7 @@ public class GeneratorService {
 
     public List<MeetingDto> generateMeetings(Database database) throws IOException, InterruptedException {
         String jsonFilePath = prepareData(database);
-        ExecutionResult executionResult = scriptExecutor.executeScriptAndGetOutput(jsonFilePath, SCRIPT_PATH, VENV_PATH);
+        ExecutionResult executionResult = scriptExecutor.executeScriptAndGetOutput(jsonFilePath, scriptPath, venvPath);
         return objectMapper.readValue(executionResult.getScriptOutput(), new TypeReference<>() {});
     }
 

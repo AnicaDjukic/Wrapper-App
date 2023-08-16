@@ -7,6 +7,7 @@ import com.wrapper.app.domain.model.Meeting;
 import com.wrapper.app.domain.model.MeetingSchedule;
 import com.wrapper.app.infrastructure.dto.optimizator.MeetingScheduleDto;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -25,8 +26,10 @@ public class OptimizatorService {
 
     private final ModelMapper modelMapper;
 
-    private static final String SEND_DATA_URL = "http://localhost:8081/timeTable";
-    private static final String START_URL = "http://localhost:8081/timeTable/solve";
+    @Value("${optimizator.send-data.url}")
+    private String sendDataUrl;
+    @Value("${optimizator.start.url}")
+    private String startUrl;
 
     public OptimizatorService(RestTemplate restTemplate, MeetingScheduleService meetingScheduleService, ModelMapper modelMapper) {
         this.restTemplate = restTemplate;
@@ -39,7 +42,7 @@ public class OptimizatorService {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<Object> httpEntity = new HttpEntity<>(null, headers);
-        restTemplate.exchange(START_URL, HttpMethod.POST, httpEntity, Void.class);
+        restTemplate.exchange(startUrl, HttpMethod.POST, httpEntity, Void.class);
     }
 
     private void sendDataToOptimizator(Database database, List<MeetingDto> meetingDtos) {
@@ -49,6 +52,6 @@ public class OptimizatorService {
         MeetingSchedule meetingSchedule = meetingScheduleService.createMeetingShedule(database, meetings, null);
         MeetingScheduleDto meetingScheduleDto = modelMapper.map(meetingSchedule, MeetingScheduleDto.class);
         HttpEntity<MeetingScheduleDto> httpEntity = new HttpEntity<>(meetingScheduleDto, headers);
-        restTemplate.exchange(SEND_DATA_URL, HttpMethod.POST, httpEntity, Void.class);
+        restTemplate.exchange(sendDataUrl, HttpMethod.POST, httpEntity, Void.class);
     }
 }

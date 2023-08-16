@@ -1,5 +1,6 @@
 package com.wrapper.app.infrastructure.util;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
@@ -12,7 +13,8 @@ import java.util.zip.ZipOutputStream;
 @Component
 public class FileHandler {
 
-    private static final String BASE_PATH = "src/main/resources/files/";
+    @Value("${folder.path}")
+    private String basePath;
 
     private static final String STUDENTI_FOLDER = "studenti";
 
@@ -21,7 +23,7 @@ public class FileHandler {
     private static final String PREDAVACI_FOLDER = "predavaci";
 
     public String createFiles(String folderName) {
-        File folder = new File(BASE_PATH + folderName);
+        File folder = new File(basePath + folderName);
         folder.mkdir(); // Create the folder
 
         // Create some files in the folder (optional)
@@ -34,9 +36,9 @@ public class FileHandler {
         file3.mkdir();
 
         try {
-            Files.copy(Path.of(BASE_PATH + "styles.css"), file1.toPath().resolve("styles.css"), StandardCopyOption.REPLACE_EXISTING);
-            Files.copy(Path.of(BASE_PATH + "styles.css"), file2.toPath().resolve("styles.css"), StandardCopyOption.REPLACE_EXISTING);
-            Files.copy(Path.of(BASE_PATH + "styles.css"), file3.toPath().resolve("styles.css"), StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(Path.of(basePath + "styles.css"), file1.toPath().resolve("styles.css"), StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(Path.of(basePath + "styles.css"), file2.toPath().resolve("styles.css"), StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(Path.of(basePath + "styles.css"), file3.toPath().resolve("styles.css"), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -46,8 +48,8 @@ public class FileHandler {
 
     public String zipFolder(String sourceFolderName, String zipFolderName) {
         try {
-            File sourceFolder = new File(BASE_PATH + sourceFolderName);
-            FileOutputStream fos = new FileOutputStream(BASE_PATH + zipFolderName);
+            File sourceFolder = new File(basePath + sourceFolderName);
+            FileOutputStream fos = new FileOutputStream(basePath + zipFolderName);
             ZipOutputStream zipOut = new ZipOutputStream(fos);
 
             zipFile(sourceFolder, sourceFolder.getName(), zipOut);
@@ -56,7 +58,7 @@ public class FileHandler {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return BASE_PATH + zipFolderName;
+        return basePath + zipFolderName;
     }
 
     private static void zipFile(File fileToZip, String fileName, ZipOutputStream zipOut) throws IOException {
