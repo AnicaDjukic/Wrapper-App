@@ -68,9 +68,12 @@ export class GenerisanjeRasporedaComponent {
       });
   }
 
-  download(filename: string): void {
-    this.rasporedApi
-      .download(filename)
-      .subscribe(blob => saveAs(blob, filename));
+  send(id: string): void {
+    alert("Poslato na mejl! " + id)
   }
+
+  stop(id: string): void {
+    alert("Zaustavljeno! " + id)
+  }
+  
 }
