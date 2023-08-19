@@ -10,5 +10,6 @@ export interface DatabaseDto {
     prostorije: string;
     generationStarted: Date;
     generationFinished: Date;
+    status: string,
     path: string;
 }

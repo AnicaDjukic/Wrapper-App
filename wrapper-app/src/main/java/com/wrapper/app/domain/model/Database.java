@@ -35,5 +35,7 @@ public class Database {
 
     private Date generationFinished;
 
+    private GenerationStatus status;
+
     private String path;
 }

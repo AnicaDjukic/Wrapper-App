@@ -35,5 +35,7 @@ public class DatabaseResponseDto {
 
     private Date generationFinished;
 
+    private String status;
+
     private String path;
 }

@@ -8,6 +8,7 @@ import com.wrapper.app.infrastructure.persistence.repository.StudijskiProgramPre
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class StudijskiProgramPredmetiService {
@@ -71,5 +72,9 @@ public class StudijskiProgramPredmetiService {
 
     public void deleteById(String id) {
         repository.deleteById(id);
+    }
+
+    public List<StudijskiProgramPredmeti> getAll() {
+        return repository.findAll();
     }
 }

@@ -54,4 +54,8 @@ public class OptimizatorService {
         HttpEntity<MeetingScheduleDto> httpEntity = new HttpEntity<>(meetingScheduleDto, headers);
         restTemplate.exchange(sendDataUrl, HttpMethod.POST, httpEntity, Void.class);
     }
+
+    public void stopOptimizator() {
+        // TODO: make REST call to stop optimizator
+    }
 }

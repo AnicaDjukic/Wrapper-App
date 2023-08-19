@@ -64,6 +64,7 @@ public class DatabaseService<T> {
         String newSemester = database.getGodina() + database.getSemestar().substring(0, 1).toUpperCase();
         CollectionNameProvider.setCollectionName(newSemester);
         createCollections(database, newSemester);
+        database.setStatus(GenerationStatus.NOT_STARTED);
         database.setId(UUID.randomUUID().toString());
         return repository.save(database);
     }
@@ -151,12 +152,15 @@ public class DatabaseService<T> {
         }
     }
 
-    public void update(Database database) {
-        repository.save(database);
+    public Database update(Database database) {
+        return repository.save(database);
     }
 
     public Database getUnfinished() {
-        return repository.findByGenerationFinishedIsNullAndGenerationStartedIsNotNull()
+        Optional<Database> started = repository.findByStatus(GenerationStatus.STARTED);
+        if(started.isEmpty())
+            return repository.findByStatus(GenerationStatus.OPTIMIZING)
                 .orElseThrow(() -> new NotFoundException(Database.class.getSimpleName()));
+        return started.get();
     }
 }

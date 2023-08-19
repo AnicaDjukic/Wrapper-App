@@ -80,6 +80,7 @@ public class GeneratorService {
         RealizacijaDto realizacija = new RealizacijaDto();
         realizacija.setGodina(database.getGodina());
         realizacija.setSemestar(database.getSemestar().substring(0, 1));
+        CollectionNameProvider.setCollectionName(database.getGodina() + database.getSemestar().charAt(0));
         String collectionName = CollectionTypes.STUDIJSKI_PROGRAM_PREDMETI + database.getGodina() + database.getSemestar().charAt(0);
         List<StudijskiProgramPredmeti> studijskiProgramPredmeti = mongoTemplate.findAll(StudijskiProgramPredmeti.class, collectionName);
         List<StudijskiProgramPredmetiDto> studijskiProgramPredmetiDtos = getStudijskiProgramPredmetiDtos(studijskiProgramPredmeti);

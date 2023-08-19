@@ -32,7 +32,7 @@
             Predviđeno vreme trajanja generisanja je 3 dana...
         </mat-card>
         <div *ngFor="let semestar of semesters">
-            <mat-card *ngIf="semestar.generationStarted" class="semester-card">
+            <mat-card *ngIf="semestar.status == 'FINISHED' || semestar.status == 'STARTED' || semestar.status == 'OPTIMIZING'" class="semester-card">
                 <span class="semester"><b>{{ semestar.semestar }} {{ semestar.godina }}</b></span>
                 <span style="margin-top: 2%; width: 22%;">
                     <div style="text-align: center;">Generisanje započeto:</div>
@@ -48,11 +48,11 @@
                 </span>
 
                 <!-- GENERISANJE U ZAVRSENO -->
-                <div *ngIf="semestar.generationStarted && semestar.generationFinished"
+                <div *ngIf="semestar.status == 'FINISHED'"
                     style="display: flex; justify-content: space-around; margin-top: 2%; width: 20%;">
                     <div style="display: flex; flex-direction: column;">
                         <div style="text-align: center;">
-                            <mat-icon>
+                            <mat-icon style="color: green;">
                                 done_outline
                             </mat-icon>
                         </div>
@@ -61,7 +61,7 @@
                         </div>
                     </div>
                 </div>
-                <div *ngIf="semestar.generationStarted && semestar.generationFinished"
+                <div *ngIf="semestar.status == 'FINISHED'"
                     style="display: flex; justify-content: space-around; margin-top: 2%; width: 15%;">
                     <div style="display: flex; flex-direction: column;">
                         <div style="text-align: center; cursor: pointer" (click)="send(semestar.id)">
@@ -77,11 +77,11 @@
 
 
                 <!-- GENERISANJE U TOKU... -->
-                <div *ngIf="semestar.generationStarted && !semestar.generationFinished"
+                <div *ngIf="semestar.status == 'STARTED' || semestar.status == 'OPTIMIZING'"
                     style="display: flex; justify-content: space-around; margin-top: 2%; width: 20%;">
                     <div style="display: flex; flex-direction: column;">
                         <div style="text-align: center;">
-                            <mat-icon>
+                            <mat-icon style="color: steelblue;">
                                 update
                             </mat-icon>
                         </div>
@@ -90,8 +90,9 @@
                         </div>
                     </div>
                 </div>
-                <div *ngIf="semestar.generationStarted && !semestar.generationFinished" style="display: flex; flex-direction: column; margin-top: 2%; width: 15%;">
-                    <div style="text-align: center; cursor: pointer;" (click)="stop(semestar.id)">
+                <div *ngIf="semestar.status == 'STARTED'|| semestar.status == 'OPTIMIZING'"
+                    style="display: flex; flex-direction: column; margin-top: 2%; width: 15%;">
+                    <div style="text-align: center; cursor: pointer;" (click)="stop()">
                         <mat-icon class="stop">
                             stop
                         </mat-icon>

@@ -3,6 +3,7 @@ package com.wrapper.app.infrastructure.external;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.wrapper.app.domain.model.GenerationStatus;
 import com.wrapper.app.infrastructure.dto.converter.MeetingAssignmentDto;
 import com.wrapper.app.infrastructure.dto.converter.MeetingScheduleDto;
 import com.wrapper.app.infrastructure.dto.converter.RasporedPrikaz;
@@ -12,10 +13,7 @@ import com.wrapper.app.application.service.MeetingService;
 import com.wrapper.app.domain.model.Database;
 import com.wrapper.app.domain.model.Meeting;
 import com.wrapper.app.domain.model.MeetingSchedule;
-import com.wrapper.app.infrastructure.util.ExecutionResult;
-import com.wrapper.app.infrastructure.util.FileExtensions;
-import com.wrapper.app.infrastructure.util.FileHandler;
-import com.wrapper.app.infrastructure.util.PythonScriptExecutor;
+import com.wrapper.app.infrastructure.util.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -38,6 +36,8 @@ public class ConverterService {
 
     private final FileHandler fileHandler;
 
+    private final DatabaseService databaseService;
+
     private final NotificationService notificationService;
 
     @Value("${converter.script.path}")
@@ -56,13 +56,16 @@ public class ConverterService {
                             MeetingService meetingService,
                             MeetingScheduleService meetingScheduleService,
                             PythonScriptExecutor scriptExecutor,
-                            FileHandler fileHandler, NotificationService notificationService) {
+                            FileHandler fileHandler,
+                            DatabaseService databaseService,
+                            NotificationService notificationService) {
         this.objectMapper = objectMapper;
         this.modelMapper = modelMapper;
         this.meetingService = meetingService;
         this.meetingScheduleService = meetingScheduleService;
         this.scriptExecutor = scriptExecutor;
         this.fileHandler = fileHandler;
+        this.databaseService = databaseService;
         this.notificationService = notificationService;
     }
 
@@ -73,6 +76,9 @@ public class ConverterService {
 
             if (executionResult.getExitCode() == 0) {
                 sendConvertedSchedule(database);
+                database.setGenerationFinished(DateHandler.getLocalDate());
+                database.setStatus(GenerationStatus.FINISHED);
+                databaseService.update(database);
             }
             System.out.println(executionResult.getScriptOutput());
 
@@ -109,6 +115,7 @@ public class ConverterService {
         String folderName = database.getGodina().replace("/", "_") + database.getSemestar();
         String zipFolderName = database.getGodina().replace("/", "_") + database.getSemestar() + FileExtensions.ZIP;
         String zipPath = fileHandler.zipFolder(folderName, zipFolderName);
-        notificationService.sendNotification(zipPath);
+        database.setPath(zipPath);
+        notificationService.sendNotification(zipPath, database.getSemestar() + database.getGodina());
     }
 }
