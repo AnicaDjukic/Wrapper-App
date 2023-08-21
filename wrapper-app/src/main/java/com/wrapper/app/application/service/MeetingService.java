@@ -3,6 +3,7 @@ package com.wrapper.app.application.service;
 import com.wrapper.app.domain.model.*;
 import com.wrapper.app.infrastructure.dto.generator.*;
 import com.wrapper.app.infrastructure.external.GeneratorService;
+import com.wrapper.app.infrastructure.persistence.util.CollectionNameProvider;
 import com.wrapper.app.infrastructure.persistence.util.CollectionTypes;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -36,7 +37,10 @@ public class MeetingService {
 
     private void saveMeetings(Database database, List<MeetingDto> meetingsDtos) {
         List<Meeting> meetings = meetingsDtos.parallelStream()
-                .map(dto -> CompletableFuture.supplyAsync(() -> modelMapper.map(dto, Meeting.class)))
+                .map(dto -> CompletableFuture.supplyAsync(() -> {
+                    CollectionNameProvider.setCollectionName(database.getGodina() + database.getSemestar().charAt(0));
+                    return modelMapper.map(dto, Meeting.class);
+                }))
                 .map(CompletableFuture::join)
                 .collect(Collectors.toList());
         String collectionName = CollectionTypes.MEETINGS + database.getGodina() + database.getSemestar().charAt(0);

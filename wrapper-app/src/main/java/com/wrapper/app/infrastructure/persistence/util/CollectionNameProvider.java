@@ -16,13 +16,14 @@ public class CollectionNameProvider {
         return userCollectionMap.get(userId);
     }
 
-    private static final AtomicReference<String> collectionName = new AtomicReference<>();
+    private static final ThreadLocal<String> collectionNameThreadLocal = ThreadLocal.withInitial(() -> null);
 
     public static String getCollectionName() {
-        return collectionName.get();
+        return collectionNameThreadLocal.get();
     }
 
-    public static void setCollectionName(String name) {
-        collectionName.set(name);
+    public static void setCollectionName(String collectionName) {
+        collectionNameThreadLocal.set(collectionName);
     }
+
 }

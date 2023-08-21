@@ -1,6 +1,5 @@
 package com.wrapper.app.application.service;
 
-import com.wrapper.app.domain.exception.NotFoundException;
 import com.wrapper.app.domain.model.GenerationStatus;
 import com.wrapper.app.infrastructure.dto.generator.MeetingDto;
 import com.wrapper.app.domain.model.Database;
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 @Service
