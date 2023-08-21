@@ -1,6 +1,5 @@
 package com.wrapper.app.presentation.controller;
 
-import com.wrapper.app.domain.model.Database;
 import com.wrapper.app.domain.model.User;
 import com.wrapper.app.infrastructure.dto.optimizator.MeetingAssignment;
 import com.wrapper.app.application.service.ScheduleService;

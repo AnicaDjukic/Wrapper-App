@@ -1,5 +1,6 @@
 package com.wrapper.app.application.service;
 
+import com.sun.mail.iap.ConnectionException;
 import com.wrapper.app.domain.model.GenerationStatus;
 import com.wrapper.app.infrastructure.dto.generator.MeetingDto;
 import com.wrapper.app.domain.model.Database;
@@ -12,6 +13,7 @@ import com.wrapper.app.infrastructure.util.EmailSender;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -61,7 +63,7 @@ public class ScheduleService {
             startOptimizator(databaseId, meetings);
         } catch (IOException | InterruptedException ex) {
             Database database = databaseService.getById(databaseId);
-            database.setStatus(GenerationStatus.STOPPED); // TODO: STAVITI OVDE STANJE FAILED
+            database.setStatus(GenerationStatus.FAILED);
             databaseService.update(database);
             ex.printStackTrace();
         }

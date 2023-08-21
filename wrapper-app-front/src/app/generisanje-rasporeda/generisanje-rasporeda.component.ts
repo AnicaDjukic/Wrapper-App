@@ -31,6 +31,7 @@ export class GenerisanjeRasporedaComponent {
     this.databaseApi.getAll().subscribe({
       next: (res) => {
         this.semesters = res;
+        this.semesters = this.semesters.sort((a, b) => new Date(b.generationStarted).getTime() - new Date(a.generationStarted).getTime());
       }
     });
   }
@@ -102,6 +103,24 @@ export class GenerisanjeRasporedaComponent {
         },
         error: () => {
           this.toastr.error('Došlo je do greške! Pokušajte ponovo...', 'Greška!');
+        }
+      });
+  }
+
+  refresh(id: string) {
+    this.rasporedApi.generate(id)
+      .subscribe({
+        next: () => {
+          this.submitted = false;
+          this.selectedSemester = "";
+          this.semesters = [];
+          this.options = [];
+          this.getAllSemesters();
+          this.getAllOptions();
+        },
+        error: () => {
+          this.submitted = false;
+          this.toastr.error('Došlo je do greške prilikom dodavanja novog semestra!', 'Greška!');
         }
       });
   }

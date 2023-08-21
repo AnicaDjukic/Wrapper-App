@@ -83,6 +83,8 @@ public class ConverterService {
             System.out.println(executionResult.getScriptOutput());
 
         } catch (IOException | InterruptedException e) {
+            database.setStatus(GenerationStatus.FAILED);
+            databaseService.update(database);
             e.printStackTrace();
         }
     }

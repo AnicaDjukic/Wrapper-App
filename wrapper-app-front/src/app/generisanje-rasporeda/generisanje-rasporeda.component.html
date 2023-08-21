@@ -32,7 +32,7 @@
             Predviđeno vreme trajanja generisanja je 3 dana...
         </mat-card>
         <div *ngFor="let semestar of semesters">
-            <mat-card *ngIf="semestar.status == 'FINISHED' || semestar.status == 'STARTED' || semestar.status == 'OPTIMIZING'" class="semester-card">
+            <mat-card *ngIf="semestar.status != 'STOPPED' && semestar.status != 'NOT_STARTED'" class="semester-card">
                 <span class="semester"><b>{{ semestar.semestar }} {{ semestar.godina }}</b></span>
                 <span style="margin-top: 2%; width: 22%;">
                     <div style="text-align: center;">Generisanje započeto:</div>
@@ -99,6 +99,32 @@
                     </div>
                     <div style="text-align: center;">
                         Zaustavi
+                    </div>
+                </div>
+
+                <!-- GENERISANJE NEUSPESNO... -->
+                <div *ngIf="semestar.status == 'FAILED'"
+                    style="display: flex; justify-content: space-around; margin-top: 2%; width: 20%;">
+                    <div style="display: flex; flex-direction: column;">
+                        <div style="text-align: center;">
+                            <mat-icon style="color: red;">
+                                cancel
+                            </mat-icon>
+                        </div>
+                        <div style="text-align: center;">
+                            Generisanje nije uspelo...
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="semestar.status == 'FAILED'"
+                    style="display: flex; flex-direction: column; margin-top: 2%; width: 15%;">
+                    <div style="text-align: center; cursor: pointer;" (click)="refresh(semestar.id)">
+                        <mat-icon class="refresh">
+                            refresh
+                        </mat-icon>
+                    </div>
+                    <div style="text-align: center;">
+                        Pokreni ponovo
                     </div>
                 </div>
             </mat-card>

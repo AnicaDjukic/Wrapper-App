@@ -78,9 +78,16 @@
 }
 
 .send:hover {
-    color: green
+    color: green;
+    scale: 120%;
 }
 
 .stop:hover {
     color: red;
+    scale: 120%;
+}
+
+.refresh:hover {
+    color: orange;
+    scale: 120%;
 }
