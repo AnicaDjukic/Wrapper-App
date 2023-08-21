@@ -43,6 +43,9 @@ public class ScheduleService {
     public void startGenerating(String id) {
         updateDatabaseStatus(id);
         CompletableFuture.runAsync(() -> createMeetingsAndStartOptimizator(id)).exceptionally(ex -> {
+            Database database = databaseService.getById(id);
+            database.setStatus(GenerationStatus.FAILED);
+            databaseService.update(database);
             ex.printStackTrace();
             return null;
         });
