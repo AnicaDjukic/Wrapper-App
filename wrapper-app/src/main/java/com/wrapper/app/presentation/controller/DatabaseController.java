@@ -14,15 +14,15 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/databases")
-public class DatabaseController<T> {
+public class DatabaseController {
 
-    private final DatabaseService<T> service;
+    private final DatabaseService service;
 
     private final ModelMapper modelMapper;
 
     private final TokenUtils tokenUtils;
 
-    public DatabaseController(DatabaseService<T> service, ModelMapper modelMapper, TokenUtils tokenUtils) {
+    public DatabaseController(DatabaseService service, ModelMapper modelMapper, TokenUtils tokenUtils) {
         this.service = service;
         this.modelMapper = modelMapper;
         this.tokenUtils = tokenUtils;

@@ -4,6 +4,7 @@ import com.wrapper.app.domain.model.Database;
 import com.wrapper.app.domain.model.GenerationStatus;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface DatabaseRepository extends MongoRepository<Database, String> {
@@ -11,4 +12,6 @@ public interface DatabaseRepository extends MongoRepository<Database, String> {
     Optional<Database> findBySemestarAndGodina(String semestar, String godina);
 
     Optional<Database> findByStatus(GenerationStatus status);
+
+    List<Database> findAllByStatus(GenerationStatus status);
 }

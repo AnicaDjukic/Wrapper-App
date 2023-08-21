@@ -30,6 +30,8 @@ public class OptimizatorService {
     private String sendDataUrl;
     @Value("${optimizator.start.url}")
     private String startUrl;
+    @Value("${optimizator.stop.url}")
+    private String stopUrl;
 
     public OptimizatorService(RestTemplate restTemplate, MeetingScheduleService meetingScheduleService, ModelMapper modelMapper) {
         this.restTemplate = restTemplate;
@@ -56,6 +58,9 @@ public class OptimizatorService {
     }
 
     public void stopOptimizator() {
-        // TODO: make REST call to stop optimizator
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<Object> httpEntity = new HttpEntity<>(null, headers);
+        restTemplate.exchange(stopUrl, HttpMethod.POST, httpEntity, Void.class);
     }
 }

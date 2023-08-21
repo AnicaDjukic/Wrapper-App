@@ -2,7 +2,7 @@ package com.wrapper.app.infrastructure.external;
 
 import java.util.List;
 
-public interface DataService<T> {
+public interface DataService {
 
-    List<T> getData(Class<T> entityName, String from);
+    List<?> getData(Class<?> entityName, String from);
 }

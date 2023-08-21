@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class MongoDbService<T> implements DataService<T> {
+public class MongoDbService implements DataService {
 
     private final MongoTemplate mongoTemplate;
 
@@ -15,7 +15,7 @@ public class MongoDbService<T> implements DataService<T> {
     }
 
     @Override
-    public List<T> getData(Class<T> entityClass, String from) {
+    public List<?> getData(Class<?> entityClass, String from) {
         return mongoTemplate.findAll(entityClass, from);
     }
 }

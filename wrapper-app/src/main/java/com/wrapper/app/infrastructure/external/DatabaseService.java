@@ -9,21 +9,19 @@ import com.wrapper.app.infrastructure.persistence.util.CollectionTypes;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import javax.xml.crypto.Data;
+import java.util.*;
 
 @Service
-public class DatabaseService<T> {
+public class DatabaseService {
 
-    private final DataService<T> dataService;
+    private final DataService dataService;
 
     private final MongoTemplate mongoTemplate;
 
     private final DatabaseRepository repository;
 
-    public DatabaseService(DataService<T> dataService, MongoTemplate mongoTemplate, DatabaseRepository repository) {
+    public DatabaseService(DataService dataService, MongoTemplate mongoTemplate, DatabaseRepository repository) {
         this.dataService = dataService;
         this.mongoTemplate = mongoTemplate;
         this.repository = repository;
@@ -35,11 +33,11 @@ public class DatabaseService<T> {
 
     public List<Database> getUnblocked() {
         List<Database> unblockedDatabases = new ArrayList<>(repository.findAll());
-        for (Database database: repository.findAll()) {
+        for (Database database : repository.findAll()) {
             String collectionName = CollectionTypes.STUDIJSKI_PROGRAMI + database.getGodina() + database.getSemestar().charAt(0);
             List<StudijskiProgram> studijskiProgrami = mongoTemplate.findAll(StudijskiProgram.class, collectionName);
             boolean isBlocked = studijskiProgrami.stream().anyMatch(StudijskiProgram::isBlock);
-            if(isBlocked) {
+            if (isBlocked) {
                 unblockedDatabases.remove(database);
             }
         }
@@ -91,7 +89,7 @@ public class DatabaseService<T> {
     }
 
     private void createCollection(String from, String collectionNamePrefix, String newSemester) {
-        List<T> data = dataService.getData(getGenericTypeClass(collectionNamePrefix), collectionNamePrefix + from);
+        List<?> data = dataService.getData(getGenericTypeClass(collectionNamePrefix), collectionNamePrefix + from);
         String collectionName = collectionNamePrefix + newSemester;
         mongoTemplate.createCollection(collectionName);
         mongoTemplate.insert(data, collectionName);
@@ -125,20 +123,19 @@ public class DatabaseService<T> {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private Class<T> getGenericTypeClass(String collectionName) {
+    private Class<?> getGenericTypeClass(String collectionName) {
         if (collectionName.startsWith(CollectionTypes.STUDIJSKI_PROGRAMI)) {
-            return (Class<T>) StudijskiProgram.class;
+            return StudijskiProgram.class;
         } else if (collectionName.startsWith(CollectionTypes.PREDMETI)) {
-            return (Class<T>) Predmet.class;
+            return Predmet.class;
         } else if (collectionName.startsWith(CollectionTypes.PREDAVACI)) {
-            return (Class<T>) Predavac.class;
+            return Predavac.class;
         } else if (collectionName.startsWith(CollectionTypes.STUDIJSKI_PROGRAM_PREDMETI)) {
-            return (Class<T>) StudijskiProgramPredmeti.class;
+            return StudijskiProgramPredmeti.class;
         } else if (collectionName.startsWith(CollectionTypes.STUDENTSKE_GRUPE)) {
-            return (Class<T>) StudentskaGrupa.class;
+            return StudentskaGrupa.class;
         } else if (collectionName.startsWith(CollectionTypes.PROSTORIJE)) {
-            return (Class<T>) Prostorija.class;
+            return Prostorija.class;
         } else {
             throw new IllegalArgumentException("Invalid collection name: " + collectionName);
         }
@@ -157,10 +154,17 @@ public class DatabaseService<T> {
     }
 
     public Database getUnfinished() {
-        Optional<Database> started = repository.findByStatus(GenerationStatus.STARTED);
-        if(started.isEmpty())
-            return repository.findByStatus(GenerationStatus.OPTIMIZING)
-                .orElseThrow(() -> new NotFoundException(Database.class.getSimpleName()));
-        return started.get();
+        return repository.findByStatus(GenerationStatus.STARTED)
+                .orElseGet(() -> repository.findByStatus(GenerationStatus.OPTIMIZING)
+                        .orElseThrow(() -> new NotFoundException(Database.class.getSimpleName())));
+    }
+
+    public Database getRecentlyStarted() {
+        return repository.findByStatus(GenerationStatus.OPTIMIZING)
+                .orElseGet(() -> repository.findAllByStatus(GenerationStatus.STOPPED)
+                        .stream()
+                        .max(Comparator.comparing(Database::getGenerationStarted))
+                        .orElseThrow(() -> new NotFoundException(Database.class.getSimpleName())));
+
     }
 }

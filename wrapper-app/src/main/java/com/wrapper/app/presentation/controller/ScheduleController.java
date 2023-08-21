@@ -22,8 +22,8 @@ public class ScheduleController {
 
     @PostMapping("/generate/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Database startGenerating(@PathVariable String id) {
-        return service.startGenerating(id);
+    public void startGenerating(@PathVariable String id) {
+        service.startGenerating(id);
     }
 
     @PutMapping("/generate/stop")
