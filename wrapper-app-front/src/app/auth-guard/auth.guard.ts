@@ -11,17 +11,23 @@ export class AuthGuard implements CanActivate {
   constructor(private storageService: StorageService, private router: Router) { }
 
   canActivate(
-    route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-    const expDate = new Date(this.storageService.getExpirationDateFromToken(this.storageService.getToken()) * 1000);
-    const expDateRefresh = new Date(this.storageService.getExpirationDateFromToken(this.storageService.getRefreshToken()) * 1000);
-    if (!!this.storageService.getToken() && expDate > new Date() &&
-      !!this.storageService.getRefreshToken() && expDateRefresh > new Date()) {
-      return true;
+    _route: ActivatedRouteSnapshot,
+    _state: RouterStateSnapshot
+  ): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
+    const token = this.storageService.getToken();
+    const refreshToken = this.storageService.getRefreshToken();
+
+    if (token && refreshToken) {
+      const tokenExpDate = this.storageService.getExpirationDateFromToken(token);
+      const refreshTokenExpDate = this.storageService.getExpirationDateFromToken(refreshToken);
+
+      if (tokenExpDate > new Date() || refreshTokenExpDate > new Date()) {
+        return true;
+      }
     }
+
     this.storageService.clearToken();
-    this.router.navigate(['']);
+    this.router.navigate(['/']);
     return false;
   }
-
 }
