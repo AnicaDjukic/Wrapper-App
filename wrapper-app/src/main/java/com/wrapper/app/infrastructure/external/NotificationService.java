@@ -19,11 +19,14 @@ public class NotificationService {
         this.emailSender = emailSender;
     }
 
-    public void sendNotification(String zipPath, String semestar) {
-        emailSender.sendEmail(List.of("wrapper.app@outlook.com"), "Raspored " + semestar, "",  zipPath);
-//        List<User> users = userService.getAll();
-//        List<String> userEmails = users.stream().map(User::getUsername).toList();
-//        emailSender.sendEmail(userEmails, "Raspored", "", zipPath);
+    public void sendNotificationToAllUsers(String zipPath, String semestar) {
+        List<User> users = userService.getAll();
+        List<String> userEmails = users.stream().map(User::getUsername).toList();
+        emailSender.sendEmail(userEmails, "Raspored " + semestar, "",  zipPath);
 
+    }
+
+    public void sendNotification(String email, String zipPath, String semestar) {
+        emailSender.sendEmail(List.of(email), "Raspoed " + semestar, "", zipPath);
     }
 }

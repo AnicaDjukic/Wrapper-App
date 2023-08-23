@@ -31,8 +31,8 @@ public class PredmetRequestDto {
     @Max(value = 6)
     private int godina;
 
-    // TODO: ne sme biti nula ili manje od nule
-    @Min(value = 1)
+    // TODO: ne sme biti manje od nule
+    @Min(value = 0)
     private int brojCasovaPred;
 
     // TODO: ne sme biti nula ili prazan string

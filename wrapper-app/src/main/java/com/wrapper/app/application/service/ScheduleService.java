@@ -1,19 +1,17 @@
 package com.wrapper.app.application.service;
 
-import com.sun.mail.iap.ConnectionException;
 import com.wrapper.app.domain.model.GenerationStatus;
 import com.wrapper.app.infrastructure.dto.generator.MeetingDto;
 import com.wrapper.app.domain.model.Database;
 import com.wrapper.app.infrastructure.dto.optimizator.MeetingAssignment;
 import com.wrapper.app.infrastructure.external.ConverterService;
 import com.wrapper.app.infrastructure.external.DatabaseService;
+import com.wrapper.app.infrastructure.external.NotificationService;
 import com.wrapper.app.infrastructure.external.OptimizatorService;
 import com.wrapper.app.infrastructure.util.DateHandler;
-import com.wrapper.app.infrastructure.util.EmailSender;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.net.ConnectException;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -28,16 +26,16 @@ public class ScheduleService {
 
     private final ConverterService converterService;
 
-    private final EmailSender emailSender;
+    private final NotificationService notificationService;
 
     public ScheduleService(DatabaseService databaseService, MeetingService meetingService,
                            OptimizatorService optimizatorService, ConverterService converterService,
-                           EmailSender emailSender) {
+                           NotificationService notificationService) {
         this.databaseService = databaseService;
         this.meetingService = meetingService;
         this.optimizatorService = optimizatorService;
         this.converterService = converterService;
-        this.emailSender = emailSender;
+        this.notificationService = notificationService;
     }
 
     public void startGenerating(String id) {
@@ -100,7 +98,7 @@ public class ScheduleService {
 
     public void sendSchedule(String email, String id) {
         Database database = databaseService.getById(id);
-        emailSender.sendEmail(List.of(email), "Raspoed " + database.getSemestar() + database.getGodina(), "", database.getPath());
+        notificationService.sendNotification(email, database.getPath(), database.getSemestar() + database.getGodina());
     }
 
     public void stopGenerating() {

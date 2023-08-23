@@ -56,7 +56,7 @@
                 <input formControlName="brojCasovaPred" matInput placeholder="Unesite broj časova predavanja..."
                     type="number">
                 <mat-error *ngIf="predmetForm.get('brojCasovaPred')?.hasError('min')">
-                    Broj časova predavanja mora biti veći od 0
+                    Broj časova predavanja ne sme biti manji od 0
                 </mat-error>
             </mat-form-field>
 
@@ -66,7 +66,7 @@
                 <input formControlName="brojCasovaAud" matInput placeholder="Unesite broj časova auditornih vežbi..."
                     type="number" min="0">
                 <mat-error *ngIf="predmetForm.get('brojCasovaAud')?.hasError('min')">
-                    Broj časova auditornih vežbi mora biti veći ili jednak od 0
+                    Broj časova auditornih vežbi ne sme biti manji od 0
                 </mat-error>
             </mat-form-field>
 
@@ -75,7 +75,7 @@
                 <input formControlName="brojCasovaLab" matInput
                     placeholder="Unesite broj časova laboratorijskih vežbi..." type="number" min="0">
                 <mat-error *ngIf="predmetForm.get('brojCasovaLab')?.hasError('min')">
-                    Broj časova laboratorijskih vežbi mora biti veći ili jednak od 0
+                    Broj časova laboratorijskih vežbi ne sme biti manji od 0
                 </mat-error>
             </mat-form-field>
 
@@ -84,7 +84,7 @@
                 <input formControlName="brojCasovaRac" matInput placeholder="Unesite broj časova računarskih vežbi..."
                     type="number" min="0">
                 <mat-error *ngIf="predmetForm.get('brojCasovaRac')?.hasError('min')">
-                    Broj časova računarskih vežbi mora biti veći ili jednak od 0
+                    Broj časova računarskih vežbi ne sme biti manji od 0
                 </mat-error>
             </mat-form-field>
         </form>

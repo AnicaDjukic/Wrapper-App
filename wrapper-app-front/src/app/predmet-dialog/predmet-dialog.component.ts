@@ -37,7 +37,7 @@ export class PredmetDialogComponent implements OnInit {
       plan: ['', [Validators.required, Validators.min(1)]],
       naziv: ['', Validators.required],
       godina: ['', [Validators.required, Validators.min(1), Validators.max(6)]],
-      brojCasovaPred: ['', [Validators.required, Validators.min(1)]],
+      brojCasovaPred: ['', [Validators.required, Validators.min(0)]],
       studijskiProgram: ['', [Validators.required, autocompleteValidator(this.options)]],
       sifraStruke: [''],
       brojCasovaAud: ['', [Validators.required, Validators.min(0)]],

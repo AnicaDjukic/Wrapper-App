@@ -1,5 +1,6 @@
 package com.wrapper.app.infrastructure.util;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.mail.*;
@@ -13,11 +14,12 @@ import java.util.Properties;
 @Component
 public class EmailSender {
 
-    public void sendEmail(List<String> recipientEmails, String subject, String body, String attachmentFilePath) {
-        // Sender's email credentials
-        final String senderEmail = "wrapper.app@outlook.com";
-        final String senderPassword = "wrapper1234";
+    @Value("${email.sender.email}")
+    private String senderEmail;
+    @Value("${email.sender.pass}")
+    private String senderPassword;
 
+    public void sendEmail(List<String> recipientEmails, String subject, String body, String attachmentFilePath) {
         // Setup mail server properties
         Properties props = new Properties();
         props.put("mail.smtp.auth", "true");

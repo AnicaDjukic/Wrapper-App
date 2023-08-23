@@ -118,6 +118,6 @@ public class ConverterService {
         String zipFolderName = database.getGodina().replace("/", "_") + database.getSemestar() + FileExtensions.ZIP;
         String zipPath = fileHandler.zipFolder(folderName, zipFolderName);
         database.setPath(zipPath);
-        notificationService.sendNotification(zipPath, database.getSemestar() + database.getGodina());
+        notificationService.sendNotificationToAllUsers(zipPath, database.getSemestar() + database.getGodina());
     }
 }
