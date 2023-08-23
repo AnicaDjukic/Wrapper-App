@@ -3,40 +3,45 @@
     [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'" [mode]="(isHandset$ | async) ? 'over' : 'side'"
     [opened]="(isHandset$ | async) === false">
     <mat-toolbar>
-      <mat-select [(value)]="database" class="font-bold" (selectionChange)="changeDatabase()">
+      <mat-select [(value)]="database" [class]="!database ? 'disabled' : 'font-bold'" (selectionChange)="changeDatabase()">
         <mat-option *ngFor="let option of options"
+          [disabled]="option.status == 'STARTED' || option.status == 'OPTIMIZING'"
           [value]="option.godina + option.semestar.substring(0, 1)">{{option.semestar}} {{option.godina}}</mat-option>
       </mat-select>
     </mat-toolbar>
     <mat-nav-list #navList>
-      <a mat-list-item routerLink="predmeti" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"
-        [class.active]="router.url == '/predmeti'">
+      <button mat-list-item class="button" [disabled]="!database" routerLink="predmeti" routerLinkActive="active"
+        [routerLinkActiveOptions]="{exact: true}" [class.active]="router.url == '/predmeti'">
         <span class="contact-names">Predmeti</span>
-      </a>
-      <a mat-list-item routerLink="predavaci" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+      </button>
+      <button mat-list-item class="button" [disabled]="!database" routerLink="predavaci" routerLinkActive="active"
+        [routerLinkActiveOptions]="{exact: true}">
         <span class="contact-names">Predavači</span>
-      </a>
-      <a mat-list-item routerLink="prostorije" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+      </button>
+      <button mat-list-item class="button" [disabled]="!database" routerLink="prostorije" routerLinkActive="active"
+        [routerLinkActiveOptions]="{exact: true}">
         <span class="contact-names">Prostorije</span>
-      </a>
-      <a mat-list-item routerLink="studijski-programi" routerLinkActive="active"
+      </button>
+      <button mat-list-item class="button" [disabled]="!database" routerLink="studijski-programi" routerLinkActive="active"
         [routerLinkActiveOptions]="{exact: true}">
         <span class="contact-names">Studijski programi</span>
-      </a>
-      <a mat-list-item routerLink="studentske-grupe" routerLinkActive="active"
+      </button>
+      <button mat-list-item class="button" [disabled]="!database" routerLink="studentske-grupe" routerLinkActive="active"
         [routerLinkActiveOptions]="{exact: true}">
         <span class="contact-names">Studentske grupe</span>
-      </a>
-      <a mat-list-item routerLink="realizacija" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+      </button>
+      <button mat-list-item class="button" [disabled]="!database" routerLink="realizacija" routerLinkActive="active"
+        [routerLinkActiveOptions]="{exact: true}">
         <span class="contact-names">Realizacija</span>
-      </a>
-      <a mat-list-item routerLink="novi-semestar" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+      </button>
+      <button mat-list-item class="button" routerLink="novi-semestar" routerLinkActive="active"
+        [routerLinkActiveOptions]="{exact: true}">
         <span class="contact-names">Novi semestar</span>
-      </a>
-      <a mat-list-item routerLink="generisanje-rasporeda" routerLinkActive="active"
+      </button>
+      <button mat-list-item class="button" [disabled]="!database" routerLink="generisanje-rasporeda" routerLinkActive="active"
         [routerLinkActiveOptions]="{exact: true}">
         <span class="contact-names">Generisanje rasporeda</span>
-      </a>
+      </button>
     </mat-nav-list>
     <button class="logout-btn" mat-raised-button color="primary" (click)="logout()">
       Odjavi se

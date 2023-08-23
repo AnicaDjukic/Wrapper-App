@@ -16,8 +16,6 @@ export class GenerisanjeRasporedaComponent {
   selectedSemester!: string;
   submitted!: boolean;
 
-  path = "http://localhost:8080/api/v1/raspored/download/"
-
   constructor(private databaseApi: DatabaseService,
     private rasporedApi: RasporedService,
     private toastr: ToastrService) { }
@@ -49,7 +47,7 @@ export class GenerisanjeRasporedaComponent {
     this.databaseApi.getAll().subscribe({
       next: (res) => {
         for (let option of res.reverse()) {
-          if (option.status == 'NOT_STARTED' || option.status == 'STOPPED' || option.status == 'FINISHED') {
+          if (option.status != 'STARTED' && option.status != 'OPTIMIZING') {
             this.options.push(option);
           }
         }
@@ -62,12 +60,7 @@ export class GenerisanjeRasporedaComponent {
     this.rasporedApi.generate(this.selectedSemester)
       .subscribe({
         next: () => {
-          this.submitted = false;
-          this.selectedSemester = "";
-          this.semesters = [];
-          this.options = [];
-          this.getAllSemesters();
-          this.getAllOptions();
+          window.location.reload();
         },
         error: () => {
           this.submitted = false;
@@ -111,12 +104,7 @@ export class GenerisanjeRasporedaComponent {
     this.rasporedApi.generate(id)
       .subscribe({
         next: () => {
-          this.submitted = false;
-          this.selectedSemester = "";
-          this.semesters = [];
-          this.options = [];
-          this.getAllSemesters();
-          this.getAllOptions();
+          window.location.reload();
         },
         error: () => {
           this.submitted = false;

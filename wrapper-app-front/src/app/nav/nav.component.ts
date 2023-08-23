@@ -21,7 +21,7 @@ export class NavComponent implements OnInit {
       shareReplay()
     );
 
-  database = '';
+  database = '-';
   options: DatabaseDto[] = [];
 
   constructor(private breakpointObserver: BreakpointObserver,
@@ -40,17 +40,26 @@ export class NavComponent implements OnInit {
       .subscribe({
         next: (res) => {
           this.options = res.reverse();
-          this.database = this.options[0].godina + this.options[0].semestar.substring(0, 1);
+          let active = this.options.find(o => o.status != 'STARTED' && o.status != 'OPTIMIZING');
+          if(active) {
+            this.database = active.godina + active.semestar.substring(0, 1);
+          }
           if (!window.sessionStorage.getItem('semestar')) {
             window.sessionStorage.setItem('semestar', this.database);
           } else {
-            this.database = window.sessionStorage.getItem('semestar')!;
+            let activated = this.options.find(o => o.godina + o.semestar.substring(0, 1) == window.sessionStorage.getItem('semestar')!);
+            if(activated?.status != 'STARTED' && activated?.status != 'OPTIMIZING') {
+                this.database = window.sessionStorage.getItem('semestar')!;
+            }
           }
         }
       });
   }
 
   changeDatabase() {
+    if(!this.database) {
+      return;
+    }
     console.log(this.database);
     window.sessionStorage.setItem('semestar', this.database);
     this.databaseApi.switch(this.database.replace("/", "_"))

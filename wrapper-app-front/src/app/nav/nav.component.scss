@@ -46,5 +46,16 @@ $my-palette: mat.define-palette(mat.$indigo-palette);
 
 .font-bold {
   font-weight: 500;
+  font-size: large;
 }
 
+.disabled {
+  text-align: center;
+  font-weight: 500;
+  font-size: large;
+}
+
+.button {
+  text-align: left;
+  border: none;
+}

@@ -19,7 +19,6 @@ export class AuthInterceptorService {
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const token = this.storageService.getToken();
-    console.log('Token:', token);
 
     if (req.headers.get('anonymous')) {
       return next.handle(req);
