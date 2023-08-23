@@ -22,11 +22,11 @@ public class NotificationService {
     public void sendNotificationToAllUsers(String zipPath, String semestar) {
         List<User> users = userService.getAll();
         List<String> userEmails = users.stream().map(User::getUsername).toList();
-        emailSender.sendEmail(userEmails, "Raspored " + semestar, "",  zipPath);
+        emailSender.sendEmail(userEmails, "Raspored za" + semestar, "",  zipPath);
 
     }
 
     public void sendNotification(String email, String zipPath, String semestar) {
-        emailSender.sendEmail(List.of(email), "Raspoed " + semestar, "", zipPath);
+        emailSender.sendEmail(List.of(email), "Raspored za" + semestar, "", zipPath);
     }
 }
