@@ -15,6 +15,7 @@ import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation
 import { PredavacService } from '../services/predavac.service';
 import { PredavacDto } from '../dtos/PredavacDto';
 import { PredmetDto } from '../dtos/PredmetDto';
+import { StudijskiProgramService } from '../services/studijski-program.service';
 
 @Component({
   selector: 'app-realizacija',
@@ -32,6 +33,7 @@ export class RealizacijaComponent {
 
   constructor(private api: ApiService,
     private realizacijaService: RealizacijaService,
+    private studijskiProgramService: StudijskiProgramService,
     private predavacApi: PredavacService,
     public dialog: MatDialog,
     private toastr: ToastrService) { }
@@ -60,7 +62,7 @@ export class RealizacijaComponent {
 
   getStudijskiProgrami() {
     this.options = [];
-    this.api.getAllStudijskiProgram()
+    this.studijskiProgramService.getAll()
       .subscribe({
         next: (res) => {
           this.studijskiProgrami = res;

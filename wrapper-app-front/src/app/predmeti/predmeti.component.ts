@@ -8,6 +8,7 @@ import { PredmetDialogComponent } from '../predmet-dialog/predmet-dialog.compone
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 import { ToastrService } from 'ngx-toastr';
 import { StudijskiProgramDto } from '../dtos/StudijskiProgramDto';
+import { StudijskiProgramService } from '../services/studijski-program.service';
 
 @Component({
   selector: 'app-predmeti',
@@ -20,6 +21,7 @@ export class PredmetiComponent implements OnInit {
     'brojCasovaPred', 'brojCasovaAud', 'brojCasovaLab', 'brojCasovaRac', 'actions'];
 
   constructor(private api: ApiService,
+    private studijskiProgramService: StudijskiProgramService,
     private predmetApi: ApiService, 
     public dialog: MatDialog, 
     private toastr: ToastrService) { }
@@ -60,7 +62,7 @@ export class PredmetiComponent implements OnInit {
   }
 
   getStudijskiProgramOptions() {
-    this.api.getAllStudijskiProgram()
+    this.studijskiProgramService.getAll()
       .subscribe({
         next: (res) => {
           this.studijskiProgrami = res;

@@ -1,12 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RasporedService {
 
-  private url = "http://localhost:8080/api/v1/raspored"
+  private url = `${environment.apiUrl}/api/v1/raspored`
 
   constructor(private http: HttpClient) { }
 

@@ -1,13 +1,14 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { LoginDto } from '../dtos/LoginDto';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthenticationService {
 
-  private authUrl = "http://localhost:8080/auth"
+  private authUrl = `${environment.apiUrl}/auth`
 
   constructor(private http: HttpClient) { }
 

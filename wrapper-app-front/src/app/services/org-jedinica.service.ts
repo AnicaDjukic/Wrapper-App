@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -7,7 +8,7 @@ import { Injectable } from '@angular/core';
 export class OrgJedinicaService {
 
 
-  private organizacioneJediniceUrl = "http://localhost:8080/api/v1/organizacione-jedinice";
+  private organizacioneJediniceUrl = `${environment.apiUrl}/api/v1/organizacione-jedinice`;
   
   constructor(private http: HttpClient) { }
 

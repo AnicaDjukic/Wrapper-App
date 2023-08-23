@@ -1,12 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProstorijaService {
 
-  private prostorijeUrl = "http://localhost:8080/api/v1/prostorije"
+  private prostorijeUrl = `${environment.apiUrl}/api/v1/prostorije`
 
   constructor(private http: HttpClient) { }
 

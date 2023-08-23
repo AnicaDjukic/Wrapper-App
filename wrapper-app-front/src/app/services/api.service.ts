@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ApiService {
 
-  private predmetiUrl = "http://localhost:8080/api/v1/predmeti"
+  private predmetiUrl = `${environment.apiUrl}/api/v1/predmeti`
 
   constructor(private http: HttpClient) { }
 
@@ -39,10 +40,6 @@ export class ApiService {
 
   delete(id: string) {
     return this.http.delete(`${this.predmetiUrl}/` + id);
-  }
-
-  getAllStudijskiProgram() {
-    return this.http.get<any>("http://localhost:8080/api/v1/studijski-programi");
   }
 
 }

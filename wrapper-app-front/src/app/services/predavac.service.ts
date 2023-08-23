@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PredavacService {
   
-  private predavaciUrl = "http://localhost:8080/api/v1/predavaci";
+  private predavaciUrl = `${environment.apiUrl}/api/v1/predavaci`;
 
   constructor(private http: HttpClient) { }
 
