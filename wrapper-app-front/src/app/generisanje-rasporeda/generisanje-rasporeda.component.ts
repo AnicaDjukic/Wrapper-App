@@ -78,12 +78,9 @@ export class GenerisanjeRasporedaComponent {
       .subscribe({
         next: () => {
           this.toastr.success('Generisanje je zaustavljeno!', 'Uspešno!');
-          this.submitted = false;
-          this.selectedSemester = "";
-          this.semesters = [];
-          this.options = [];
-          this.getAllSemesters();
-          this.getAllOptions();
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000);
         },
         error: () => {
           this.toastr.error('Došlo je do greške! Pokušajte ponovo...', 'Greška!');

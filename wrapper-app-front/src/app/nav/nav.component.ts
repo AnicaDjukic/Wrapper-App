@@ -21,7 +21,7 @@ export class NavComponent implements OnInit {
       shareReplay()
     );
 
-  database = '-';
+  database = '';
   options: DatabaseDto[] = [];
 
   constructor(private breakpointObserver: BreakpointObserver,
