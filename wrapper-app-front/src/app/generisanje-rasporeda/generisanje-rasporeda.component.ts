@@ -35,16 +35,7 @@ export class GenerisanjeRasporedaComponent {
   }
 
   getAllOptions() {
-    // this.databaseApi.getAllUnblocked().subscribe({
-    //   next: (res) => {
-    //     for (let option of res.reverse()) {
-    //       if (option.status == 'NOT_STARTED' || option.status == 'STOPPED' || option.status == 'FINISHED') {
-    //         this.options.push(option);
-    //       }
-    //     }
-    //   }
-    // })
-    this.databaseApi.getAll().subscribe({
+    this.databaseApi.getAllUnblocked().subscribe({
       next: (res) => {
         for (let option of res.reverse()) {
           if (option.status != 'STARTED' && option.status != 'OPTIMIZING') {

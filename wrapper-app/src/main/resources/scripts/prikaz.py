@@ -1158,7 +1158,7 @@ def generate_all_rasporedi(
         file_name = unidecode(combination.nazivRasporeda)
         html_file = 'html'
         write_to_file(html, file_name, html_file, dir_path)
-        # write_pdf_from_html(file_name, css_file, dir_path)
+        write_pdf_from_html(file_name, css_file, dir_path)
         #print(combination.nazivRasporeda.encode('utf-8').decode('utf-8') + ' DONE')
 
 
@@ -1180,7 +1180,7 @@ def generate_all_prostorija_rasporedi(
         html = prostorija_table(prostorija)
         html_file = 'html'
         write_to_file(html, file_name, html_file, dir_path)
-        # write_pdf_from_html(file_name, css_file, dir_path)
+        write_pdf_from_html(file_name, css_file, dir_path)
         # print(oznaka + ' DONE')
     
 
@@ -1202,7 +1202,7 @@ def generate_all_predavac_rasporedi(
         html = predavac_table(predavac)
         html_file = 'html'
         write_to_file(html, file_name, html_file, dir_path)
-        # write_pdf_from_html(file_name, css_file, dir_path)
+        write_pdf_from_html(file_name, css_file, dir_path)
         #print(ime + ' DONE')
 
 

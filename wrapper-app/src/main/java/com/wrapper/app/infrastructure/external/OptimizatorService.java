@@ -26,12 +26,8 @@ public class OptimizatorService {
 
     private final ModelMapper modelMapper;
 
-    @Value("${optimizator.send-data.url}")
-    private String sendDataUrl;
-    @Value("${optimizator.start.url}")
-    private String startUrl;
-    @Value("${optimizator.stop.url}")
-    private String stopUrl;
+    @Value("${optimizator.url}")
+    private String optimizatorUrl;
 
     public OptimizatorService(RestTemplate restTemplate, MeetingScheduleService meetingScheduleService, ModelMapper modelMapper) {
         this.restTemplate = restTemplate;
@@ -44,6 +40,7 @@ public class OptimizatorService {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<Object> httpEntity = new HttpEntity<>(null, headers);
+        String startUrl = optimizatorUrl + "/timeTable/solve";
         restTemplate.exchange(startUrl, HttpMethod.POST, httpEntity, Void.class);
     }
 
@@ -54,6 +51,7 @@ public class OptimizatorService {
         MeetingSchedule meetingSchedule = meetingScheduleService.createMeetingShedule(database, meetings, null);
         MeetingScheduleDto meetingScheduleDto = modelMapper.map(meetingSchedule, MeetingScheduleDto.class);
         HttpEntity<MeetingScheduleDto> httpEntity = new HttpEntity<>(meetingScheduleDto, headers);
+        String sendDataUrl = optimizatorUrl + "/timeTable";
         restTemplate.exchange(sendDataUrl, HttpMethod.POST, httpEntity, Void.class);
     }
 
@@ -61,6 +59,7 @@ public class OptimizatorService {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<Object> httpEntity = new HttpEntity<>(null, headers);
+        String stopUrl = optimizatorUrl + "/timeTable/stopSolving";
         restTemplate.exchange(stopUrl, HttpMethod.POST, httpEntity, Void.class);
     }
 }
