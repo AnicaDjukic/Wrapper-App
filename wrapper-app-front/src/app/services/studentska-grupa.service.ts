@@ -1,16 +1,18 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { environment } from 'src/environments/environment';
+import { ConfigService } from './config.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class StudentskaGrupaService {
 
-  private studentskeGrupeUrl = `${environment.apiUrl}/api/v1/studentske-grupe`
+  private studentskeGrupeUrl = `/api/v1/studentske-grupe`;
 
-  constructor(private http: HttpClient) { }
-
+  constructor(private http: HttpClient, private configService: ConfigService) {
+    const apiUrl = this.configService.getBackendUrl();
+    this.studentskeGrupeUrl = apiUrl + this.studentskeGrupeUrl;
+   }
   getAll(page: number, size: number) {
     return this.http.get<any>(`${this.studentskeGrupeUrl}?page=` + page + `&size=` + size);
   }

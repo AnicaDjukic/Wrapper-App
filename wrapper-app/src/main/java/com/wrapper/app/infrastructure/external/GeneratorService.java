@@ -11,6 +11,7 @@ import com.wrapper.app.infrastructure.persistence.util.CollectionTypes;
 import com.wrapper.app.infrastructure.util.ExecutionResult;
 import com.wrapper.app.infrastructure.util.FileExtensions;
 import com.wrapper.app.infrastructure.util.PythonScriptExecutor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -22,6 +23,7 @@ import java.io.IOException;
 import java.util.List;
 
 @Service
+@Slf4j
 public class GeneratorService {
 
     private final ObjectMapper objectMapper;

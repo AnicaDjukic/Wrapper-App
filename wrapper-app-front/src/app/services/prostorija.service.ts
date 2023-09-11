@@ -1,15 +1,18 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { environment } from 'src/environments/environment';
+import { ConfigService } from './config.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProstorijaService {
 
-  private prostorijeUrl = `${environment.apiUrl}/api/v1/prostorije`
+  private prostorijeUrl = `/api/v1/prostorije`;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private configService: ConfigService) {
+    const apiUrl = this.configService.getBackendUrl();
+    this.prostorijeUrl = apiUrl + this.prostorijeUrl;
+   }
 
   getAll(page: number, size: number) {
     return this.http.get<any>(`${this.prostorijeUrl}?page=` + page + `&size=` + size);

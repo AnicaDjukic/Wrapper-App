@@ -439,7 +439,7 @@ import sys
 json_file_path = sys.argv[1]
 
 # Read the JSON data from the file with specified encoding
-with open(json_file_path, encoding='utf-8') as file:
+with open(json_file_path) as file:
     json_input = file.read()
 
 # Parse the JSON input into a Python object

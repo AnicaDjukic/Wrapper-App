@@ -36,13 +36,14 @@ public class MeetingService {
     }
 
     private void saveMeetings(Database database, List<MeetingDto> meetingsDtos) {
-        List<Meeting> meetings = meetingsDtos.parallelStream()
-                .map(dto -> CompletableFuture.supplyAsync(() -> {
-                    CollectionNameProvider.setCollectionName(database.getGodina() + database.getSemestar().charAt(0));
-                    return modelMapper.map(dto, Meeting.class);
-                }))
-                .map(CompletableFuture::join)
-                .collect(Collectors.toList());
+//        List<Meeting> meetings = meetingsDtos.parallelStream()
+//                .map(dto -> CompletableFuture.supplyAsync(() -> {
+//                    CollectionNameProvider.setCollectionName(database.getGodina() + database.getSemestar().charAt(0));
+//                    return modelMapper.map(dto, Meeting.class);
+//                }))
+//                .map(CompletableFuture::join)
+//                .collect(Collectors.toList());
+        List<Meeting> meetings = meetingsDtos.stream().map(m -> modelMapper.map(m, Meeting.class)).toList();
         String collectionName = CollectionTypes.MEETINGS + database.getGodina() + database.getSemestar().charAt(0);
         mongoTemplate.dropCollection(collectionName);
         mongoTemplate.createCollection(collectionName);

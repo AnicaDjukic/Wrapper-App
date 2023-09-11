@@ -22,7 +22,10 @@
                 </mat-grid-tile>
                 <mat-grid-tile>
                     <button mat-raised-button color="primary" (click)="submit()"
-                        [disabled]="!selectedSemester">Pokreni</button>
+                        [disabled]="isDisabled()">Pokreni</button>
+                </mat-grid-tile>
+                <mat-grid-tile *ngIf="selectedSemester && isGenerating()" style="font-size: medium; font-weight: 500;">
+                    Jedno generisanje je u toku, sačekajte...
                 </mat-grid-tile>
             </form>
         </mat-grid-list>
@@ -118,8 +121,8 @@
                 </div>
                 <div *ngIf="semestar.status == 'FAILED'"
                     style="display: flex; flex-direction: column; margin-top: 2%; width: 15%;">
-                    <div style="text-align: center; cursor: pointer;" (click)="refresh(semestar.id)">
-                        <mat-icon class="refresh">
+                    <div style="text-align: center; cursor: pointer;">
+                        <mat-icon>
                             refresh
                         </mat-icon>
                     </div>

@@ -1,15 +1,18 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '../../environments/environment';
+import { ConfigService } from './config.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ApiService {
 
-  private predmetiUrl = `${environment.apiUrl}/api/v1/predmeti`
+  private predmetiUrl = `/api/v1/predmeti`;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private configService: ConfigService) { 
+    const apiUrl = this.configService.getBackendUrl();
+    this.predmetiUrl = apiUrl + this.predmetiUrl
+  }
 
   getAll(page: number, size: number) {
     return this.http.get<any>(`${this.predmetiUrl}?page=` + page + `&size=` + size);

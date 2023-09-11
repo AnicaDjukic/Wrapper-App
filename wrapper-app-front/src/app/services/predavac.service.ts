@@ -1,16 +1,18 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { environment } from 'src/environments/environment';
+import { ConfigService } from './config.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PredavacService {
   
-  private predavaciUrl = `${environment.apiUrl}/api/v1/predavaci`;
+  private predavaciUrl = `/api/v1/predavaci`;
 
-  constructor(private http: HttpClient) { }
-
+  constructor(private http: HttpClient, private configService: ConfigService) {
+    const apiUrl = this.configService.getBackendUrl();
+    this.predavaciUrl = apiUrl + this.predavaciUrl;
+   }
   getAll(page: number, size: number) {
     return this.http.get<any>(`${this.predavaciUrl}?page=` + page + `&size=` + size);
   }

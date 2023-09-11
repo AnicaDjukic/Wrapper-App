@@ -3,6 +3,7 @@ import { DatabaseDto } from '../dtos/DatabaseDto';
 import { DatabaseService } from '../services/database.service';
 import { RasporedService } from '../services/raspored.service';
 import { ToastrService } from 'ngx-toastr';
+import { tap } from 'rxjs';
 
 @Component({
   selector: 'app-generisanje-rasporeda',
@@ -28,7 +29,11 @@ export class GenerisanjeRasporedaComponent {
   getAllSemesters() {
     this.databaseApi.getAll().subscribe({
       next: (res) => {
-        this.semesters = res;
+        for(let sem of res) {
+          if (sem.status != null && sem.status != 'NOT_STARTED' && sem.status != 'STOPPED') {
+            this.semesters.push(sem);
+          }
+        }
         this.semesters = this.semesters.sort((a, b) => new Date(b.generationStarted).getTime() - new Date(a.generationStarted).getTime());
       }
     });
@@ -46,18 +51,19 @@ export class GenerisanjeRasporedaComponent {
     });
   }
 
+  isDisabled() {
+    return !this.selectedSemester || this.semesters.find(s => s.status == 'STARTED' || s.status == 'OPTIMIZING');
+  }
+
+  isGenerating() {
+    return this.semesters.find(s => s.status == 'STARTED' || s.status == 'OPTIMIZING');
+  }
+
   submit() {
     this.submitted = true;
     this.rasporedApi.generate(this.selectedSemester)
-      .subscribe({
-        next: () => {
-          window.location.reload();
-        },
-        error: () => {
-          this.submitted = false;
-          this.toastr.error('Došlo je do greške prilikom dodavanja novog semestra!', 'Greška!');
-        }
-      });
+      .subscribe();
+    window.location.reload();
   }
 
   send(id: string) {
@@ -88,17 +94,12 @@ export class GenerisanjeRasporedaComponent {
       });
   }
 
-  refresh(id: string) {
-    this.rasporedApi.generate(id)
-      .subscribe({
-        next: () => {
-          window.location.reload();
-        },
-        error: () => {
-          this.submitted = false;
-          this.toastr.error('Došlo je do greške prilikom dodavanja novog semestra!', 'Greška!');
-        }
-      });
+  async refresh(id: string) {
+    this.rasporedApi.generate(id).pipe(
+      tap(() => {
+        window.location.reload();
+      })
+    ).subscribe();
   }
 
 }

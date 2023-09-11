@@ -1,15 +1,18 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { environment } from 'src/environments/environment';
+import { ConfigService } from './config.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DatabaseService {
 
-  private databaseUrl = `${environment.apiUrl}/api/v1/databases`;
+  private databaseUrl = `/api/v1/databases`;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private configService: ConfigService) {
+    const apiUrl = this.configService.getBackendUrl();
+    this.databaseUrl = apiUrl + this.databaseUrl;
+   }
 
   getAll() {
     return this.http.get<any>(`${this.databaseUrl}`);

@@ -10,6 +10,7 @@ import com.wrapper.app.infrastructure.external.NotificationService;
 import com.wrapper.app.infrastructure.external.OptimizatorService;
 import com.wrapper.app.infrastructure.util.DateHandler;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.ResourceAccessException;
 
 import java.io.IOException;
 import java.util.List;
@@ -40,13 +41,18 @@ public class ScheduleService {
 
     public void startGenerating(String id) {
         updateDatabaseStatus(id);
-        CompletableFuture.runAsync(() -> createMeetingsAndStartOptimizator(id)).exceptionally(ex -> {
-            Database database = databaseService.getById(id);
-            database.setStatus(GenerationStatus.FAILED);
-            databaseService.update(database);
+//        CompletableFuture.runAsync(() -> createMeetingsAndStartOptimizator(id)).exceptionally(ex -> {
+//            Database database = databaseService.getById(id);
+//            database.setStatus(GenerationStatus.FAILED);
+//            databaseService.update(database);
+//            ex.printStackTrace();
+//            return null;
+//        });
+        try {
+            createMeetingsAndStartOptimizator(id);
+        } catch (Exception ex) {
             ex.printStackTrace();
-            return null;
-        });
+        }
     }
 
     private void updateDatabaseStatus(String databaseId) {
@@ -62,7 +68,7 @@ public class ScheduleService {
         try {
             List<MeetingDto> meetings = createMeetings(databaseId);
             startOptimizator(databaseId, meetings);
-        } catch (IOException | InterruptedException ex) {
+        } catch (IOException | InterruptedException | ResourceAccessException ex) {
             Database database = databaseService.getById(databaseId);
             database.setStatus(GenerationStatus.FAILED);
             databaseService.update(database);
@@ -112,8 +118,10 @@ public class ScheduleService {
 
     public void finishGenerating(List<MeetingAssignment> meetingAssignments) {
         Database database = databaseService.getRecentlyStarted();
+        System.out.println("FINISH");
         if(database.getStatus().equals(GenerationStatus.OPTIMIZING)) {
-            CompletableFuture.runAsync(() -> converterService.convert(meetingAssignments, database));
+            //CompletableFuture.runAsync(() -> converterService.convert(meetingAssignments, database));
+            converterService.convert(meetingAssignments, database);
         }
     }
 }

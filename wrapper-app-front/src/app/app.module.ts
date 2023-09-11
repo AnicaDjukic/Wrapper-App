@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -33,6 +33,11 @@ import { NoviSemestarComponent } from './novi-semestar/novi-semestar.component';
 import { GenerisanjeRasporedaComponent } from './generisanje-rasporeda/generisanje-rasporeda.component';
 import { LoginComponent } from './login/login.component';
 import { AuthInterceptorService } from './services/auth-interceptor.service';
+import { ConfigService } from './services/config.service';
+
+export function loadConfig(configService: ConfigService) {
+  return () => configService.loadConfig();
+}
 
 @NgModule({
   declarations: [
@@ -54,7 +59,7 @@ import { AuthInterceptorService } from './services/auth-interceptor.service';
     NoviSemestarComponent,
     GenerisanjeRasporedaComponent,
     LoginComponent
-],
+  ],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -76,7 +81,13 @@ import { AuthInterceptorService } from './services/auth-interceptor.service';
     provide: HTTP_INTERCEPTORS,
     useClass: AuthInterceptorService,
     multi: true
-}],
+  }, ConfigService,
+  {
+    provide: APP_INITIALIZER,
+    useFactory: loadConfig,
+    deps: [ConfigService],
+    multi: true
+  }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

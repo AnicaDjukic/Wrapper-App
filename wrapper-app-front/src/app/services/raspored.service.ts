@@ -1,16 +1,18 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { environment } from 'src/environments/environment';
+import { ConfigService } from './config.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RasporedService {
 
-  private url = `${environment.apiUrl}/api/v1/raspored`
+  private url = `/api/v1/raspored`;
 
-  constructor(private http: HttpClient) { }
-
+  constructor(private http: HttpClient, private configService: ConfigService) {
+    const apiUrl = this.configService.getBackendUrl();
+    this.url = apiUrl + this.url;
+   }
   generate(id: string) {
     return this.http.post(`${this.url}/generate/${id}`, null);
   }

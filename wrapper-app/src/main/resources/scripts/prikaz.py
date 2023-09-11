@@ -788,6 +788,7 @@ def write_to_file(
         extension: str = 'html',
         dir_path: str = '../out_data/'
 ) -> None:
+    file_name = file_name.replace("?", "C")
     with open(dir_path + file_name + '.' + extension, 'w', encoding='utf-8') as out_file:
         out_file.write(content)
 
@@ -1158,6 +1159,7 @@ def generate_all_rasporedi(
         file_name = unidecode(combination.nazivRasporeda)
         html_file = 'html'
         write_to_file(html, file_name, html_file, dir_path)
+        #
         write_pdf_from_html(file_name, css_file, dir_path)
         #print(combination.nazivRasporeda.encode('utf-8').decode('utf-8') + ' DONE')
 
@@ -1309,7 +1311,7 @@ class MeetingScheduleEncoder(json.JSONEncoder):
 json_file_path = sys.argv[1]
 
 # Read the JSON data from the file with specified encoding
-with open(json_file_path, encoding='utf-8') as file:
+with open(json_file_path) as file:
     json_input = file.read()
 
 # Create a list of MeetingAssignmentJoined objects

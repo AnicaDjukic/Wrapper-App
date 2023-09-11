@@ -6,6 +6,7 @@ import com.wrapper.app.infrastructure.persistence.cascade.CascadingMongoDeleteEv
 import com.wrapper.app.infrastructure.persistence.cascade.CascadingMongoSaveEventListener;
 import com.wrapper.app.infrastructure.persistence.util.CollectionNameResolver;
 import com.wrapper.app.infrastructure.persistence.util.CollectionNameResolverImpl;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.config.AbstractMongoClientConfiguration;
@@ -14,15 +15,24 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 @Configuration
 public class MongoDBConfig extends AbstractMongoClientConfiguration {
 
+    @Value("${spring.data.mongodb.database}")
+    private String databaseName;
+
+    @Value("${spring.data.mongodb.host}")
+    private String host;
+
+    @Value("${spring.data.mongodb.port}")
+    private String port;
+
     @Override
     protected String getDatabaseName() {
-        return "WrapperAppDatabase";
+        return databaseName;
     }
 
     @Bean
     @Override
     public MongoClient mongoClient() {
-        return MongoClients.create("mongodb://localhost:27017");
+        return MongoClients.create("mongodb://" + host + ":" + port);
     }
 
     @Bean

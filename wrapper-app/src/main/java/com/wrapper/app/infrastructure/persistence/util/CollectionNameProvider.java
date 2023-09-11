@@ -2,7 +2,6 @@ package com.wrapper.app.infrastructure.persistence.util;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class CollectionNameProvider {
 

@@ -1,16 +1,18 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { environment } from 'src/environments/environment';
+import { ConfigService } from './config.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RealizacijaService {
 
-  private realizacijaUrl = `${environment.apiUrl}/api/v1/realizacija`
+  private realizacijaUrl = `/api/v1/realizacija`;
 
-  constructor(private http: HttpClient) { }
-
+  constructor(private http: HttpClient, private configService: ConfigService) {
+    const apiUrl = this.configService.getBackendUrl();
+    this.realizacijaUrl = apiUrl + this.realizacijaUrl;
+   }
   get(studijskiProgramId: string) {
     return this.http.get<any>(`${this.realizacijaUrl}/studijski-programi/` + studijskiProgramId + '/predmeti');
   }
